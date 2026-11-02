@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e9c75c8224a31847909e762f3353a1c, type: 3}
   m_Name: Ranged
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
-  EnemyType: 0
+  EnemyType: 1
   Name: 
   Sprite: {fileID: 0}
   SpawnTurn: 0
   Reward: 0
   BaseHealth: 0
   Dmg: 0
-  Range: 0
-  StopCell: 0
-  MoveSpeed: 0
+  Range: 4
+  StopCell: 4
+  MoveSpeed: 1
   HealPercent: 0
   HasShield: 0

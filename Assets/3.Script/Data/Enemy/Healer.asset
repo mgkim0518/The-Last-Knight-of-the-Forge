@@ -19,8 +19,8 @@ MonoBehaviour:
   Reward: 0
   BaseHealth: 0
   Dmg: 0
-  Range: 0
-  StopCell: 0
-  MoveSpeed: 0
+  Range: 3
+  StopCell: 1
+  MoveSpeed: 1
   HealPercent: 0
   HasShield: 0

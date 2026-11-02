@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c2208e0d5ea1ca459f8d902f19cfcdf, type: 3}
   m_Name: Sword
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
-  WeaponName: 
+  WeaponName: "\uAE30\uBCF8 \uAC80"
   Icon: {fileID: 0}
   Target: 0
-  BasePower: 0
+  BasePower: 3
   BaseAmount: 1
   ChargeType: 0
   CapTier: 1
   ValueTier: 1
   UpgradeType: 1
-  SpawnWeight: 10
+  SpawnWeight: 12
   MaxSpawnWeight: 50

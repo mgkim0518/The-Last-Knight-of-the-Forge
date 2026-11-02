@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c2208e0d5ea1ca459f8d902f19cfcdf, type: 3}
   m_Name: Halberd
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
-  WeaponName: 
+  WeaponName: "\uBBF8\uB298\uCC3D"
   Icon: {fileID: 0}
-  Target: 0
-  BasePower: 0
-  BaseAmount: 1
+  Target: 3
+  BasePower: 2
+  BaseAmount: 3
   ChargeType: 0
   CapTier: 1
-  ValueTier: 1
+  ValueTier: 0
   UpgradeType: 1
   SpawnWeight: 10
   MaxSpawnWeight: 50

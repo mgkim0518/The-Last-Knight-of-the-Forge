@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c2208e0d5ea1ca459f8d902f19cfcdf, type: 3}
   m_Name: Crossbow
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
-  WeaponName: 
+  WeaponName: "\uC11D\uAD81"
   Icon: {fileID: 0}
-  Target: 0
-  BasePower: 0
+  Target: 2
+  BasePower: 1
   BaseAmount: 1
   ChargeType: 0
   CapTier: 1
   ValueTier: 1
-  UpgradeType: 1
+  UpgradeType: 2
   SpawnWeight: 10
   MaxSpawnWeight: 50

@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c2208e0d5ea1ca459f8d902f19cfcdf, type: 3}
   m_Name: Dagger
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
-  WeaponName: 
+  WeaponName: "\uB2E8\uAC80"
   Icon: {fileID: 0}
   Target: 0
-  BasePower: 0
+  BasePower: 5
   BaseAmount: 1
   ChargeType: 0
-  CapTier: 1
+  CapTier: 0
   ValueTier: 1
   UpgradeType: 1
   SpawnWeight: 10
