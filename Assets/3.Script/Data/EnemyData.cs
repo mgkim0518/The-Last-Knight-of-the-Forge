@@ -13,21 +13,21 @@ public enum EnemyType
 
 public class EnemyData : ScriptableObject
 {
-    [Header("±âº»")]
+    [Header("ê¸°ë³¸")]
     public EnemyType EnemyType;
     public string Name;
     public Sprite Sprite;
     public int SpawnTurn;
     public int Reward;
 
-    [Header("ÀüÅõ")]
+    [Header("ì „íˆ¬")]
     public int BaseHealth;
     public int Dmg;
     public int Range;
     public int StopCell;
     public int MoveSpeed;
 
-    [Header("Æ¯¼ö")]
+    [Header("íŠ¹ìˆ˜")]
     [Range(0f, 1f)] public float HealPercent;
     public bool HasShield = false;
 }

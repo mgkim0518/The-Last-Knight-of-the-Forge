@@ -9,26 +9,26 @@ public enum TargetType { Front = 0, Back = 1, Choose = 2, FrontThree = 3, Self =
 [CreateAssetMenu(fileName = "WeaponData", menuName = "Scriptable Objects/WeaponData")]
 public class WeaponData : ScriptableObject
 {
-    [Header("±âº»")]
+    [Header("ê¸°ë³¸")]
     public string WeaponName;
     public Sprite Icon;
     public TargetType Target;
 
-    [Header("¼öÄ¡")]
+    [Header("ìˆ˜ì¹˜")]
     public int BasePower;
-    [Tooltip("¹üÀ§: Å¸°İ Ä­ ¼ö / °Å¸®: ³Ë¹é¡¤²ø±â Ä­ ¼ö / ¹æ¾î: ¸·´Â È½¼ö")]
+    [Tooltip("ë²”ìœ„: íƒ€ê²© ì¹¸ ìˆ˜ / ê±°ë¦¬: ë„‰ë°±Â·ëŒê¸° ì¹¸ ìˆ˜ / ë°©ì–´: ë§‰ëŠ” íšŸìˆ˜")]
     public int BaseAmount = 1;
 
-    [Header("ÃæÀü")]
+    [Header("ì¶©ì „")]
     public ChargeType ChargeType;
     public CapTier CapTier = CapTier.Normal;
-    [Tooltip("À§·Â ÃæÀü ¹«±â¸¸ »ç¿ë")]
+    [Tooltip("ìœ„ë ¥ ì¶©ì „ ë¬´ê¸°ë§Œ ì‚¬ìš©")]
     public ValueTier ValueTier = ValueTier.Normal;
 
-    [Header("°­È­")]
+    [Header("ê°•í™”")]
     public UpgradeType UpgradeType = UpgradeType.Power;
 
-    [Header("µîÀå")]
+    [Header("ë“±ì¥")]
     public int SpawnWeight = 10;
     public int MaxSpawnWeight = 50;
 }

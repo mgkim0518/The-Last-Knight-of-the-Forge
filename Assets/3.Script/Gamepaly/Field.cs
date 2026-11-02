@@ -15,7 +15,7 @@ public class Enemy
     public bool IsDead => HP <= 0;
 
     public bool IsInRange(int index) => index < Data.Range;
-     //index 0 = ±âÈ¹¼­ 1¹ø Ä­
+     //index 0 = ê¸°íšì„œ 1ë²ˆ ì¹¸
 }
 
 public class Field

@@ -46,7 +46,7 @@ public class TurnManager : MonoBehaviour
             return;
         }
 
-        Debug.Log("»ç¿ëÇÑ ¹«±â: " + weapon.Data.WeaponName);
+        Debug.Log("ì‚¬ìš©í•œ ë¬´ê¸°: " + weapon.Data.WeaponName);
 
         GetTargets(weapon, enemyCell);
 
@@ -55,23 +55,23 @@ public class TurnManager : MonoBehaviour
 
     private void GetTargets(Weapon weapon, int enemyCell)
     {
-        Debug.Log("½½¶óÀÓÀÌ ¼±ÅÃµÇ¾ú½À´Ï´Ù");
+        Debug.Log("ìŠ¬ë¼ì„ì´ ì„ íƒë˜ì—ˆìŠµë‹ˆë‹¤");
     }
 
     public void Rest()
     {
-        Debug.Log("½¬±â");
+        Debug.Log("ì‰¬ê¸°");
         EndTurn();
     }
 
     public void EndTurn()
     {
-        Debug.Log("¾ÆÀÌÅÛ È¹µæ");
+        Debug.Log("ì•„ì´í…œ íšë“");
         state.AddWeapon(CreateRandomWeapon());
-        Debug.Log("Àû Çàµ¿");
+        Debug.Log("ì  í–‰ë™");
         int p_hit = state.Field.ActAll();
-        Debug.Log($"¹ŞÀº ÇÇÇØ: {p_hit}");
-        Debug.Log("´ÙÀ½ ÅÏ ÁØºñ");
+        Debug.Log($"ë°›ì€ í”¼í•´: {p_hit}");
+        Debug.Log("ë‹¤ìŒ í„´ ì¤€ë¹„");
         TrySpawnEnemy();
         state.NextTurn();
     }
@@ -85,13 +85,15 @@ public class TurnManager : MonoBehaviour
     private void TrySpawnEnemy()
     {
         if (state.Turn < prepTurns) return;
-        if (!state.Field.IsEntranceFree) return;   // ÀÔ±¸ ¸·Èû ¡æ ÆĞÅÏ ÁøÇà ¾È ÇÏ°í ´ë±â
+        if (!state.Field.IsEntranceFree) return;   // ì…êµ¬ ë§‰í˜ â†’ íŒ¨í„´ ì§„í–‰ ì•ˆ í•˜ê³  ëŒ€ê¸°
 
         bool spawn = spawnPattern[state.SpawnIndex % spawnPattern.Length];
         state.SpawnIndex++;
 
         if (spawn)
+        {
             state.Field.TrySpawn(new Enemy(normalEnemy, normalEnemy.BaseHealth));
+        }
     }
 
     private void OnGUI()
@@ -99,7 +101,7 @@ public class TurnManager : MonoBehaviour
         if (state == null) return;
 
         GUILayout.BeginArea(new Rect(10, 40, 300, 400));
-        GUILayout.Label($"ÅÏ: {state.Turn}");
+        GUILayout.Label($"í„´: {state.Turn}");
         GUILayout.Label(FieldToString(state.Field));
 
         Weapon clicked = null;
@@ -109,7 +111,7 @@ public class TurnManager : MonoBehaviour
             var w = state.Inventory[i];
             if (w == null)
             {
-                GUILayout.Label($"[{i}] ºóÄ­");
+                GUILayout.Label($"[{i}] ë¹ˆì¹¸");
                 continue;
             }
 
@@ -117,10 +119,10 @@ public class TurnManager : MonoBehaviour
                 clicked = w;
         }
 
-        bool rest = GUILayout.Button("½¬±â");
+        bool rest = GUILayout.Button("ì‰¬ê¸°");
         GUILayout.EndArea();
 
-        if (clicked != null) UseWeapon(clicked, 1);   // ¼®±Ã Å×½ºÆ®¿ëÀ¸·Î 1¹ø Ä­ ÁöÁ¤
+        if (clicked != null) UseWeapon(clicked, 1);   // ì„ê¶ í…ŒìŠ¤íŠ¸ìš©ìœ¼ë¡œ 1ë²ˆ ì¹¸ ì§€ì •
         else if (rest) Rest();
     }
 

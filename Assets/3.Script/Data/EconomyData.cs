@@ -3,26 +3,26 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "EconomyData", menuName = "Scriptable Objects/EconomyData")]
 public class EconomyData : ScriptableObject
 {
-    [Header("¹«±â °­È­ (¹«±â Á¾·ùº° ¼±Çü Áõ°¡)")]
+    [Header("ë¬´ê¸° ê°•í™” (ë¬´ê¸° ì¢…ë¥˜ë³„ ì„ í˜• ì¦ê°€)")]
     public int UpgradeBasePrice = 10;
     public int UpgradePriceStep = 5;        
     public int PowerPerUpgrade = 1;         
     public int ChargeValuePerUpgrade = 1;   
 
-    [Header("½½·Ô È®Àå (Áö¼ö Áõ°¡)")]
+    [Header("ìŠ¬ë¡¯ í™•ìž¥ (ì§€ìˆ˜ ì¦ê°€)")]
     public int StartSlots = 4;
     public int MaxSlots = 8;
     public int SlotBasePrice = 20;
     public float SlotGrowth = 1.5f;
 
-    [Header("È¸º¹ (´Ü°¡ ¡¿ È¸º¹% ¡¿ ÅÏ ¹èÀ²)")]
+    [Header("íšŒë³µ (ë‹¨ê°€ Ã— íšŒë³µ% Ã— í„´ ë°°ìœ¨)")]
     public float HealUnitPrice = 0.5f;
-    [Tooltip("x = ÅÏ, y = ¹èÀ²")]
+    [Tooltip("x = í„´, y = ë°°ìœ¨")]
     public AnimationCurve HealTurnMultiplier = AnimationCurve.Linear(0, 1, 100, 5);
 
-    [Header("Ã¶±« ¼öÀÔ")]
+    [Header("ì² ê´´ ìˆ˜ìž…")]
     public int SmeltValue = 2;              
-    public int WeightSkipReward = 3;        
+    public int WeightSkipReward = 3;      
 
     public int GetUpgradePrice(int level)
         => UpgradeBasePrice + UpgradePriceStep * level;

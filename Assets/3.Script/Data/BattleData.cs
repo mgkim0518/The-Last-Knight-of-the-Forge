@@ -3,7 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "BattleData", menuName = "Scriptable Objects/BattleData")]
 public class BattleData : ScriptableObject
 {
-    [Header("ÃæÀü µî±Þ")]
+    [Header("ì¶©ì „ ë“±ê¸‰")]
     public int CapShort = 2;
     public int CapNormal = 4;
     public int CapLong = 6;
@@ -12,11 +12,11 @@ public class BattleData : ScriptableObject
     public int ValueNormal = 2;
     public int ValueFast = 3;
 
-    [Header("Ãæµ¹")]
+    [Header("ì¶©ëŒ")]
     [Range(0f, 1f)] public float CollisionDamagePercent = 0.1f;
 
-    [Header("Àû")]
-    [Tooltip("x = ÅÏ, y = Ã¼·Â ¹èÀ²")]
+    [Header("ì ")]
+    [Tooltip("x = í„´, y = ì²´ë ¥ ë°°ìœ¨")]
     public AnimationCurve EnemyHealthCurve = AnimationCurve.Linear(0, 1, 100, 10);
 
     public int GetCap(CapTier tier) => tier switch
@@ -34,6 +34,6 @@ public class BattleData : ScriptableObject
             ValueTier.Fast => ValueFast,
             _ => ValueNormal,
         },
-        _ => 1, // ¹üÀ§¡¤°Å¸®¡¤¹æ¾î´Â ½ºÅÃ´ç 1Ä­(1È¸) °íÁ¤
+        _ => 1, // ë²”ìœ„Â·ê±°ë¦¬Â·ë°©ì–´ëŠ” ìŠ¤íƒë‹¹ 1ì¹¸(1íšŒ) ê³ ì •
     };
 }
