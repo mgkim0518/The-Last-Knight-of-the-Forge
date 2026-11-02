@@ -15,8 +15,9 @@ public class GameState
     public readonly System.Random Rng;
     public EconomyData PlayData;
     public int Turn { get; private set; }
-
     public Weapon[] Inventory { get; private set; }
+    public Field Field { get; } = new Field();
+    public int SpawnIndex;
 
     public GameState(int seed, EconomyData playData)
     {

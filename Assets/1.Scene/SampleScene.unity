@@ -430,6 +430,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ff4907c3098acdb49ab4a7916c031e72, type: 2}
   - {fileID: 11400000, guid: 0f7e6091463ccb24e9c00009c3bccd73, type: 2}
   - {fileID: 11400000, guid: 3127e7ee24187ff49a9e3e770dd82c94, type: 2}
+  normalEnemy: {fileID: 11400000, guid: ab2e2ed68ef3e6b459721c814197776a, type: 2}
+  prepTurns: 3
 --- !u!4 &889328403
 Transform:
   m_ObjectHideFlags: 0

@@ -7,8 +7,11 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private EconomyData economyData;
     [SerializeField] private RandomManager randomManager;
     [SerializeField] private WeaponData[] weaponPool;
+    [SerializeField] private EnemyData normalEnemy;
+    [SerializeField] private int prepTurns = 3;
 
     private GameState state;
+    private readonly bool[] spawnPattern = { true, false, true, true, false, true, false, false };
 
 
     private void Start()
@@ -66,7 +69,10 @@ public class TurnManager : MonoBehaviour
         Debug.Log("아이템 획득");
         state.AddWeapon(CreateRandomWeapon());
         Debug.Log("적 행동");
+        int p_hit = state.Field.ActAll();
+        Debug.Log($"받은 피해: {p_hit}");
         Debug.Log("다음 턴 준비");
+        TrySpawnEnemy();
         state.NextTurn();
     }
 
@@ -76,12 +82,25 @@ public class TurnManager : MonoBehaviour
         return new Weapon(data);
     }
 
+    private void TrySpawnEnemy()
+    {
+        if (state.Turn < prepTurns) return;
+        if (!state.Field.IsEntranceFree) return;   // 입구 막힘 → 패턴 진행 안 하고 대기
+
+        bool spawn = spawnPattern[state.SpawnIndex % spawnPattern.Length];
+        state.SpawnIndex++;
+
+        if (spawn)
+            state.Field.TrySpawn(new Enemy(normalEnemy, normalEnemy.BaseHealth));
+    }
+
     private void OnGUI()
     {
         if (state == null) return;
 
         GUILayout.BeginArea(new Rect(10, 40, 300, 400));
         GUILayout.Label($"턴: {state.Turn}");
+        GUILayout.Label(FieldToString(state.Field));
 
         Weapon clicked = null;
 
@@ -103,5 +122,16 @@ public class TurnManager : MonoBehaviour
 
         if (clicked != null) UseWeapon(clicked, 1);   // 석궁 테스트용으로 1번 칸 지정
         else if (rest) Rest();
+    }
+
+    private string FieldToString(Field field)
+    {
+        var sb = new System.Text.StringBuilder("[P]");
+        for (int i = 0; i < Field.Size; i++)
+        {
+            var e = field.Get(i);
+            sb.Append(e == null ? " _" : $" E{e.HP}");
+        }
+        return sb.ToString();
     }
 }
