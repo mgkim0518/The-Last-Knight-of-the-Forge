@@ -32,13 +32,19 @@ public class TurnManager : MonoBehaviour
             return;
         }
 
-
         if (weapon.Data.Target == TargetType.Choose)
         {
             if (enemyCell.Equals(-1))
             {
                 return;
             }
+        }
+
+        List<int> targets = GetTargets(state.Field, weapon, enemyCell);
+        Debug.Log("지정된 대상의 개수:" + targets.Count);
+        if (targets.Count.Equals(0) && !weapon.Data.Target.Equals(TargetType.Self))
+        {
+            return;
         }
 
         if (!state.RemoveWeapon(weapon))
@@ -48,14 +54,83 @@ public class TurnManager : MonoBehaviour
 
         Debug.Log("사용한 무기: " + weapon.Data.WeaponName);
 
-        GetTargets(weapon, enemyCell);
-
         EndTurn();
     }
 
-    private void GetTargets(Weapon weapon, int enemyCell)
+    private List<int> GetTargets(Field field, Weapon weapon, int enemyCell)
     {
-        Debug.Log("슬라임이 선택되었습니다");
+        int hitRange = weapon.Data.BaseAmount;
+
+        if (weapon.Data.ChargeType.Equals(ChargeType.Area))
+        {
+            hitRange += weapon.CurStack;
+        }
+
+        List<int> w_target = new List<int>();
+
+        switch (weapon.Data.Target)
+        {
+            case TargetType.Front:
+                {
+                    int start = -1;
+                    for (int i = 0; i < Field.Size; i++)
+                    {
+                        if (field.Get(i) != null) 
+                        {
+                            start = i; break; 
+                        }
+                    }
+
+                    if (start == -1)
+                    {
+                        break;
+                    }
+
+                    for (int i = start; i < Field.Size && i < start + hitRange; i++)
+                    {
+                        if (field.Get(i) != null)
+                        {
+                            w_target.Add(i);
+                        }
+                    }
+                    break;
+                }
+            case TargetType.Back:
+                {
+                    int start = -1;
+                    for (int i = Field.Size - 1; i >= 0; i--)
+                    {
+                        if (field.Get(i) != null)
+                        {
+                            start = i;
+                            break; 
+                        }
+                    }
+
+                    if (start == -1)
+                    {
+                        break;
+                    }
+
+                    for (int i = start ; i >= 0 && i > start - hitRange; i--)
+                    {
+                        if (field.Get(i) != null)
+                        {
+                            w_target.Add(i);
+                        }
+                    }
+                    break;
+                }
+
+            case TargetType.Choose:
+                w_target.Add(enemyCell);
+                break;
+            case TargetType.Self:
+                break;
+        }
+
+        return w_target;
+
     }
 
     public void Rest()
