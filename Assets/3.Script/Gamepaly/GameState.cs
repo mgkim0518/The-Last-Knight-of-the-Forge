@@ -2,14 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Weapon
-{
-    public WeaponData Data;
-    public int CurStack;
-
-    public Weapon(WeaponData data) { Data = data; }
-}
-
 public class GameState 
 {
     public readonly System.Random Rng;

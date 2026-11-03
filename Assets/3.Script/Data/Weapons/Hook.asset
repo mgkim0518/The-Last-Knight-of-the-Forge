@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
   WeaponName: "\uAC08\uACE0\uB9AC"
   Icon: {fileID: 0}
-  Target: 0
+  Target: 4
   BasePower: 1
-  BaseAmount: 1
+  BaseAmount: 3
   ChargeType: 2
   CapTier: 1
   ValueTier: 1

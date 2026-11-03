@@ -12,10 +12,20 @@ public class Enemy
         HP = hp;
     }
 
+    public void Damaged(int damage)
+    {
+        if (IsShielded)
+        {
+            IsShielded = false;
+            return;
+        }
+
+        HP -= damage;
+    }
     public bool IsDead => HP <= 0;
 
     public bool IsInRange(int index) => index < Data.Range;
-     //index 0 = 기획서 1번 칸
+    //index 0 = 기획서 1번 칸
 }
 
 public class Field
@@ -61,5 +71,18 @@ public class Field
             }
         }
         return damage;
+    }
+
+    public void CheckDead()
+    {
+        for (int i = 0; i < cells.Length; i++)
+        {
+            Enemy e = cells[i];
+            if (e != null && e.IsDead)
+            {
+                Debug.Log($"{i}번 칸 적 처치");
+                cells[i] = null;
+            }
+        }
     }
 }

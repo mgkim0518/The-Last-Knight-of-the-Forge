@@ -11,11 +11,12 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private int prepTurns = 3;
 
     private GameState state;
+    private WeaponStatCalculator calc;
     private readonly bool[] spawnPattern = { true, false, true, true, false, true, false, false };
-
 
     private void Start()
     {
+        calc = new WeaponStatCalculator();
         StartNewGame();
     }
 
@@ -32,7 +33,8 @@ public class TurnManager : MonoBehaviour
             return;
         }
 
-        if (weapon.Data.Target == TargetType.Choose)
+        if (weapon.Data.Target == TargetType.Choose ||
+    weapon.Data.Target == TargetType.WithinReach)
         {
             if (enemyCell.Equals(-1))
             {
@@ -41,7 +43,6 @@ public class TurnManager : MonoBehaviour
         }
 
         List<int> targets = GetTargets(state.Field, weapon, enemyCell);
-        Debug.Log("지정된 대상의 개수:" + targets.Count);
         if (targets.Count.Equals(0) && !weapon.Data.Target.Equals(TargetType.Self))
         {
             return;
@@ -52,6 +53,14 @@ public class TurnManager : MonoBehaviour
             return;
         }
 
+        int dmg = calc.DamageCalc(weapon);
+        foreach (int cell in targets)
+        {
+            Enemy e = state.Field.Get(cell);
+            if (e != null) e.Damaged(dmg);
+        }
+        state.Field.CheckDead();
+
         Debug.Log("사용한 무기: " + weapon.Data.WeaponName);
 
         EndTurn();
@@ -59,12 +68,7 @@ public class TurnManager : MonoBehaviour
 
     private List<int> GetTargets(Field field, Weapon weapon, int enemyCell)
     {
-        int hitRange = weapon.Data.BaseAmount;
-
-        if (weapon.Data.ChargeType.Equals(ChargeType.Area))
-        {
-            hitRange += weapon.CurStack;
-        }
+        int hitRange = calc.CalcHitRange(weapon);
 
         List<int> w_target = new List<int>();
 
@@ -75,9 +79,9 @@ public class TurnManager : MonoBehaviour
                     int start = -1;
                     for (int i = 0; i < Field.Size; i++)
                     {
-                        if (field.Get(i) != null) 
+                        if (field.Get(i) != null)
                         {
-                            start = i; break; 
+                            start = i; break;
                         }
                     }
 
@@ -103,7 +107,7 @@ public class TurnManager : MonoBehaviour
                         if (field.Get(i) != null)
                         {
                             start = i;
-                            break; 
+                            break;
                         }
                     }
 
@@ -112,7 +116,7 @@ public class TurnManager : MonoBehaviour
                         break;
                     }
 
-                    for (int i = start ; i >= 0 && i > start - hitRange; i--)
+                    for (int i = start; i >= 0 && i > start - hitRange; i--)
                     {
                         if (field.Get(i) != null)
                         {
@@ -127,6 +131,13 @@ public class TurnManager : MonoBehaviour
                 break;
             case TargetType.Self:
                 break;
+            case TargetType.WithinReach:
+                if (enemyCell >= 0 && enemyCell < hitRange && enemyCell < Field.Size
+        && field.Get(enemyCell) != null)
+                {
+                    w_target.Add(enemyCell);
+                }
+                break;
         }
 
         return w_target;
@@ -139,9 +150,8 @@ public class TurnManager : MonoBehaviour
         EndTurn();
     }
 
-    public void EndTurn()
+    private void EndTurn()
     {
-        Debug.Log("아이템 획득");
         state.AddWeapon(CreateRandomWeapon());
         Debug.Log("적 행동");
         int p_hit = state.Field.ActAll();
