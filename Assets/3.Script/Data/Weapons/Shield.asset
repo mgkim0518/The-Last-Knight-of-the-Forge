@@ -21,5 +21,4 @@ MonoBehaviour:
   CapTier: 1
   ValueTier: 1
   UpgradeType: 0
-  SpawnWeight: 10
-  MaxSpawnWeight: 50
+  SpawnWeight: 2

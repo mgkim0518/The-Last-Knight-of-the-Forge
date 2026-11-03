@@ -6,17 +6,22 @@ public class GameState
 {
     public readonly System.Random Rng;
     public EconomyData PlayData;
+    public SpawnData Spawn;
     public int Turn { get; private set; }
     public Weapon[] Inventory { get; private set; }
     public Field Field { get; } = new Field();
     public int SpawnIndex;
 
-    public GameState(int seed, EconomyData playData)
+    public Weapon NextWeapon { get; private set; } 
+
+    public GameState(int seed, EconomyData playData, SpawnData spawn)
     {
         Rng = new System.Random(seed);
         PlayData = playData;
+        Spawn = spawn;
         Inventory = new Weapon[playData.StartSlots];
         Turn = 1;
+        NextWeapon = CreateRandomWeapon();
     }
 
     public bool RemoveWeapon(Weapon weapon)
@@ -43,6 +48,19 @@ public class GameState
             }
         }
         return false;
+    }
+
+    public Weapon CreateRandomWeapon()
+    {
+        WeaponData data = Spawn.WeaponPool[Rng.Next(Spawn.WeaponPool.Length)];
+        return new Weapon(data);
+    }
+
+    public bool ReceiveNextWeapon()
+    {
+        bool added = AddWeapon(NextWeapon);
+        NextWeapon = CreateRandomWeapon();
+        return added;
     }
 
     public void NextTurn() => Turn++;

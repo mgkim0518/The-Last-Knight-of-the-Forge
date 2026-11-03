@@ -416,20 +416,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TurnManager
   economyData: {fileID: 11400000, guid: 964b00ee800515e4b83a7fb16596ca10, type: 2}
+  battleData: {fileID: 11400000, guid: aa8933ad806a1ae45a878233eb41b6de, type: 2}
+  spawnData: {fileID: 11400000, guid: 9f73d2dae5ba62d48b8dc0f5bdf0ac15, type: 2}
   randomManager: {fileID: 76147263}
-  weaponPool:
-  - {fileID: 11400000, guid: 1ce57b288b1381e41b8abefe858bf91f, type: 2}
-  - {fileID: 11400000, guid: 0884433a08c686c4ea4b42c329ea88b8, type: 2}
-  - {fileID: 11400000, guid: 3c3c1f45d4b27a84d8b24e0c29ee1415, type: 2}
-  - {fileID: 11400000, guid: 0d7536f9ea43e484589e939f85f1a2e8, type: 2}
-  - {fileID: 11400000, guid: 9d48d3ae976ac2141b5556ae9424c8b3, type: 2}
-  - {fileID: 11400000, guid: 91455a298f2b89047a8961a30bd9ab0c, type: 2}
-  - {fileID: 11400000, guid: 58a8fc27c63f9064ca9d35c5496ebe95, type: 2}
-  - {fileID: 11400000, guid: b1d97d23510998f49b34ced36ff8ee34, type: 2}
-  - {fileID: 11400000, guid: 1c4b47527f7ff174981caf95ac3cd930, type: 2}
-  - {fileID: 11400000, guid: ff4907c3098acdb49ab4a7916c031e72, type: 2}
-  - {fileID: 11400000, guid: 0f7e6091463ccb24e9c00009c3bccd73, type: 2}
-  - {fileID: 11400000, guid: 3127e7ee24187ff49a9e3e770dd82c94, type: 2}
   normalEnemy: {fileID: 11400000, guid: ab2e2ed68ef3e6b459721c814197776a, type: 2}
   prepTurns: 3
 --- !u!4 &889328403

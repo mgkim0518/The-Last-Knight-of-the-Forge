@@ -5,8 +5,9 @@ using UnityEngine;
 public class TurnManager : MonoBehaviour
 {
     [SerializeField] private EconomyData economyData;
+    [SerializeField] private BattleData battleData;
+    [SerializeField] private SpawnData spawnData;
     [SerializeField] private RandomManager randomManager;
-    [SerializeField] private WeaponData[] weaponPool;
     [SerializeField] private EnemyData normalEnemy;
     [SerializeField] private int prepTurns = 3;
 
@@ -16,14 +17,14 @@ public class TurnManager : MonoBehaviour
 
     private void Start()
     {
-        calc = new WeaponStatCalculator();
+        calc = new WeaponStatCalculator(battleData);
         StartNewGame();
     }
 
     private void StartNewGame()
     {
-        state = new GameState(randomManager.GetSeed(), economyData);
-        state.AddWeapon(CreateRandomWeapon());
+        state = new GameState(randomManager.GetSeed(), economyData, spawnData);
+        state.AddWeapon(state.CreateRandomWeapon());
     }
 
     public void UseWeapon(Weapon weapon, int enemyCell = -1)
@@ -34,7 +35,7 @@ public class TurnManager : MonoBehaviour
         }
 
         if (weapon.Data.Target == TargetType.Choose ||
-    weapon.Data.Target == TargetType.WithinReach)
+        weapon.Data.Target == TargetType.WithinReach)
         {
             if (enemyCell.Equals(-1))
             {
@@ -152,19 +153,16 @@ public class TurnManager : MonoBehaviour
 
     private void EndTurn()
     {
-        state.AddWeapon(CreateRandomWeapon());
+        if (!state.ReceiveNextWeapon())
+        {
+            Debug.Log("슬롯이 가득 차 무기 소멸");
+        }
         Debug.Log("적 행동");
         int p_hit = state.Field.ActAll();
         Debug.Log($"받은 피해: {p_hit}");
         Debug.Log("다음 턴 준비");
         TrySpawnEnemy();
         state.NextTurn();
-    }
-
-    private Weapon CreateRandomWeapon()
-    {
-        var data = weaponPool[state.Rng.Next(weaponPool.Length)];
-        return new Weapon(data);
     }
 
     private void TrySpawnEnemy()
@@ -203,6 +201,9 @@ public class TurnManager : MonoBehaviour
             if (GUILayout.Button($"[{i}] {w.Data.WeaponName} (+{w.CurStack})"))
                 clicked = w;
         }
+
+        string next = state.NextWeapon != null ? state.NextWeapon.Data.WeaponName : "없음";
+        GUILayout.Label($"다음: {next}");
 
         bool rest = GUILayout.Button("쉬기");
         GUILayout.EndArea();

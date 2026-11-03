@@ -29,6 +29,5 @@ public class WeaponData : ScriptableObject
     public UpgradeType UpgradeType = UpgradeType.Power;
 
     [Header("등장")]
-    public int SpawnWeight = 10;
-    public int MaxSpawnWeight = 50;
+    public int SpawnWeight = 2;
 }

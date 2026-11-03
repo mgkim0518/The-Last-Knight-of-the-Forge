@@ -12,28 +12,15 @@ public class Weapon
 
 public class WeaponStatCalculator
 {
+    private readonly BattleData tierStat;
+    public WeaponStatCalculator(BattleData tierStat) { this.tierStat = tierStat; }
     public int DamageCalc(Weapon weapon)
     {
         int dmg = weapon.Data.BasePower;
 
-        int tierVal = 0;
-
-        switch (weapon.Data.ValueTier)
-        {
-            case ValueTier.Slow:
-                tierVal = 1;
-                break;
-            case ValueTier.Normal:
-                tierVal = 2;
-                break;
-            case ValueTier.Fast:
-                tierVal = 3;
-                break;
-        }
-
         if (weapon.Data.ChargeType.Equals(ChargeType.Power))
         {
-            dmg += weapon.CurStack * tierVal;
+            dmg += weapon.CurStack * tierStat.GetStackValue(weapon.Data);
         }
 
         return dmg;

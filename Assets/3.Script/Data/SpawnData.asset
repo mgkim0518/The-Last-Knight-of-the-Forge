@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23a981fe352762d4cb7f54fb83b58d83, type: 3}
+  m_Name: SpawnData
+  m_EditorClassIdentifier: Assembly-CSharp::SpawnData
+  WeaponPool:
+  - {fileID: 11400000, guid: 1ce57b288b1381e41b8abefe858bf91f, type: 2}
+  - {fileID: 11400000, guid: 0884433a08c686c4ea4b42c329ea88b8, type: 2}
+  - {fileID: 11400000, guid: 3c3c1f45d4b27a84d8b24e0c29ee1415, type: 2}
+  - {fileID: 11400000, guid: 0d7536f9ea43e484589e939f85f1a2e8, type: 2}
+  - {fileID: 11400000, guid: 9d48d3ae976ac2141b5556ae9424c8b3, type: 2}
+  - {fileID: 11400000, guid: 91455a298f2b89047a8961a30bd9ab0c, type: 2}
+  - {fileID: 11400000, guid: 58a8fc27c63f9064ca9d35c5496ebe95, type: 2}
+  - {fileID: 11400000, guid: b1d97d23510998f49b34ced36ff8ee34, type: 2}
+  - {fileID: 11400000, guid: 1c4b47527f7ff174981caf95ac3cd930, type: 2}
+  - {fileID: 11400000, guid: ff4907c3098acdb49ab4a7916c031e72, type: 2}
+  - {fileID: 11400000, guid: 0f7e6091463ccb24e9c00009c3bccd73, type: 2}
+  - {fileID: 11400000, guid: 3127e7ee24187ff49a9e3e770dd82c94, type: 2}
+  UpWeightTurn: 10
+  WeightIncrease: 1
+  MaxSpawnWeight: 20
