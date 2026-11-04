@@ -14,6 +14,7 @@ public class TurnManager : MonoBehaviour
     private GameState state;
     private WeaponStatCalculator calc;
     private readonly bool[] spawnPattern = { true, false, true, true, false, true, false, false };
+    private int turn_survived = 0;
 
     private void Start()
     {
@@ -174,6 +175,12 @@ public class TurnManager : MonoBehaviour
         List<HitResult> validHits = state.Player.PredictHit(state.Field.ActAll());
         state.Player.TakeHit(validHits);
         lastHitTexts = ShowHits(validHits); //GUI에 넘기기
+        if (state.Player.IsDead)
+        {
+            turn_survived = state.Turn;
+            StartNewGame();
+            return;
+        }
         Debug.Log("다음 턴 준비");
         TrySpawnEnemy();
         state.NextTurn();
@@ -200,6 +207,7 @@ public class TurnManager : MonoBehaviour
         if (state == null) return;
 
         GUILayout.BeginArea(new Rect(10, 40, 300, 600));
+        GUILayout.Label($"지난 판 {(turn_survived == 0 ? "기록 없음" : turn_survived + "턴")}");
         GUILayout.Label($"턴: {state.Turn}");
         GUILayout.Label(FieldToString(state.Field));
 
