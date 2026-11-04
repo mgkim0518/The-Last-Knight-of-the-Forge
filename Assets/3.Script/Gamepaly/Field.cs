@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class Enemy
 {
@@ -47,12 +48,12 @@ public class Field
         return true;
     }
 
-    public int ActAll()   
+    public List<EnemyAttack> ActAll()   
     {
-        int damage = 0;
+        List<EnemyAttack> attacks = new List<EnemyAttack>();
         for (int i = 0; i < Size; i++)
         {
-            var e = cells[i];
+            Enemy e = cells[i];
             if (e == null) continue;
 
             bool canMove = i > 0 && cells[i - 1] == null;
@@ -60,7 +61,7 @@ public class Field
 
             if (inRange && !(e.IsAttackedLastTurn && canMove))
             {
-                damage += e.Data.Dmg;
+                attacks.Add(new EnemyAttack { Cell = i, Damage = e.Data.Dmg});
                 e.IsAttackedLastTurn = true;
             }
             else if (canMove)
@@ -70,7 +71,7 @@ public class Field
                 e.IsAttackedLastTurn = false;
             }
         }
-        return damage;
+        return attacks;
     }
 
     public void CheckDead()

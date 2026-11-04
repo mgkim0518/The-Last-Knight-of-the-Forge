@@ -25,6 +25,7 @@ public class TurnManager : MonoBehaviour
     {
         state = new GameState(randomManager.GetSeed(), economyData, spawnData);
         state.AddWeapon(state.CreateRandomWeapon());
+        lastHitTexts.Clear(); //GUI용 임시 코드
     }
 
     public void UseWeapon(Weapon weapon, int enemyCell = -1)
@@ -128,7 +129,7 @@ public class TurnManager : MonoBehaviour
                 }
 
             case TargetType.Choose:
-                if (enemyCell >= 0 && enemyCell < hitRange && enemyCell < Field.Size
+                if (enemyCell >= 0 && enemyCell < Field.Size
         && field.Get(enemyCell) != null)
                 {
                     w_target.Add(enemyCell);
@@ -170,8 +171,9 @@ public class TurnManager : MonoBehaviour
             Debug.Log("슬롯이 가득 차 무기 소멸");
         }
         Debug.Log("적 행동");
-        int p_hit = state.Field.ActAll();
-        Debug.Log($"받은 피해: {p_hit}");
+        List<HitResult> validHits = state.Player.PredictHit(state.Field.ActAll());
+        state.Player.TakeHit(validHits);
+        lastHitTexts = ShowHits(validHits); //GUI에 넘기기
         Debug.Log("다음 턴 준비");
         TrySpawnEnemy();
         state.NextTurn();
@@ -191,13 +193,20 @@ public class TurnManager : MonoBehaviour
         }
     }
 
+    private List<string> lastHitTexts = new List<string>();
+
     private void OnGUI()
     {
         if (state == null) return;
 
-        GUILayout.BeginArea(new Rect(10, 40, 300, 400));
+        GUILayout.BeginArea(new Rect(10, 40, 300, 600));
         GUILayout.Label($"턴: {state.Turn}");
         GUILayout.Label(FieldToString(state.Field));
+
+        GUILayout.Label($"체력: {state.Player.HP}/{Player.MaxHP}  보호막: {state.Player.Shield}");
+        GUILayout.Label("지난 적 행동");
+        foreach (string t in lastHitTexts)
+            GUILayout.Label("  " + t);
 
         Weapon clicked = null;
 
@@ -233,5 +242,30 @@ public class TurnManager : MonoBehaviour
             sb.Append(e == null ? " _" : $" E{e.HP}");
         }
         return sb.ToString();
+    }
+
+    private List<string> ShowHits(List<HitResult> validHits)
+    {
+        List<string> DmgResult = new List<string>();
+
+        foreach (HitResult r in validHits)
+        {
+            if (r.Blocked)
+            {
+                DmgResult.Add($"{r.Cell+1}번 적 공격 막힘");
+            }
+            else
+            {
+                DmgResult.Add($"{r.Cell+1}번 적이 입힌 데미지: {r.Damage}");
+            }
+        }
+
+        if (DmgResult.Count.Equals(0))
+        {
+            DmgResult.Add("공격하는 적 없음");
+            return DmgResult;
+        }
+
+        return DmgResult;
     }
 }
