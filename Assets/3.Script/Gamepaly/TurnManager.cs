@@ -10,6 +10,7 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private RandomManager randomManager;
     [SerializeField] private EnemyData normalEnemy;
     [SerializeField] private int prepTurns = 3;
+    [SerializeField] private int Debug_SkipTurnTo = 15;
 
     private GameState state;
     private WeaponStatCalculator calc;
@@ -235,10 +236,12 @@ public class TurnManager : MonoBehaviour
         GUILayout.Label($"다음: {next}");
 
         bool rest = GUILayout.Button("쉬기");
+        bool debug_skipturn = GUILayout.Button($"{Debug_SkipTurnTo}턴으로 이동");
         GUILayout.EndArea();
 
         if (clicked != null) UseWeapon(clicked, 1);   // 석궁 테스트용으로 1번 칸 지정
         else if (rest) Rest();
+        else if (debug_skipturn) state.Debug_SkipTurn(Debug_SkipTurnTo);
     }
 
     private string FieldToString(Field field)

@@ -65,4 +65,14 @@ public class GameState
     }
 
     public void NextTurn() => Turn++;
+
+    public void Debug_SkipTurn(int dest)
+    {
+        if (Turn >= dest)
+        {
+            return;
+        }
+
+        Turn = dest;
+    }
 }
