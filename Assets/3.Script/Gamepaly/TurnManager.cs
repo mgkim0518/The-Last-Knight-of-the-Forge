@@ -128,7 +128,11 @@ public class TurnManager : MonoBehaviour
                 }
 
             case TargetType.Choose:
-                w_target.Add(enemyCell);
+                if (enemyCell >= 0 && enemyCell < hitRange && enemyCell < Field.Size
+        && field.Get(enemyCell) != null)
+                {
+                    w_target.Add(enemyCell);
+                }
                 break;
             case TargetType.Self:
                 break;
@@ -147,7 +151,15 @@ public class TurnManager : MonoBehaviour
 
     public void Rest()
     {
-        Debug.Log("쉬기");
+        foreach (Weapon w in state.Inventory)
+        {
+            if (w == null) continue;
+
+            if (w.CurStack < battleData.GetCap(w.Data.CapTier))
+            {
+                w.CurStack++;
+            }
+        }
         EndTurn();
     }
 
@@ -198,7 +210,7 @@ public class TurnManager : MonoBehaviour
                 continue;
             }
 
-            if (GUILayout.Button($"[{i}] {w.Data.WeaponName} (+{w.CurStack})"))
+            if (GUILayout.Button($"[{i}] {w.Data.WeaponName} (+{w.CurStack}) 위력 {calc.DamageCalc(w)}"))
                 clicked = w;
         }
 
