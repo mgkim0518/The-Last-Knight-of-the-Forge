@@ -36,7 +36,8 @@ public class WeaponStatCalculator
             //갈고리의 던지는 거리
         }
 
-        if (weapon.Data.ChargeType.Equals(ChargeType.Area))
+        if (weapon.Data.ChargeType.Equals(ChargeType.Area) 
+            || weapon.Data.ChargeType.Equals(ChargeType.Defense))
         {
             hitRange += weapon.CurStack;
         }

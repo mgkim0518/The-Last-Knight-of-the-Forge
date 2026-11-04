@@ -18,7 +18,7 @@ MonoBehaviour:
   BasePower: 0
   BaseAmount: 1
   ChargeType: 3
-  CapTier: 1
+  CapTier: 0
   ValueTier: 1
   UpgradeType: 0
   SpawnWeight: 2

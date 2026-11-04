@@ -57,6 +57,11 @@ public class TurnManager : MonoBehaviour
             return;
         }
 
+        if (weapon.Data.ChargeType.Equals(ChargeType.Defense))
+        {
+            state.Player.SetShield(calc.CalcHitRange(weapon));
+        }
+
         int dmg = calc.DamageCalc(weapon);
         foreach (int cell in targets)
         {
