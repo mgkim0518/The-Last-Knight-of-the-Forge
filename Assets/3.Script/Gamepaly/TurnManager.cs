@@ -313,7 +313,8 @@ public class TurnManager : MonoBehaviour
                 continue;
             }
 
-            if (GUILayout.Button($"[{i}] {w.Data.WeaponName} (+{w.CurStack}) {ShowEffect(w)}"))
+            if (GUILayout.Button($"[{i}] {w.Data.WeaponName} (+{w.CurStack}) {ShowEffect(w)}" +
+                $"\n{ChargeGauge(w)}"))
                 clicked = w;
         }
 
@@ -399,5 +400,18 @@ public class TurnManager : MonoBehaviour
         }
 
         return effectLabel;
+    }
+
+    private string ChargeGauge(Weapon weapon)
+    {
+        int cap = battleData.GetCap(weapon.Data.CapTier);
+        var sb = new System.Text.StringBuilder();
+
+        for (int i = 0; i < cap; i++)
+        {
+            sb.Append(i < weapon.CurStack ? "■" : "□");
+        }
+
+        return sb.ToString();
     }
 }
