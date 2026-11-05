@@ -25,34 +25,35 @@ public class WeaponStatCalculator
 
         return dmg;
     }
+    public int CalcWEffect(Weapon weapon)
+    {
+        int coefficient = weapon.Data.BaseAmount;
+
+        if (weapon.Data.ChargeType != ChargeType.Power)
+        {
+            coefficient += weapon.CurStack;
+        }
+
+        return coefficient;
+    }
 
     public int CalcHitRange(Weapon weapon)
     {
-        int hitRange = weapon.Data.BaseAmount;
-
-        if (weapon.Data.Target.Equals(TargetType.WithinReach))
+        if(weapon.Data.Reloc == Relocation.Push)
         {
-            return hitRange + weapon.CurStack;
-            //갈고리의 던지는 거리
+            return 1;   // 철퇴는 맨 앞 1명만 침
         }
 
-        if (weapon.Data.ChargeType.Equals(ChargeType.Area) 
-            || weapon.Data.ChargeType.Equals(ChargeType.Defense))
-        {
-            hitRange += weapon.CurStack;
-        }
-        else if (weapon.Data.ChargeType.Equals(ChargeType.Distance))
-        {
-            hitRange = 1;
-        }
-
-        return hitRange;
+        return CalcWEffect(weapon);
     }
 
-    public int CalcPush(Weapon weapon)
+    public int CalcChargeValue(Weapon weapon)
     {
-        int pushRange = weapon.Data.BaseAmount + weapon.CurStack;
+        if (weapon.Data.ChargeType == ChargeType.Power)
+        {
+            return CalcDamage(weapon);
+        }
 
-        return pushRange;
+        return CalcWEffect(weapon);
     }
 }

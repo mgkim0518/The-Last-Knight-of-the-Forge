@@ -115,7 +115,7 @@ public class TurnManager : MonoBehaviour
 
         if (weapon.Data.Reloc.Equals(Relocation.Push))
         {
-            int pushRange = calc.CalcPush(weapon);
+            int pushRange = calc.CalcWEffect(weapon);
             state.Field.Push(targets[0], pushRange, battleData.CollisionDamagePercent);
         }
         else if (weapon.Data.Reloc.Equals(Relocation.Pull))
@@ -313,7 +313,7 @@ public class TurnManager : MonoBehaviour
                 continue;
             }
 
-            if (GUILayout.Button($"[{i}] {w.Data.WeaponName} (+{w.CurStack}) 위력 {calc.CalcDamage(w)}"))
+            if (GUILayout.Button($"[{i}] {w.Data.WeaponName} (+{w.CurStack}) {ShowEffect(w)}"))
                 clicked = w;
         }
 
@@ -329,7 +329,7 @@ public class TurnManager : MonoBehaviour
         else if (isCancelled) CancelTargetSelect();
         else if (clicked != null)
         {
-            SelectWeapon(clicked); 
+            SelectWeapon(clicked);
         }
         else if (rest) Rest();
         else if (debug_skipturn) state.Debug_SkipTurn(Debug_SkipTurnTo);
@@ -354,11 +354,11 @@ public class TurnManager : MonoBehaviour
         {
             if (r.Blocked)
             {
-                DmgResult.Add($"{r.Cell+1}번 적 공격 막힘");
+                DmgResult.Add($"{r.Cell + 1}번 적 공격 막힘");
             }
             else
             {
-                DmgResult.Add($"{r.Cell+1}번 적이 입힌 데미지: {r.Damage}");
+                DmgResult.Add($"{r.Cell + 1}번 적이 입힌 데미지: {r.Damage}");
             }
         }
 
@@ -369,5 +369,35 @@ public class TurnManager : MonoBehaviour
         }
 
         return DmgResult;
+    }
+
+    private string ShowEffect(Weapon weapon)
+    {
+        string effectLabel = string.Empty;
+
+        switch (weapon.Data.ChargeType)
+        {
+            case ChargeType.Power:
+                effectLabel = $"위력 {calc.CalcChargeValue(weapon)}";
+                break;
+            case ChargeType.Area:
+                effectLabel = $"위력 {calc.CalcDamage(weapon)}, {calc.CalcChargeValue(weapon)}칸";
+                break;
+            case ChargeType.Distance:
+                if (weapon.Data.Reloc.Equals(Relocation.Push))
+                {
+                    effectLabel = $"위력 {calc.CalcDamage(weapon)}, {calc.CalcChargeValue(weapon)}칸 밀치기";
+                }
+                else
+                {
+                    effectLabel = $"위력 {calc.CalcDamage(weapon)}, {calc.CalcChargeValue(weapon)}칸 내 대상 끌어오기";
+                }
+                break;
+            case ChargeType.Defense:
+                effectLabel = $"보호막 {calc.CalcChargeValue(weapon)}회";
+                break;
+        }
+
+        return effectLabel;
     }
 }
