@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,10 +13,16 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private int prepTurns = 3;
     [SerializeField] private int Debug_SkipTurnTo = 15;
 
+    public event Action<Weapon> OnTargetSelect;
+    public event Action OnChoiceFinished;
+
     private GameState state;
     private WeaponStatCalculator calc;
     private readonly bool[] spawnPattern = { true, false, true, true, false, true, false, false };
     private int turn_survived = 0;
+    private Weapon selected;
+
+
 
     private void Start()
     {
@@ -30,7 +37,7 @@ public class TurnManager : MonoBehaviour
         lastHitTexts.Clear(); //GUI용 임시 코드
     }
 
-    public void UseWeapon(Weapon weapon, int enemyCell = -1)
+    public void SelectWeapon(Weapon weapon)
     {
         if (weapon == null)
         {
@@ -40,21 +47,60 @@ public class TurnManager : MonoBehaviour
         if (weapon.Data.Target == TargetType.Choose ||
         weapon.Data.Target == TargetType.WithinReach)
         {
+            selected = weapon;
+            OnTargetSelect?.Invoke(weapon);
+        }
+        else
+        {
+            UseWeapon(weapon);
+        }
+    }
+
+    public void SelectTarget(int enemyCell)
+    {
+        if (selected == null)
+        {
+            return;
+        }
+
+        if (UseWeapon(selected, enemyCell))
+        {
+            CancelTargetSelect();
+        }
+    }
+
+    public void CancelTargetSelect()
+    {
+        selected = null;
+        OnChoiceFinished?.Invoke();
+    }
+
+    public bool UseWeapon(Weapon weapon, int enemyCell = -1)
+    {
+        if (weapon == null)
+        {
+            Debug.LogWarning("빈 무기가 들어왔습니다");
+            return false;
+        }
+
+        if (weapon.Data.Target == TargetType.Choose ||
+        weapon.Data.Target == TargetType.WithinReach)
+        {
             if (enemyCell.Equals(-1))
             {
-                return;
+                return false;
             }
         }
 
         List<int> targets = GetTargets(state.Field, weapon, enemyCell);
         if (targets.Count.Equals(0) && !weapon.Data.Target.Equals(TargetType.Self))
         {
-            return;
+            return false;
         }
 
         if (!state.RemoveWeapon(weapon))
         {
-            return;
+            return false;
         }
 
         if (weapon.Data.ChargeType.Equals(ChargeType.Defense))
@@ -73,6 +119,7 @@ public class TurnManager : MonoBehaviour
         Debug.Log("사용한 무기: " + weapon.Data.WeaponName);
 
         EndTurn();
+        return true;
     }
 
     private List<int> GetTargets(Field field, Weapon weapon, int enemyCell)
@@ -192,7 +239,7 @@ public class TurnManager : MonoBehaviour
         state.NextTurn();
     }
 
-    private void TrySpawnEnemy()
+    private void TrySpawnEnemy() //몬스터 스폰용 임시 코드
     {
         if (state.Turn < prepTurns) return;
         if (!state.Field.IsEntranceFree) return;   // 입구 막힘 → 패턴 진행 안 하고 대기
@@ -215,13 +262,37 @@ public class TurnManager : MonoBehaviour
         GUILayout.BeginArea(new Rect(10, 40, 300, 600));
         GUILayout.Label($"지난 판 {(turn_survived == 0 ? "기록 없음" : turn_survived + "턴")}");
         GUILayout.Label($"턴: {state.Turn}");
-        GUILayout.Label(FieldToString(state.Field));
+
+        int clickedCell = -1;
+        bool isCancelled = false;
+
+        if (selected != null)
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("[P]");
+            for (int i = 0; i < Field.Size; i++)
+            {
+                var e = state.Field.Get(i);
+                GUI.enabled = GetTargets(state.Field, selected, i).Count > 0;
+                if (GUILayout.Button(e == null ? "_" : $"E{e.HP}"))
+                    clickedCell = i;
+            }
+            GUILayout.EndHorizontal();
+
+            GUI.enabled = true;
+            isCancelled = GUILayout.Button("취소");
+        }
+        else
+        {
+            GUILayout.Label(FieldToString(state.Field));
+        }
 
         GUILayout.Label($"체력: {state.Player.HP}/{Player.MaxHP}  보호막: {state.Player.Shield}");
         GUILayout.Label("지난 적 행동");
         foreach (string t in lastHitTexts)
             GUILayout.Label("  " + t);
 
+        GUI.enabled = selected == null;
         Weapon clicked = null;
 
         for (int i = 0; i < state.Inventory.Length; i++)
@@ -242,9 +313,15 @@ public class TurnManager : MonoBehaviour
 
         bool rest = GUILayout.Button("쉬기");
         bool debug_skipturn = GUILayout.Button($"{Debug_SkipTurnTo}턴으로 이동");
+        GUI.enabled = true;
         GUILayout.EndArea();
 
-        if (clicked != null) UseWeapon(clicked, 1);   // 석궁 테스트용으로 1번 칸 지정
+        if (clickedCell != -1) SelectTarget(clickedCell);
+        else if (isCancelled) CancelTargetSelect();
+        else if (clicked != null)
+        {
+            SelectWeapon(clicked); 
+        }
         else if (rest) Rest();
         else if (debug_skipturn) state.Debug_SkipTurn(Debug_SkipTurnTo);
     }

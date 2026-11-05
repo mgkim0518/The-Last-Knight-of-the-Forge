@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 public class Player
@@ -7,7 +8,7 @@ public class Player
     public int Shield { get; private set; }
     public bool IsDead => HP <= 0;
 
-    public event System.Action OnChanged;
+    public event Action OnChanged;
 
     public List<HitResult> PredictHit(List<EnemyAttack> attacks)
     {
