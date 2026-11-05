@@ -5,6 +5,7 @@ public enum ChargeType { Power = 0, Area = 1, Distance = 2, Defense = 3 }
 public enum CapTier { Short = 0, Normal = 1, Long = 2 }      // 2 / 4 / 6
 public enum ValueTier { Slow = 0, Normal = 1, Fast = 2 }       // +1 / +2 / +3
 public enum TargetType { Front = 0, Back = 1, Choose = 2, Self = 3, WithinReach = 4 }
+public enum Relocation { None = 0, Push = 1, Pull = 2 }
 
 [CreateAssetMenu(fileName = "WeaponData", menuName = "Scriptable Objects/WeaponData")]
 public class WeaponData : ScriptableObject
@@ -13,6 +14,7 @@ public class WeaponData : ScriptableObject
     public string WeaponName;
     public Sprite Icon;
     public TargetType Target;
+    public Relocation Reloc = Relocation.None;
 
     [Header("수치")]
     public int BasePower;

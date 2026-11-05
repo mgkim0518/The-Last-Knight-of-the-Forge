@@ -4,12 +4,14 @@ using System.Collections.Generic;
 public class Enemy
 {
     public EnemyData Data;
+    public readonly int MaxHP;
     public int HP;
     public bool IsShielded;
     public bool IsAttackedLastTurn;
     public Enemy(EnemyData data, int hp)
     {
         Data = data;
+        MaxHP = hp;
         HP = hp;
     }
 
@@ -23,6 +25,14 @@ public class Enemy
 
         HP -= damage;
     }
+
+    public int CollisionDamage(float colDmg)
+    {
+        int col = Mathf.Max(1, (int)(MaxHP * colDmg));
+
+        return col;
+    }
+
     public bool IsDead => HP <= 0;
 
     public bool IsInRange(int index) => index < Data.Range;
@@ -85,5 +95,48 @@ public class Field
                 cells[i] = null;
             }
         }
+    }
+
+    public void Push(int target, int pushRange, float colDmg)
+    {
+        if (cells[target] == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < pushRange; i++)
+        {
+            if (i + target + 1 >= Size)
+            {
+                break;
+            }
+
+            if (cells[i+target+1] == null)
+            {
+                cells[i + target + 1] = cells[i + target];
+                cells[i + target] = null;
+            }
+            else
+            {
+                cells[i+target].Damaged(cells[i + target].CollisionDamage(colDmg));
+                cells[i+target+1].Damaged(cells[i + target+1].CollisionDamage(colDmg));
+            }
+        }
+    }
+    public void Pull(int target)
+    {
+        Enemy e_pulled = cells[target];
+
+        if (e_pulled == null)
+        {
+            return;
+        }
+
+        for (int i = target-1; i >= 0; i--)
+        {
+            cells[i + 1] = cells[i];
+        }
+
+        cells[0] = e_pulled;
     }
 }

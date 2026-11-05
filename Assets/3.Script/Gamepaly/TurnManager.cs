@@ -22,8 +22,6 @@ public class TurnManager : MonoBehaviour
     private int turn_survived = 0;
     private Weapon selected;
 
-
-
     private void Start()
     {
         calc = new WeaponStatCalculator(battleData);
@@ -108,12 +106,23 @@ public class TurnManager : MonoBehaviour
             state.Player.SetShield(calc.CalcHitRange(weapon));
         }
 
-        int dmg = calc.DamageCalc(weapon);
+        int dmg = calc.CalcDamage(weapon);
         foreach (int cell in targets)
         {
             Enemy e = state.Field.Get(cell);
             if (e != null) e.Damaged(dmg);
         }
+
+        if (weapon.Data.Reloc.Equals(Relocation.Push))
+        {
+            int pushRange = calc.CalcPush(weapon);
+            state.Field.Push(targets[0], pushRange, battleData.CollisionDamagePercent);
+        }
+        else if (weapon.Data.Reloc.Equals(Relocation.Pull))
+        {
+            state.Field.Pull(enemyCell);
+        }
+
         state.Field.CheckDead();
 
         Debug.Log("사용한 무기: " + weapon.Data.WeaponName);
@@ -304,7 +313,7 @@ public class TurnManager : MonoBehaviour
                 continue;
             }
 
-            if (GUILayout.Button($"[{i}] {w.Data.WeaponName} (+{w.CurStack}) 위력 {calc.DamageCalc(w)}"))
+            if (GUILayout.Button($"[{i}] {w.Data.WeaponName} (+{w.CurStack}) 위력 {calc.CalcDamage(w)}"))
                 clicked = w;
         }
 

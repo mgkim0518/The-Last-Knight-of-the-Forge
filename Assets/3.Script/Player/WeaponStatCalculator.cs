@@ -14,7 +14,7 @@ public class WeaponStatCalculator
 {
     private readonly BattleData tierStat;
     public WeaponStatCalculator(BattleData tierStat) { this.tierStat = tierStat; }
-    public int DamageCalc(Weapon weapon)
+    public int CalcDamage(Weapon weapon)
     {
         int dmg = weapon.Data.BasePower;
 
@@ -47,5 +47,12 @@ public class WeaponStatCalculator
         }
 
         return hitRange;
+    }
+
+    public int CalcPush(Weapon weapon)
+    {
+        int pushRange = weapon.Data.BaseAmount + weapon.CurStack;
+
+        return pushRange;
     }
 }
