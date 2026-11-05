@@ -21,6 +21,7 @@ public class TurnManager : MonoBehaviour
     private readonly bool[] spawnPattern = { true, false, true, true, false, true, false, false };
     private int turn_survived = 0;
     private Weapon selected;
+    private Weapon hovered;   // 마우스를 올린 무기 (OnGUI 임시)
 
     private void Start()
     {
@@ -262,6 +263,35 @@ public class TurnManager : MonoBehaviour
         }
     }
 
+    public List<int> GetHitCells(Weapon weapon)
+    {
+        List<int> atkRange = new List<int>();
+
+        if (weapon == null)
+        {
+            return atkRange;
+        }
+
+        if (weapon.Data.Target.Equals(TargetType.Choose)
+            || weapon.Data.Target.Equals(TargetType.WithinReach))
+        {
+            for (int i = 0; i < Field.Size; i++)
+            {
+                if(GetTargets(state.Field, weapon, i).Count >0)
+                {
+                    atkRange.Add(i);
+                }
+
+            }
+        }
+        else
+        {
+            atkRange = GetTargets(state.Field, weapon, -1);
+        }
+
+        return atkRange;
+    }
+
     private List<string> lastHitTexts = new List<string>();
 
     private void OnGUI()
@@ -293,7 +323,7 @@ public class TurnManager : MonoBehaviour
         }
         else
         {
-            GUILayout.Label(FieldToString(state.Field));
+            GUILayout.Label(FieldToString(state.Field, GetHitCells(hovered)));
         }
 
         GUILayout.Label($"체력: {state.Player.HP}/{Player.MaxHP}  보호막: {state.Player.Shield}");
@@ -303,6 +333,9 @@ public class TurnManager : MonoBehaviour
 
         GUI.enabled = selected == null;
         Weapon clicked = null;
+
+        bool isRepaint = Event.current.type == EventType.Repaint;
+        if (isRepaint) hovered = null;
 
         for (int i = 0; i < state.Inventory.Length; i++)
         {
@@ -316,6 +349,9 @@ public class TurnManager : MonoBehaviour
             if (GUILayout.Button($"[{i}] {w.Data.WeaponName} (+{w.CurStack}) {ShowEffect(w)}" +
                 $"\n{ChargeGauge(w)}"))
                 clicked = w;
+
+            if (isRepaint && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
+                hovered = w;
         }
 
         string next = state.NextWeapon != null ? state.NextWeapon.Data.WeaponName : "없음";
@@ -336,13 +372,14 @@ public class TurnManager : MonoBehaviour
         else if (debug_skipturn) state.Debug_SkipTurn(Debug_SkipTurnTo);
     }
 
-    private string FieldToString(Field field)
+    private string FieldToString(Field field, List<int> highlight)
     {
         var sb = new System.Text.StringBuilder("[P]");
         for (int i = 0; i < Field.Size; i++)
         {
             var e = field.Get(i);
-            sb.Append(e == null ? " _" : $" E{e.HP}");
+            string cell = e == null ? "_" : $"E{e.HP}";
+            sb.Append(highlight.Contains(i) ? $" [{cell}]" : $" {cell}");
         }
         return sb.ToString();
     }
