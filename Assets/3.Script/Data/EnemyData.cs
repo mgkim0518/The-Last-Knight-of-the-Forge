@@ -8,6 +8,14 @@ public enum EnemyType
     Shield = 3
 }
 
+public enum EnemyBehav
+{
+    Move = 0,
+    Attack = 1,
+    Wait = 2, 
+    Heal = 3
+}
+
 [CreateAssetMenu(fileName = "EnemyData", menuName = "Scriptable Objects/EnemyData")]
 
 
@@ -19,6 +27,7 @@ public class EnemyData : ScriptableObject
     public Sprite Sprite;
     public int SpawnTurn;
     public int Reward;
+    public NormalEnemyAct Act;
 
     [Header("전투")]
     public int BaseHealth;

@@ -1,5 +1,12 @@
 using UnityEngine;
 
+public struct EnemyAction
+{
+    public int Cell;
+    public EnemyBehav E_Action;
+    public int Dest;
+}
+
 public struct EnemyAttack //적의 공격
 {
     public int Cell;

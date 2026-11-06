@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections.Generic;
 
 public class Enemy
@@ -56,6 +57,24 @@ public class Field
         }
         cells[Size - 1] = e;
         return true;
+    }
+
+    public List<EnemyAction> PlanAction()
+    {
+        Enemy[] currnetField = new Enemy[Size];
+        List<EnemyAction> nextMove = new List<EnemyAction>();
+
+        Array.Copy(cells, currnetField, Size);
+
+        for (int i = 0; i < Size; i++)
+        {
+            Enemy e = currnetField[i];
+            if (e == null) continue;
+
+            //e.Add()
+        }
+        return nextMove;
+
     }
 
     public List<EnemyAttack> ActAll()   
