@@ -15,6 +15,7 @@ public class TurnManager : MonoBehaviour
 
     public event Action<Weapon> OnTargetSelect;
     public event Action OnChoiceFinished;
+    public event Action<Weapon> OnMelting;
 
     private GameState state;
     private WeaponStatCalculator calc;
@@ -228,6 +229,23 @@ public class TurnManager : MonoBehaviour
         EndTurn();
     }
 
+    public bool TryMelt(Weapon weapon)
+    {
+        if (selected != null)
+        {
+            return false;
+        }
+
+        if (!state.Melt(weapon))
+        {
+            return false;
+        }
+
+        OnMelting?.Invoke(weapon);
+        Debug.Log(weapon.Data.WeaponName + "을 녹였습니다.");
+        return true;
+    }
+
     private void EndTurn()
     {
         if (!state.ReceiveNextWeapon())
@@ -360,6 +378,7 @@ public class TurnManager : MonoBehaviour
 
         GUI.enabled = selected == null;
         Weapon clicked = null;
+        Weapon forMelt = null;
 
         bool isRepaint = Event.current.type == EventType.Repaint;
         if (isRepaint) hovered = null;
@@ -373,16 +392,36 @@ public class TurnManager : MonoBehaviour
                 continue;
             }
 
+            GUILayout.BeginHorizontal();
+
             if (GUILayout.Button($"[{i}] {w.Data.WeaponName} (+{w.CurStack}) {ShowEffect(w)}" +
                 $"\n{ChargeGauge(w)}"))
                 clicked = w;
 
             if (isRepaint && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
                 hovered = w;
+
+            GUI.enabled = selected == null && state.MeltLeft > 0;
+            if (GUILayout.Button("녹이기", GUILayout.Width(60), GUILayout.Height(40)))
+                forMelt = w;
+            GUI.enabled = selected == null;
+
+            GUILayout.EndHorizontal();
         }
+
+        GUILayout.BeginHorizontal();
 
         string next = state.NextWeapon != null ? state.NextWeapon.Data.WeaponName : "없음";
         GUILayout.Label($"다음: {next}");
+
+        GUI.enabled = selected == null && state.MeltLeft > 0 && state.NextWeapon != null;
+        if (GUILayout.Button("녹이기", GUILayout.Width(60)))
+            forMelt = state.NextWeapon;
+        GUI.enabled = selected == null;
+
+        GUILayout.EndHorizontal();
+
+        GUILayout.Label($"용광로 {state.MeltLeft} / {state.PlayData.FurnaceCap}");
 
         bool rest = GUILayout.Button("쉬기");
         bool debug_skipturn = GUILayout.Button($"{Debug_SkipTurnTo}턴으로 이동");
@@ -397,6 +436,7 @@ public class TurnManager : MonoBehaviour
         }
         else if (rest) Rest();
         else if (debug_skipturn) state.Debug_SkipTurn(Debug_SkipTurnTo);
+        else if (forMelt != null) TryMelt(forMelt);
     }
 
     private string FieldToString(Field field, List<int> highlight, List<EnemyAction> next)

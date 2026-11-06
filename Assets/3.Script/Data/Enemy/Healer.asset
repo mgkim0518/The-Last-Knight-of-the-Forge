@@ -17,6 +17,7 @@ MonoBehaviour:
   Sprite: {fileID: 0}
   SpawnTurn: 0
   Reward: 0
+  Act: {fileID: 11400000, guid: c3663c5a794d08b4689f6ed9f79cfe91, type: 2}
   BaseHealth: 0
   Dmg: 0
   Range: 3

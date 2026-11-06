@@ -21,6 +21,7 @@ public class EconomyData : ScriptableObject
     public AnimationCurve HealTurnMultiplier = AnimationCurve.Linear(0, 1, 100, 5);
 
     [Header("철괴 수입")]
+    public int FurnaceCap = 2;
     public int SmeltValue = 2;              
     public int WeightSkipReward = 3;      
 

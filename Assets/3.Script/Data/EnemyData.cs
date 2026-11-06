@@ -4,8 +4,7 @@ public enum EnemyType
 {
     Normal = 0,
     Ranged = 1,
-    Heal = 2,
-    Shield = 3
+    Heal = 2
 }
 
 public enum EnemyBehav

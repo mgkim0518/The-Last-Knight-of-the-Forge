@@ -13,6 +13,7 @@ public class GameState
     public int SpawnIndex;
     public Weapon NextWeapon { get; private set; }
     public Player Player;
+    public int MeltLeft;
 
     public GameState(int seed, EconomyData playData, SpawnData spawn)
     {
@@ -23,6 +24,7 @@ public class GameState
         Inventory = new Weapon[playData.StartSlots];
         Turn = 1;
         NextWeapon = CreateRandomWeapon();
+        MeltLeft = playData.FurnaceCap;
     }
 
     public bool RemoveWeapon(Weapon weapon)
@@ -59,12 +61,49 @@ public class GameState
 
     public bool ReceiveNextWeapon()
     {
-        bool added = AddWeapon(NextWeapon);
+        bool added = true;
+
+        if (NextWeapon != null) 
+        {
+            added = AddWeapon(NextWeapon);
+        }
         NextWeapon = CreateRandomWeapon();
         return added;
     }
 
-    public void NextTurn() => Turn++;
+    public void NextTurn()
+    {
+        Turn++;
+        MeltLeft = PlayData.FurnaceCap;
+    }
+
+    public bool Melt(Weapon weapon)
+    {
+        if (MeltLeft <= 0)
+        {
+            return false;
+        }
+
+        if (weapon == null)
+        {
+            return false;
+        }
+
+        if (weapon == NextWeapon)
+        {
+            NextWeapon = null;
+        }
+        else
+        {
+            if (!RemoveWeapon(weapon))
+            {
+                return false;
+            }
+        }
+
+        MeltLeft--;
+        return true;
+    }
 
     public void Debug_SkipTurn(int dest)
     {
