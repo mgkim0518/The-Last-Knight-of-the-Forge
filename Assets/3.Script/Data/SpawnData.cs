@@ -10,5 +10,6 @@ public class SpawnData : ScriptableObject
     public int WeightIncrease = 1;
     public int MaxSpawnWeight = 20;
 
-    //[Header("적")]
+    [Header("적")]
+    public EnemyData[] EnemyPool;
 }

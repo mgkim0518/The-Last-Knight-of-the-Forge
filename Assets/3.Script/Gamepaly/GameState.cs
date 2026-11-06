@@ -14,8 +14,12 @@ public class GameState
     public Weapon NextWeapon { get; private set; }
     public Player Player;
     public int MeltLeft;
+    public Enemy NextEnemy { get; private set; }
+    public int PrepTurns;
 
-    public GameState(int seed, EconomyData playData, SpawnData spawn)
+    private readonly bool[] spawnPattern = { true, false, true, true, false, true, false, false };
+
+    public GameState(int seed, EconomyData playData, SpawnData spawn, int prepTurns)
     {
         Rng = new System.Random(seed);
         Player = new Player();
@@ -25,6 +29,8 @@ public class GameState
         Turn = 1;
         NextWeapon = CreateRandomWeapon();
         MeltLeft = playData.FurnaceCap;
+        PrepTurns = prepTurns;
+        NextEnemy = CreateNextEnemy();
     }
 
     public bool RemoveWeapon(Weapon weapon)
@@ -103,6 +109,35 @@ public class GameState
 
         MeltLeft--;
         return true;
+    }
+
+    public Enemy CreateNextEnemy()
+    {
+        if (Turn < PrepTurns - 1) return null;
+
+        bool spawn = spawnPattern[SpawnIndex % spawnPattern.Length];
+        SpawnIndex++;
+
+        if (spawn)
+        {
+           return new Enemy(Spawn.EnemyPool[0], Spawn.EnemyPool[0].BaseHealth);
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public void TrySpawnEnemy()
+    { 
+        if (!Field.IsEntranceFree) return;
+
+        if (NextEnemy != null)
+        {
+            Field.TrySpawn(NextEnemy);
+        }
+
+        NextEnemy = CreateNextEnemy();
     }
 
     public void Debug_SkipTurn(int dest)

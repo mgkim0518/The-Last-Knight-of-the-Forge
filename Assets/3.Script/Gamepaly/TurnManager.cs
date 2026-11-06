@@ -9,7 +9,6 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private BattleData battleData;
     [SerializeField] private SpawnData spawnData;
     [SerializeField] private RandomManager randomManager;
-    [SerializeField] private EnemyData normalEnemy;
     [SerializeField] private int prepTurns = 3;
     [SerializeField] private int Debug_SkipTurnTo = 15;
 
@@ -19,7 +18,6 @@ public class TurnManager : MonoBehaviour
 
     private GameState state;
     private WeaponStatCalculator calc;
-    private readonly bool[] spawnPattern = { true, false, true, true, false, true, false, false };
     private int turn_survived = 0;
     private Weapon selected;
     private Weapon hovered;   // 마우스를 올린 무기 (OnGUI 임시)
@@ -32,7 +30,7 @@ public class TurnManager : MonoBehaviour
 
     private void StartNewGame()
     {
-        state = new GameState(randomManager.GetSeed(), economyData, spawnData);
+        state = new GameState(randomManager.GetSeed(), economyData, spawnData, prepTurns);
         state.AddWeapon(state.CreateRandomWeapon());
         lastHitTexts.Clear(); //GUI용 임시 코드
     }
@@ -264,22 +262,8 @@ public class TurnManager : MonoBehaviour
             return;
         }
         Debug.Log("다음 턴 준비");
-        TrySpawnEnemy();
+        state.TrySpawnEnemy();
         state.NextTurn();
-    }
-
-    private void TrySpawnEnemy() //몬스터 스폰용 임시 코드
-    {
-        if (state.Turn < prepTurns) return;
-        if (!state.Field.IsEntranceFree) return;   // 입구 막힘 → 패턴 진행 안 하고 대기
-
-        bool spawn = spawnPattern[state.SpawnIndex % spawnPattern.Length];
-        state.SpawnIndex++;
-
-        if (spawn)
-        {
-            state.Field.TrySpawn(new Enemy(normalEnemy, normalEnemy.BaseHealth));
-        }
     }
 
     public List<int> GetHitCells(Weapon weapon)
@@ -336,14 +320,20 @@ public class TurnManager : MonoBehaviour
                 if (GUILayout.Button(e == null ? "_" : $"E{e.HP}"))
                     clickedCell = i;
             }
+            GUI.enabled = true;
+
+            string nextEnemy = state.NextEnemy != null ? $"E{state.NextEnemy.HP}" : "없음";
+            GUILayout.Label($" | 등장: {nextEnemy}");
+
             GUILayout.EndHorizontal();
 
-            GUI.enabled = true;
             isCancelled = GUILayout.Button("취소");
         }
         else
         {
-            GUILayout.Label(FieldToString(state.Field, GetHitCells(hovered), nextMove_E));
+            string nextEnemy = state.NextEnemy != null ? $"E{state.NextEnemy.HP}" : "없음";
+            GUILayout.Label(FieldToString(state.Field, GetHitCells(hovered), nextMove_E) + 
+                $" | 등장: {nextEnemy}");
         }
 
         List<EnemyAttack> attacks = new List<EnemyAttack>();
@@ -411,8 +401,8 @@ public class TurnManager : MonoBehaviour
 
         GUILayout.BeginHorizontal();
 
-        string next = state.NextWeapon != null ? state.NextWeapon.Data.WeaponName : "없음";
-        GUILayout.Label($"다음: {next}");
+        string nextWeapon = state.NextWeapon != null ? state.NextWeapon.Data.WeaponName : "없음";
+        GUILayout.Label($"다음: {nextWeapon}");
 
         GUI.enabled = selected == null && state.MeltLeft > 0 && state.NextWeapon != null;
         if (GUILayout.Button("녹이기", GUILayout.Width(60)))
