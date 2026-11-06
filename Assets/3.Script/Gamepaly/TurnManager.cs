@@ -235,7 +235,8 @@ public class TurnManager : MonoBehaviour
             Debug.Log("슬롯이 가득 차 무기 소멸");
         }
         Debug.Log("적 행동");
-        List<HitResult> validHits = state.Player.PredictHit(state.Field.ActAll());
+        List<HitResult> validHits = state.Player.PredictHit(state.Field.ActAll
+            (state.Field.PlanAction()));
         state.Player.TakeHit(validHits);
         lastHitTexts = ShowHits(validHits); //GUI에 넘기기
         if (state.Player.IsDead)
@@ -277,7 +278,7 @@ public class TurnManager : MonoBehaviour
         {
             for (int i = 0; i < Field.Size; i++)
             {
-                if(GetTargets(state.Field, weapon, i).Count >0)
+                if (GetTargets(state.Field, weapon, i).Count > 0)
                 {
                     atkRange.Add(i);
                 }
@@ -297,8 +298,9 @@ public class TurnManager : MonoBehaviour
     private void OnGUI()
     {
         if (state == null) return;
+        List<EnemyAction> nextMove_E = state.Field.PlanAction();
 
-        GUILayout.BeginArea(new Rect(10, 40, 300, 600));
+        GUILayout.BeginArea(new Rect(10, 40, 400, 600));
         GUILayout.Label($"지난 판 {(turn_survived == 0 ? "기록 없음" : turn_survived + "턴")}");
         GUILayout.Label($"턴: {state.Turn}");
 
@@ -323,10 +325,35 @@ public class TurnManager : MonoBehaviour
         }
         else
         {
-            GUILayout.Label(FieldToString(state.Field, GetHitCells(hovered)));
+            GUILayout.Label(FieldToString(state.Field, GetHitCells(hovered), nextMove_E));
         }
 
-        GUILayout.Label($"체력: {state.Player.HP}/{Player.MaxHP}  보호막: {state.Player.Shield}");
+        List<EnemyAttack> attacks = new List<EnemyAttack>();
+        foreach (EnemyAction act in nextMove_E)
+        {
+            Enemy e = state.Field.Get(act.Cell);
+
+            if (act.E_Action.Equals(EnemyBehav.Attack))
+            {
+                attacks.Add(new EnemyAttack { Cell = act.Cell, Damage = e.Data.Dmg });
+            }
+        }
+
+        List<HitResult> validHits = state.Player.PredictHit(attacks);
+
+        int damage = 0;
+        foreach (HitResult r in validHits)
+        {
+            if (!r.Blocked)
+            {
+                damage += r.Damage;
+            }
+        }
+
+        string expected = damage > 0 ? $" (예상 -{damage})" : "";
+
+        GUILayout.Label($"체력: {state.Player.HP}/{Player.MaxHP}{expected} " +
+            $" 보호막: {state.Player.Shield}");
         GUILayout.Label("지난 적 행동");
         foreach (string t in lastHitTexts)
             GUILayout.Label("  " + t);
@@ -372,13 +399,29 @@ public class TurnManager : MonoBehaviour
         else if (debug_skipturn) state.Debug_SkipTurn(Debug_SkipTurnTo);
     }
 
-    private string FieldToString(Field field, List<int> highlight)
+    private string FieldToString(Field field, List<int> highlight, List<EnemyAction> next)
     {
+        string[] marks = new string[Field.Size];
+        for (int i = 0; i < Field.Size; i++)
+        {
+            marks[i] = string.Empty;
+        }
+
+        foreach (EnemyAction act in next)
+        {
+            switch (act.E_Action)
+            {
+                case EnemyBehav.Attack: marks[act.Cell] = "!"; break;
+                case EnemyBehav.Move: marks[act.Cell] = "←"; break;
+                case EnemyBehav.Wait: marks[act.Cell] = "…"; break;
+            }
+        }
+
         var sb = new System.Text.StringBuilder("[P]");
         for (int i = 0; i < Field.Size; i++)
         {
             var e = field.Get(i);
-            string cell = e == null ? "_" : $"E{e.HP}";
+            string cell = e == null ? "_" : $"E{e.HP}{marks[i]}";
             sb.Append(highlight.Contains(i) ? $" [{cell}]" : $" {cell}");
         }
         return sb.ToString();

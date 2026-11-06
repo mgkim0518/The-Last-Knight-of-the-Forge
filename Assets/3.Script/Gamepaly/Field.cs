@@ -61,45 +61,48 @@ public class Field
 
     public List<EnemyAction> PlanAction()
     {
-        Enemy[] currnetField = new Enemy[Size];
+        Enemy[] currentField = new Enemy[Size];
         List<EnemyAction> nextMove = new List<EnemyAction>();
 
-        Array.Copy(cells, currnetField, Size);
+        Array.Copy(cells, currentField, Size);
 
         for (int i = 0; i < Size; i++)
         {
-            Enemy e = currnetField[i];
+            Enemy e = currentField[i];
             if (e == null) continue;
 
-            //e.Add()
+            EnemyAction act = e.Data.Act.NextMove(currentField, i);
+            nextMove.Add(act);
+            if (act.E_Action.Equals(EnemyBehav.Move))
+            {
+                currentField[act.Dest] = currentField[act.Cell];
+                currentField[act.Cell] = null;
+            }
         }
         return nextMove;
-
     }
 
-    public List<EnemyAttack> ActAll()   
+    public List<EnemyAttack> ActAll(List<EnemyAction> planned)   
     {
         List<EnemyAttack> attacks = new List<EnemyAttack>();
-        for (int i = 0; i < Size; i++)
+
+        foreach (EnemyAction act in planned)
         {
-            Enemy e = cells[i];
-            if (e == null) continue;
+            Enemy e = cells[act.Cell];
 
-            bool canMove = i > 0 && cells[i - 1] == null;
-            bool inRange = e.IsInRange(i);
-
-            if (inRange && !(e.IsAttackedLastTurn && canMove))
+            if (act.E_Action.Equals(EnemyBehav.Attack))
             {
-                attacks.Add(new EnemyAttack { Cell = i, Damage = e.Data.Dmg});
+                attacks.Add(new EnemyAttack { Cell = act.Cell, Damage = e.Data.Dmg });
                 e.IsAttackedLastTurn = true;
             }
-            else if (canMove)
+            else if (act.E_Action.Equals(EnemyBehav.Move))
             {
-                cells[i - 1] = e;
-                cells[i] = null;
+                cells[act.Dest] = e;
+                cells[act.Cell] = null;
                 e.IsAttackedLastTurn = false;
             }
         }
+
         return attacks;
     }
 

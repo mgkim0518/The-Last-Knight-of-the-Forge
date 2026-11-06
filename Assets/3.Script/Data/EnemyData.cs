@@ -27,7 +27,7 @@ public class EnemyData : ScriptableObject
     public Sprite Sprite;
     public int SpawnTurn;
     public int Reward;
-    public NormalEnemyAct Act;
+    public BaseEnemyAct Act;
 
     [Header("전투")]
     public int BaseHealth;

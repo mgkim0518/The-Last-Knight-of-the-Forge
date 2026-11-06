@@ -1,14 +1,14 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "EnemyAct", menuName = "Scriptable Objects/EnemyAct/Normal")]
-public class NormalEnemyAct: ScriptableObject
+public class BaseEnemyAct: ScriptableObject
     
 {
     public virtual EnemyAction NextMove(Enemy[] cells, int pos)
     {
         Enemy self = cells[pos];
 
-        if (pos <= 0 && cells[pos - 1] != null)
+        if (pos == 0 || cells[pos - 1] != null)
         {
             if (self.IsInRange(pos))
             {
