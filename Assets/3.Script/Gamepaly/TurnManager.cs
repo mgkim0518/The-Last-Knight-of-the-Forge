@@ -15,7 +15,7 @@ public class TurnManager : MonoBehaviour
     public event Action<Weapon> OnTargetSelect;
     public event Action OnChoiceFinished;
     public event Action<Weapon> OnMelting;
-    public event Action<int> OnCurrecnyChange;
+    public event Action<int> OnCurrencyChange;
 
     private GameState state;
     private WeaponStatCalculator calc;
@@ -28,7 +28,7 @@ public class TurnManager : MonoBehaviour
     private void Start()
     {
         calc = new WeaponStatCalculator(battleData);
-        OnCurrecnyChange += iron => GUI_Iron = iron;
+        OnCurrencyChange += iron => GUI_Iron = iron;
         StartNewGame();
     }
 
@@ -46,7 +46,7 @@ public class TurnManager : MonoBehaviour
         state = new GameState(randomManager.GetSeed(), economyData, spawnData, prepTurns);
         state.AddWeapon(state.CreateRandomWeapon());
         state.OnIronChanged += ChangeIronValUI;
-        OnCurrecnyChange?.Invoke(state.Iron);
+        OnCurrencyChange?.Invoke(state.Iron);
         lastHitTexts.Clear(); //GUI용 임시 코드
     }
 
@@ -259,6 +259,17 @@ public class TurnManager : MonoBehaviour
         return true;
     }
 
+    public bool TryUpgrade(WeaponData data)
+    {
+        if (selected != null)
+        {
+            return false;
+        }
+
+        int nextLevel = state.Forge.GetUpgradeLevel(data) + 1;
+        return state.Forge.Upgrade(data, nextLevel);
+    }
+
     private void EndTurn()
     {
         if (!state.ReceiveNextWeapon())
@@ -283,7 +294,7 @@ public class TurnManager : MonoBehaviour
 
     private void ChangeIronValUI(int iron)
     {
-        OnCurrecnyChange?.Invoke(iron);
+        OnCurrencyChange?.Invoke(iron);
     }
 
     public List<int> GetHitCells(Weapon weapon)
@@ -322,7 +333,7 @@ public class TurnManager : MonoBehaviour
         if (state == null) return;
         List<EnemyAction> nextMove_E = state.Field.PlanAction();
 
-        GUILayout.BeginArea(new Rect(10, 40, 400, 600));
+        GUILayout.BeginArea(new Rect(10, 40, 500, 600));
         GUILayout.Label($"지난 판 {(turn_survived == 0 ? "기록 없음" : turn_survived + "턴")}");
 
         GUILayout.BeginHorizontal();
@@ -393,6 +404,7 @@ public class TurnManager : MonoBehaviour
         GUI.enabled = selected == null;
         Weapon clicked = null;
         Weapon forMelt = null;
+        WeaponData forUpgrade = null;
 
         bool isRepaint = Event.current.type == EventType.Repaint;
         if (isRepaint) hovered = null;
@@ -408,7 +420,8 @@ public class TurnManager : MonoBehaviour
 
             GUILayout.BeginHorizontal();
 
-            if (GUILayout.Button($"[{i}] {w.Data.WeaponName} (+{w.CurStack}) {ShowEffect(w)}" +
+            if (GUILayout.Button($"[{i}] {w.Data.WeaponName} Lv {state.Forge.GetUpgradeLevel(w.Data)}" +
+                $" (+{w.CurStack}) {ShowEffect(w)}" +
                 $"\n{ChargeGauge(w)}"))
                 clicked = w;
 
@@ -419,6 +432,13 @@ public class TurnManager : MonoBehaviour
             if (GUILayout.Button($"녹이기 +{economyData.GetMeltValue(w)}",
                 GUILayout.Width(80), GUILayout.Height(40)))
                 forMelt = w;
+
+            int nextLevel = state.Forge.GetUpgradeLevel(w.Data) + 1;
+            GUI.enabled = selected == null && state.Forge.CheckUpgradeable(w.Data, nextLevel);
+            if (GUILayout.Button($"강화 {state.Forge.GetUpgradePrice(w.Data, nextLevel)}",
+                GUILayout.Width(80), GUILayout.Height(40)))
+                forUpgrade = w.Data;
+
             GUI.enabled = selected == null;
 
             GUILayout.EndHorizontal();
@@ -454,6 +474,7 @@ public class TurnManager : MonoBehaviour
         else if (rest) Rest();
         else if (debug_skipturn) state.Debug_SkipTurn(Debug_SkipTurnTo);
         else if (forMelt != null) TryMelt(forMelt);
+        else if (forUpgrade != null) TryUpgrade(forUpgrade);
     }
 
     private string FieldToString(Field field, List<int> highlight, List<EnemyAction> next)

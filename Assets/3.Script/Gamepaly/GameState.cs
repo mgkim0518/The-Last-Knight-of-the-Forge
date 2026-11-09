@@ -16,12 +16,14 @@ public class GameState
     public int SpawnIndex;
     public int MeltLeft;
     public int Iron { get; private set; }
+    public Forge Forge;
 
     public Field Field { get; } = new Field();
     public Enemy NextEnemy { get; private set; }
     public int PrepTurns;
 
     public event Action<int> OnIronChanged;
+
 
     private readonly bool[] spawnPattern = { true, false, true, true, false, true, false, false };
 
@@ -36,6 +38,8 @@ public class GameState
         NextWeapon = CreateRandomWeapon();
         MeltLeft = playData.FurnaceCap;
         Iron = playData.StartIron;
+        Forge = new Forge(this);
+        
         PrepTurns = prepTurns;
         NextEnemy = CreateNextEnemy();
     }
@@ -88,6 +92,7 @@ public class GameState
     {
         Turn++;
         MeltLeft = PlayData.FurnaceCap;
+        Forge.ResetForgeState();
     }
 
     public bool Melt(Weapon weapon)
