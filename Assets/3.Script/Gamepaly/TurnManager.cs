@@ -15,23 +15,39 @@ public class TurnManager : MonoBehaviour
     public event Action<Weapon> OnTargetSelect;
     public event Action OnChoiceFinished;
     public event Action<Weapon> OnMelting;
+    public event Action<int> OnCurrecnyChange;
 
     private GameState state;
     private WeaponStatCalculator calc;
     private int turn_survived = 0;
     private Weapon selected;
     private Weapon hovered;   // 마우스를 올린 무기 (OnGUI 임시)
+    private int GUI_Iron;
+    
 
     private void Start()
     {
         calc = new WeaponStatCalculator(battleData);
+        OnCurrecnyChange += iron => GUI_Iron = iron;
         StartNewGame();
+        state.OnIronChanged += ChangeIronValUI;
+    }
+
+    private void OnDestroy()
+    {
+        state.OnIronChanged -= ChangeIronValUI;
     }
 
     private void StartNewGame()
     {
+        if (state != null)
+        {
+            state.OnIronChanged -= ChangeIronValUI;
+        }
         state = new GameState(randomManager.GetSeed(), economyData, spawnData, prepTurns);
         state.AddWeapon(state.CreateRandomWeapon());
+        state.OnIronChanged += ChangeIronValUI;
+        OnCurrecnyChange?.Invoke(state.Iron);
         lastHitTexts.Clear(); //GUI용 임시 코드
     }
 
@@ -266,6 +282,11 @@ public class TurnManager : MonoBehaviour
         state.NextTurn();
     }
 
+    private void ChangeIronValUI(int iron)
+    {
+        OnCurrecnyChange?.Invoke(iron);
+    }
+
     public List<int> GetHitCells(Weapon weapon)
     {
         List<int> atkRange = new List<int>();
@@ -304,7 +325,11 @@ public class TurnManager : MonoBehaviour
 
         GUILayout.BeginArea(new Rect(10, 40, 400, 600));
         GUILayout.Label($"지난 판 {(turn_survived == 0 ? "기록 없음" : turn_survived + "턴")}");
+
+        GUILayout.BeginHorizontal();
         GUILayout.Label($"턴: {state.Turn}");
+        GUILayout.Label($"철괴: {GUI_Iron}");
+        GUILayout.EndHorizontal();
 
         int clickedCell = -1;
         bool isCancelled = false;
@@ -392,7 +417,8 @@ public class TurnManager : MonoBehaviour
                 hovered = w;
 
             GUI.enabled = selected == null && state.MeltLeft > 0;
-            if (GUILayout.Button("녹이기", GUILayout.Width(60), GUILayout.Height(40)))
+            if (GUILayout.Button($"녹이기 +{economyData.GetMeltValue(w)}",
+                GUILayout.Width(80), GUILayout.Height(40)))
                 forMelt = w;
             GUI.enabled = selected == null;
 
@@ -405,7 +431,9 @@ public class TurnManager : MonoBehaviour
         GUILayout.Label($"다음: {nextWeapon}");
 
         GUI.enabled = selected == null && state.MeltLeft > 0 && state.NextWeapon != null;
-        if (GUILayout.Button("녹이기", GUILayout.Width(60)))
+        string meltVal = state.NextWeapon != null ? $" +{economyData.GetMeltValue(state.NextWeapon)}"
+            : "";
+        if (GUILayout.Button($"녹이기{meltVal}", GUILayout.Width(80)))
             forMelt = state.NextWeapon;
         GUI.enabled = selected == null;
 

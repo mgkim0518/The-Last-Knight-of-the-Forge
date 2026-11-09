@@ -22,8 +22,11 @@ public class EconomyData : ScriptableObject
 
     [Header("철괴 수입")]
     public int FurnaceCap = 2;
-    public int SmeltValue = 2;              
-    public int WeightSkipReward = 3;      
+    public int SmeltValue_Short = 2;              
+    public int SmeltValue_Normal = 4;              
+    public int SmeltValue_Long = 5;              
+    public int WeightSkipReward = 3;
+    public int StartIron = 10;
 
     public int GetUpgradePrice(int level)
         => UpgradeBasePrice + UpgradePriceStep * level;
@@ -40,4 +43,20 @@ public class EconomyData : ScriptableObject
 
     public int GetHealPrice(int percent, int turn)
         => Mathf.CeilToInt(HealUnitPrice * percent * HealTurnMultiplier.Evaluate(turn));
+
+    public int GetMeltValue(Weapon weapon)
+    {
+        switch (weapon.Data.CapTier)
+        {
+            case CapTier.Short:
+                return SmeltValue_Short;
+            case CapTier.Normal:
+                return SmeltValue_Normal;
+            case CapTier.Long:
+                return SmeltValue_Long;
+            default:
+                Debug.LogWarning("무기에 잘못된 값이 들어갔습니다.");
+                return 0;
+        }
+    }
 }

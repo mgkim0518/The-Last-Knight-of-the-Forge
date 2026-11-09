@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,14 +9,19 @@ public class GameState
     public EconomyData PlayData;
     public SpawnData Spawn;
     public int Turn { get; private set; }
-    public Weapon[] Inventory { get; private set; }
-    public Field Field { get; } = new Field();
-    public int SpawnIndex;
-    public Weapon NextWeapon { get; private set; }
+
     public Player Player;
+    public Weapon[] Inventory { get; private set; }
+    public Weapon NextWeapon { get; private set; }
+    public int SpawnIndex;
     public int MeltLeft;
+    public int Iron { get; private set; }
+
+    public Field Field { get; } = new Field();
     public Enemy NextEnemy { get; private set; }
     public int PrepTurns;
+
+    public event Action<int> OnIronChanged;
 
     private readonly bool[] spawnPattern = { true, false, true, true, false, true, false, false };
 
@@ -24,11 +30,12 @@ public class GameState
         Rng = new System.Random(seed);
         Player = new Player();
         PlayData = playData;
+        Turn = 1;
         Spawn = spawn;
         Inventory = new Weapon[playData.StartSlots];
-        Turn = 1;
         NextWeapon = CreateRandomWeapon();
         MeltLeft = playData.FurnaceCap;
+        Iron = playData.StartIron;
         PrepTurns = prepTurns;
         NextEnemy = CreateNextEnemy();
     }
@@ -108,6 +115,30 @@ public class GameState
         }
 
         MeltLeft--;
+        AddIron(PlayData.GetMeltValue(weapon));
+        return true;
+    }
+
+    public void AddIron(int addVal)
+    {
+        if (addVal <= 0)
+        {
+            return;
+        }
+
+        Iron += addVal;
+        OnIronChanged?.Invoke(Iron);
+    }
+
+    public bool UseIron(int useVal)
+    {
+        if (Iron < useVal)
+        {
+            return false;
+        }
+
+        Iron -= useVal;
+        OnIronChanged?.Invoke(Iron);
         return true;
     }
 
@@ -138,6 +169,20 @@ public class GameState
         }
 
         NextEnemy = CreateNextEnemy();
+    }
+
+    public int ClearDeadEnemies()
+    {
+        int bounty = 0;
+        List<Enemy> casualty = Field.CheckDead();
+
+        foreach (Enemy e in casualty)
+        {
+            bounty += e.Data.Reward;
+        }
+
+        AddIron(bounty);
+        return bounty;
     }
 
     public void Debug_SkipTurn(int dest)

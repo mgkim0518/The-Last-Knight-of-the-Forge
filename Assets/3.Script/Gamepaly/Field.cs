@@ -106,17 +106,22 @@ public class Field
         return attacks;
     }
 
-    public void CheckDead()
+    public List<Enemy> CheckDead()
     {
+        List<Enemy> deadList = new List<Enemy>();
+
         for (int i = 0; i < cells.Length; i++)
         {
             Enemy e = cells[i];
             if (e != null && e.IsDead)
             {
                 Debug.Log($"{i}번 칸 적 처치");
+                deadList.Add(e);
                 cells[i] = null;
             }
         }
+
+        return deadList;
     }
 
     public void Push(int target, int pushRange, float colDmg)
