@@ -30,7 +30,6 @@ public class TurnManager : MonoBehaviour
         calc = new WeaponStatCalculator(battleData);
         OnCurrecnyChange += iron => GUI_Iron = iron;
         StartNewGame();
-        state.OnIronChanged += ChangeIronValUI;
     }
 
     private void OnDestroy()
@@ -139,7 +138,7 @@ public class TurnManager : MonoBehaviour
             state.Field.Pull(enemyCell);
         }
 
-        state.Field.CheckDead();
+        state.ClearDeadEnemies();
 
         Debug.Log("사용한 무기: " + weapon.Data.WeaponName);
 
