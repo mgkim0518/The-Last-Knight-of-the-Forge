@@ -44,6 +44,8 @@ public class Forge
         CurState = ForgeState.None;
     }
 
+    #region 강화
+
     public int GetUpgradeLevel(WeaponData data)
     {
         int upLevel = 0;
@@ -114,4 +116,6 @@ public class Forge
 
         return true;
     }
+
+    #endregion
 }
