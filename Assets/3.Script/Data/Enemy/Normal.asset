@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Normal
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   EnemyType: 0
-  Name: 
+  Name: "\uBC84\uB824\uC9C4 \uB18D\uAE30\uAD6C"
   Sprite: {fileID: 0}
   SpawnTurn: 0
   Reward: 5

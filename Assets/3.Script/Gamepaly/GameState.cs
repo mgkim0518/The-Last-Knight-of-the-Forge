@@ -196,6 +196,22 @@ public class GameState
         return bounty;
     }
 
+    public bool AddSlot()
+    {
+        Weapon[] slots = Inventory;
+
+        if (Inventory.Length >= PlayData.MaxSlots)
+        {
+            return false;
+        }
+
+        Array.Resize(ref slots, slots.Length + 1);
+
+        Inventory = slots;
+
+        return true;
+    }
+
     public void Debug_SkipTurn(int dest)
     {
         if (Turn >= dest)

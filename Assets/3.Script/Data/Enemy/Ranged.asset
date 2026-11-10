@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: Ranged
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   EnemyType: 1
-  Name: 
+  Name: "\uBCF4\uD589 \uB4DC\uB860"
   Sprite: {fileID: 0}
   SpawnTurn: 20
   Reward: 5
   Act: {fileID: 11400000, guid: c3663c5a794d08b4689f6ed9f79cfe91, type: 2}
-  BaseHealth: 0
-  Dmg: 0
+  BaseHealth: 8
+  Dmg: 3
   Range: 4
   StopCell: 4
   MoveSpeed: 1

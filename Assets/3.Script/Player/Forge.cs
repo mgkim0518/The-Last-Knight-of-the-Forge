@@ -98,7 +98,7 @@ public class Forge
         return true;
     }
 
-    public bool Upgrade(WeaponData data, int upTarget)
+    public bool PaytoUpgrade(WeaponData data, int upTarget)
     {
         if (!CheckUpgradeable(data, upTarget))
         {
@@ -166,6 +166,54 @@ public class Forge
         state.Player.Heal(healTarget - state.Player.HP);
 
         SetForgeState(ForgeState.Heal);
+
+        return true;
+    }
+
+    #endregion
+
+    #region 인벤토리 확장
+
+    public int GetSlotPrice()
+    {
+        return economy.CalcSlotPrice(state.Inventory.Length - economy.StartSlots);
+    }
+
+    public bool CheckExpandable()
+    {
+        if (!CurState.Equals(ForgeState.None))
+        {
+            return false;
+        }
+
+        if (state.Inventory.Length >= economy.MaxSlots)
+        {
+            return false;
+        }
+
+        if (GetSlotPrice() > state.Iron)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    public bool PayToExpand()
+    {
+        if (!CheckExpandable())
+        {
+            return false;
+        }
+
+        if (!state.UseIron(GetSlotPrice()))
+        {
+            return false;
+        }
+
+        state.AddSlot();
+
+        SetForgeState(ForgeState.Expand);
 
         return true;
     }

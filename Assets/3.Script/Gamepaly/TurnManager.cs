@@ -267,7 +267,7 @@ public class TurnManager : MonoBehaviour
         }
 
         int nextLevel = state.Forge.GetUpgradeLevel(data) + 1;
-        return state.Forge.Upgrade(data, nextLevel);
+        return state.Forge.PaytoUpgrade(data, nextLevel);
     }
 
     public bool TryHeal(int healTarget)
@@ -278,6 +278,16 @@ public class TurnManager : MonoBehaviour
         }
 
         return state.Forge.PayToHeal(healTarget);
+    }
+
+    public bool TryExpand()
+    {
+        if (selected != null)
+        {
+            return false;
+        }
+
+        return state.Forge.PayToExpand();
     }
 
     private void EndTurn()
@@ -453,6 +463,7 @@ public class TurnManager : MonoBehaviour
         Weapon clicked = null;
         Weapon forMelt = null;
         WeaponData forUpgrade = null;
+        bool forExpand = false;
 
         bool isRepaint = Event.current.type == EventType.Repaint;
         if (isRepaint) hovered = null;
@@ -492,6 +503,12 @@ public class TurnManager : MonoBehaviour
             GUILayout.EndHorizontal();
         }
 
+        GUI.enabled = selected == null && state.Forge.CheckExpandable();
+        if (GUILayout.Button($"슬롯 확장 {state.Forge.GetSlotPrice()}"))
+        {
+            forExpand = true;
+        }
+
         GUILayout.BeginHorizontal();
 
         string nextWeapon = state.NextWeapon != null ? state.NextWeapon.Data.WeaponName : "없음";
@@ -523,7 +540,8 @@ public class TurnManager : MonoBehaviour
         else if (debug_skipturn) state.Debug_SkipTurn(Debug_SkipTurnTo);
         else if (forMelt != null) TryMelt(forMelt);
         else if (forUpgrade != null) TryUpgrade(forUpgrade);
-        else if (forHeal) TryHeal(GUI_HealTo); 
+        else if (forHeal) TryHeal(GUI_HealTo);
+        else if (forExpand) TryExpand();
     }
 
     private string FieldToString(Field field, List<int> highlight, List<EnemyAction> next)
