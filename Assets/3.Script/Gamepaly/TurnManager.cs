@@ -11,6 +11,7 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private RandomManager randomManager;
     [SerializeField] private int prepTurns = 3;
     [SerializeField] private int Debug_SkipTurnTo = 15;
+    [SerializeField] private int Debug_FreeIron = 100;
 
     public event Action<Weapon> OnTargetSelect;
     public event Action OnChoiceFinished;
@@ -527,6 +528,7 @@ public class TurnManager : MonoBehaviour
 
         bool rest = GUILayout.Button("쉬기");
         bool debug_skipturn = GUILayout.Button($"{Debug_SkipTurnTo}턴으로 이동");
+        bool debug_addIron = GUILayout.Button($"철괴 {Debug_FreeIron}개");
         GUI.enabled = true;
         GUILayout.EndArea();
 
@@ -542,6 +544,7 @@ public class TurnManager : MonoBehaviour
         else if (forUpgrade != null) TryUpgrade(forUpgrade);
         else if (forHeal) TryHeal(GUI_HealTo);
         else if (forExpand) TryExpand();
+        else if (debug_addIron) state.AddIron(Debug_FreeIron);
     }
 
     private string FieldToString(Field field, List<int> highlight, List<EnemyAction> next)
