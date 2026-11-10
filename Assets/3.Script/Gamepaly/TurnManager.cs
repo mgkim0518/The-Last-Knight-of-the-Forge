@@ -18,7 +18,6 @@ public class TurnManager : MonoBehaviour
     public event Action<int> OnCurrencyChange;
 
     private GameState state;
-    private WeaponStatCalculator calc;
     private int turn_survived = 0;
     private Weapon selected;
     private Weapon hovered;   // 마우스를 올린 무기 (OnGUI 임시)
@@ -27,7 +26,6 @@ public class TurnManager : MonoBehaviour
 
     private void Start()
     {
-        calc = new WeaponStatCalculator(battleData);
         OnCurrencyChange += iron => GUI_Iron = iron;
         StartNewGame();
     }
@@ -43,7 +41,8 @@ public class TurnManager : MonoBehaviour
         {
             state.OnIronChanged -= ChangeIronValUI;
         }
-        state = new GameState(randomManager.GetSeed(), economyData, spawnData, prepTurns);
+        state = new GameState(randomManager.GetSeed(), economyData, spawnData,
+            prepTurns, battleData);
         state.AddWeapon(state.CreateRandomWeapon());
         state.OnIronChanged += ChangeIronValUI;
         OnCurrencyChange?.Invoke(state.Iron);
@@ -118,10 +117,10 @@ public class TurnManager : MonoBehaviour
 
         if (weapon.Data.ChargeType.Equals(ChargeType.Defense))
         {
-            state.Player.SetShield(calc.CalcHitRange(weapon));
+            state.Player.SetShield(state.Calc.CalcHitRange(weapon));
         }
 
-        int dmg = calc.CalcDamage(weapon);
+        int dmg = state.Calc.CalcDamage(weapon);
         foreach (int cell in targets)
         {
             Enemy e = state.Field.Get(cell);
@@ -130,8 +129,8 @@ public class TurnManager : MonoBehaviour
 
         if (weapon.Data.Reloc.Equals(Relocation.Push))
         {
-            int pushRange = calc.CalcWEffect(weapon);
-            state.Field.Push(targets[0], pushRange, battleData.CollisionDamagePercent);
+            int pushRange = state.Calc.CalcWEffect(weapon);
+            state.Field.Push(targets[0], pushRange, state.BattleData.CollisionDamagePercent);
         }
         else if (weapon.Data.Reloc.Equals(Relocation.Pull))
         {
@@ -148,7 +147,7 @@ public class TurnManager : MonoBehaviour
 
     private List<int> GetTargets(Field field, Weapon weapon, int enemyCell)
     {
-        int hitRange = calc.CalcHitRange(weapon);
+        int hitRange = state.Calc.CalcHitRange(weapon);
 
         List<int> w_target = new List<int>();
 
@@ -234,7 +233,7 @@ public class TurnManager : MonoBehaviour
         {
             if (w == null) continue;
 
-            if (w.CurStack < battleData.GetCap(w.Data.CapTier))
+            if (w.CurStack < state.BattleData.GetCap(w.Data.CapTier))
             {
                 w.CurStack++;
             }
@@ -537,23 +536,26 @@ public class TurnManager : MonoBehaviour
         switch (weapon.Data.ChargeType)
         {
             case ChargeType.Power:
-                effectLabel = $"위력 {calc.CalcChargeValue(weapon)}";
+                effectLabel = $"위력 {state.Calc.CalcChargeValue(weapon)}";
                 break;
             case ChargeType.Area:
-                effectLabel = $"위력 {calc.CalcDamage(weapon)}, {calc.CalcChargeValue(weapon)}칸";
+                effectLabel = $"위력 {state.Calc.CalcDamage(weapon)}, " +
+                    $"{state.Calc.CalcChargeValue(weapon)}칸";
                 break;
             case ChargeType.Distance:
                 if (weapon.Data.Reloc.Equals(Relocation.Push))
                 {
-                    effectLabel = $"위력 {calc.CalcDamage(weapon)}, {calc.CalcChargeValue(weapon)}칸 밀치기";
+                    effectLabel = $"위력 {state.Calc.CalcDamage(weapon)}, " +
+                        $"{state.Calc.CalcChargeValue(weapon)}칸 밀기";
                 }
                 else
                 {
-                    effectLabel = $"위력 {calc.CalcDamage(weapon)}, {calc.CalcChargeValue(weapon)}칸 내 대상 끌어오기";
+                    effectLabel = $"위력 {state.Calc.CalcDamage(weapon)}, " +
+                        $"{state.Calc.CalcChargeValue(weapon)}칸 내 대상 끌기";
                 }
                 break;
             case ChargeType.Defense:
-                effectLabel = $"보호막 {calc.CalcChargeValue(weapon)}회";
+                effectLabel = $"보호막 {state.Calc.CalcChargeValue(weapon)}회";
                 break;
         }
 
@@ -562,7 +564,7 @@ public class TurnManager : MonoBehaviour
 
     private string ChargeGauge(Weapon weapon)
     {
-        int cap = battleData.GetCap(weapon.Data.CapTier);
+        int cap = state.BattleData.GetCap(weapon.Data.CapTier);
         var sb = new System.Text.StringBuilder();
 
         for (int i = 0; i < cap; i++)

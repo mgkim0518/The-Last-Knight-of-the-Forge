@@ -7,16 +7,18 @@ public class GameState
 {
     public readonly System.Random Rng;
     public EconomyData PlayData;
+    public BattleData BattleData;
     public SpawnData Spawn;
     public int Turn { get; private set; }
 
     public Player Player;
     public Weapon[] Inventory { get; private set; }
     public Weapon NextWeapon { get; private set; }
+    public WeaponStatCalculator Calc { get; private set; }
     public int SpawnIndex;
     public int MeltLeft;
     public int Iron { get; private set; }
-    public Forge Forge;
+    public Forge Forge { get; private set; }
 
     public Field Field { get; } = new Field();
     public Enemy NextEnemy { get; private set; }
@@ -27,18 +29,22 @@ public class GameState
 
     private readonly bool[] spawnPattern = { true, false, true, true, false, true, false, false };
 
-    public GameState(int seed, EconomyData playData, SpawnData spawn, int prepTurns)
+    public GameState(int seed, EconomyData playData, SpawnData spawn, 
+        int prepTurns, BattleData battleData)
     {
         Rng = new System.Random(seed);
         Player = new Player();
         PlayData = playData;
+        BattleData = battleData;
         Turn = 1;
         Spawn = spawn;
+        
         Inventory = new Weapon[playData.StartSlots];
         NextWeapon = CreateRandomWeapon();
         MeltLeft = playData.FurnaceCap;
         Iron = playData.StartIron;
         Forge = new Forge(this);
+        Calc = new WeaponStatCalculator(battleData, playData, Forge);
         
         PrepTurns = prepTurns;
         NextEnemy = CreateNextEnemy();
