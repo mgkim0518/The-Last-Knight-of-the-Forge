@@ -15,7 +15,6 @@ public class GameState
     public Weapon[] Inventory { get; private set; }
     public Weapon NextWeapon { get; private set; }
     public WeaponStatCalculator Calc { get; private set; }
-    public int SpawnIndex;
     public int MeltLeft;
     public int Iron { get; private set; }
     public Forge Forge { get; private set; }
@@ -27,8 +26,6 @@ public class GameState
     public event Action<int> OnIronChanged;
 
     private EnemySpawner Spawner;
-
-    private readonly bool[] spawnPattern = { true, false, true, true, false, true, false, false };
 
     public GameState(int seed, EconomyData playData, SpawnData spawn, 
         int prepTurns, BattleData battleData)

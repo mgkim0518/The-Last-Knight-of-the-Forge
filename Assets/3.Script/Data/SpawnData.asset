@@ -32,3 +32,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ab2e2ed68ef3e6b459721c814197776a, type: 2}
   - {fileID: 11400000, guid: a17b123a2623cbd4982cd220cbfc41a7, type: 2}
   - {fileID: 11400000, guid: 09b6ae9de4ca7ad48b1af968ba6afa11, type: 2}
+  SpawnProb: 0.8
+  ShieldProb: 0.4
