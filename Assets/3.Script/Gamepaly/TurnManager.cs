@@ -309,8 +309,8 @@ public class TurnManager : MonoBehaviour
             return;
         }
         Debug.Log("다음 턴 준비");
-        state.TrySpawnEnemy();
         state.NextTurn();
+        state.TrySpawnEnemy();
     }
 
     private void ChangeIronValUI(int iron)
@@ -364,6 +364,17 @@ public class TurnManager : MonoBehaviour
 
         int clickedCell = -1;
         bool isCancelled = false;
+        string nextEnemy = "없음";
+
+        if (state.NextEnemy != null)
+        {
+            nextEnemy = EnemyToString(state.NextEnemy);
+
+            if (state.NextEnemy.IsFirstAppearance)
+            {
+                nextEnemy += " (첫 등장!)";
+            }
+        }
 
         if (selected != null)
         {
@@ -373,12 +384,11 @@ public class TurnManager : MonoBehaviour
             {
                 var e = state.Field.Get(i);
                 GUI.enabled = GetTargets(state.Field, selected, i).Count > 0;
-                if (GUILayout.Button(e == null ? "_" : $"E{e.HP}"))
+                if (GUILayout.Button(e == null ? "_" : $"{EnemyToString(e)}"))
                     clickedCell = i;
             }
             GUI.enabled = true;
 
-            string nextEnemy = state.NextEnemy != null ? $"E{state.NextEnemy.HP}" : "없음";
             GUILayout.Label($" | 등장: {nextEnemy}");
 
             GUILayout.EndHorizontal();
@@ -387,7 +397,6 @@ public class TurnManager : MonoBehaviour
         }
         else
         {
-            string nextEnemy = state.NextEnemy != null ? $"E{state.NextEnemy.HP}" : "없음";
             GUILayout.Label(FieldToString(state.Field, GetHitCells(hovered), nextMove_E) + 
                 $" | 등장: {nextEnemy}");
         }
@@ -569,7 +578,7 @@ public class TurnManager : MonoBehaviour
         for (int i = 0; i < Field.Size; i++)
         {
             var e = field.Get(i);
-            string cell = e == null ? "_" : $"E{e.HP}{marks[i]}";
+            string cell = e == null ? "_" : $"{EnemyToString(e)}{marks[i]}";
             sb.Append(highlight.Contains(i) ? $" [{cell}]" : $" {cell}");
         }
         return sb.ToString();
@@ -644,5 +653,26 @@ public class TurnManager : MonoBehaviour
         }
 
         return sb.ToString();
+    }
+
+    private string EnemyToString(Enemy enemy)
+    {
+        char type = 'e';
+        switch (enemy.Data.EnemyType)
+        {
+            case EnemyType.Normal:
+                type = 'N';
+                break;
+            case EnemyType.Ranged:
+                type = 'R';
+                break;
+            case EnemyType.Heal:
+                type = 'H';
+                break;
+        }
+
+        string shield = enemy.IsShielded ? "◆" : string.Empty;
+
+        return $"{type}{enemy.HP}{shield}";
     }
 }

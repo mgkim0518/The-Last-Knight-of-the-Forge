@@ -26,16 +26,15 @@ public class EnemyData : ScriptableObject
     public Sprite Sprite;
     public int SpawnTurn;
     public int Reward;
+    public int SpawnWeight = 10;
     public BaseEnemyAct Act;
 
     [Header("전투")]
     public int BaseHealth;
     public int Dmg;
     public int Range;
-    public int StopCell;
     public int MoveSpeed;
 
     [Header("특수")]
     [Range(0f, 1f)] public float HealPercent;
-    public bool HasShield = false;
 }

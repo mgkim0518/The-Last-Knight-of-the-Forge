@@ -9,6 +9,7 @@ public class Enemy
     public int HP;
     public bool IsShielded;
     public bool IsAttackedLastTurn;
+    public bool IsFirstAppearance = false;
     public Enemy(EnemyData data, int hp)
     {
         Data = data;

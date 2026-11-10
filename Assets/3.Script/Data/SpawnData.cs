@@ -12,4 +12,6 @@ public class SpawnData : ScriptableObject
 
     [Header("적")]
     public EnemyData[] EnemyPool;
+    public float SpawnProb = 0.8f;
+    public float ShieldProb = 0.3f;
 }

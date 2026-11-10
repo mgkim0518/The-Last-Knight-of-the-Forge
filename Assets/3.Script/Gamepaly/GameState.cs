@@ -26,6 +26,7 @@ public class GameState
 
     public event Action<int> OnIronChanged;
 
+    private EnemySpawner Spawner;
 
     private readonly bool[] spawnPattern = { true, false, true, true, false, true, false, false };
 
@@ -47,6 +48,7 @@ public class GameState
         Calc = new WeaponStatCalculator(battleData, playData, Forge);
         
         PrepTurns = prepTurns;
+        Spawner = new EnemySpawner(spawn, battleData, Rng);
         NextEnemy = CreateNextEnemy();
     }
 
@@ -155,19 +157,11 @@ public class GameState
 
     public Enemy CreateNextEnemy()
     {
-        if (Turn < PrepTurns - 1) return null;
+        if (Turn + 1 <= PrepTurns) return null;
 
-        bool spawn = spawnPattern[SpawnIndex % spawnPattern.Length];
-        SpawnIndex++;
+        Enemy spawned = Spawner.CreateEnemy(Turn+1);
 
-        if (spawn)
-        {
-           return new Enemy(Spawn.EnemyPool[0], Spawn.EnemyPool[0].BaseHealth);
-        }
-        else
-        {
-            return null;
-        }
+        return spawned;
     }
 
     public void TrySpawnEnemy()
