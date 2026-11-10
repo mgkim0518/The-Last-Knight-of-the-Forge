@@ -6,8 +6,8 @@ using UnityEngine;
 public class GameState 
 {
     public readonly System.Random Rng;
-    public EconomyData PlayData;
-    public BattleData BattleData;
+    public EconomyData PlayData { get; private set; }
+    public BattleData BattleData { get; private set; }
     public SpawnData Spawn;
     public int Turn { get; private set; }
 

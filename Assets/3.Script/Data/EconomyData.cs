@@ -27,23 +27,6 @@ public class EconomyData : ScriptableObject
     public int SmeltValue_Long = 5;              
     public int WeightSkipReward = 3;
     public int StartIron = 10;
-
-    public int GetUpgradePrice(int level)
-        => UpgradeBasePrice + UpgradePriceStep * level;
-
-    public int GetUpgradePrice(int fromLevel, int count)
-    {
-        int sum = 0;
-        for (int i = 0; i < count; i++) sum += GetUpgradePrice(fromLevel + i);
-        return sum;
-    }
-
-    public int GetSlotPrice(int expandCount)
-        => Mathf.RoundToInt(SlotBasePrice * Mathf.Pow(SlotGrowth, expandCount));
-
-    public int GetHealPrice(int percent, int turn)
-        => Mathf.CeilToInt(HealUnitPrice * percent * HealTurnMultiplier.Evaluate(turn));
-
     public int GetMeltValue(Weapon weapon)
     {
         switch (weapon.Data.CapTier)
@@ -59,4 +42,21 @@ public class EconomyData : ScriptableObject
                 return 0;
         }
     }
+
+    public int CalcUpgradePrice(int level)
+        => UpgradeBasePrice + UpgradePriceStep * level;
+
+    public int CalcUpgradePrice(int fromLevel, int count)
+    {
+        int sum = 0;
+        for (int i = 0; i < count; i++) sum += CalcUpgradePrice(fromLevel + i);
+        return sum;
+    }
+    public int CalcHealPrice(int percent, int turn)
+        => Mathf.CeilToInt(HealUnitPrice * percent * HealTurnMultiplier.Evaluate(turn));
+
+    public int CalcSlotPrice(int expandCount)
+        => Mathf.RoundToInt(SlotBasePrice * Mathf.Pow(SlotGrowth, expandCount));
+
+
 }

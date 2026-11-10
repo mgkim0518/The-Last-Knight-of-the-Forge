@@ -22,7 +22,8 @@ public class TurnManager : MonoBehaviour
     private Weapon selected;
     private Weapon hovered;   // 마우스를 올린 무기 (OnGUI 임시)
     private int GUI_Iron;
-    
+    private int GUI_HealTo;
+    private int GUI_LastHP;
 
     private void Start()
     {
@@ -269,6 +270,16 @@ public class TurnManager : MonoBehaviour
         return state.Forge.Upgrade(data, nextLevel);
     }
 
+    public bool TryHeal(int healTarget)
+    {
+        if (selected != null)
+        {
+            return false;
+        }
+
+        return state.Forge.PayToHeal(healTarget);
+    }
+
     private void EndTurn()
     {
         if (!state.ReceiveNextWeapon())
@@ -396,6 +407,44 @@ public class TurnManager : MonoBehaviour
 
         GUILayout.Label($"체력: {state.Player.HP}/{Player.MaxHP}{expected} " +
             $" 보호막: {state.Player.Shield}");
+
+        GUILayout.BeginHorizontal();
+
+        bool forHeal = false;
+        Color prevColor = GUI.contentColor;
+
+        if (state.Player.HP != GUI_LastHP)
+        {
+            GUI_HealTo = state.Player.HP;
+            GUI_LastHP = state.Player.HP;
+        }
+
+        GUI.enabled = selected == null;
+        GUI_HealTo = Mathf.RoundToInt(GUILayout.HorizontalSlider
+            (GUI_HealTo, 0, Player.MaxHP, GUILayout.Width(200)));
+        GUI_HealTo = Mathf.Clamp(GUI_HealTo, state.Player.HP, Player.MaxHP);
+
+        int healPrice = state.Forge.GetHealPrice(GUI_HealTo);
+
+        if (healPrice > state.Iron)
+        {
+            GUI.contentColor = Color.red;
+        }
+        GUILayout.Label($"{state.Player.HP} → {GUI_HealTo} (+{GUI_HealTo - state.Player.HP})" +
+            $" · {healPrice} 철괴");
+        GUI.contentColor = prevColor;
+
+        GUI.enabled = selected == null && state.Forge.CheckHealable(GUI_HealTo);
+
+        if (GUILayout.Button("회복", GUILayout.Width(80)))
+        {
+            forHeal = true;
+        }
+
+        GUI.enabled = selected == null;
+
+        GUILayout.EndHorizontal();
+
         GUILayout.Label("지난 적 행동");
         foreach (string t in lastHitTexts)
             GUILayout.Label("  " + t);
@@ -474,6 +523,7 @@ public class TurnManager : MonoBehaviour
         else if (debug_skipturn) state.Debug_SkipTurn(Debug_SkipTurnTo);
         else if (forMelt != null) TryMelt(forMelt);
         else if (forUpgrade != null) TryUpgrade(forUpgrade);
+        else if (forHeal) TryHeal(GUI_HealTo); 
     }
 
     private string FieldToString(Field field, List<int> highlight, List<EnemyAction> next)

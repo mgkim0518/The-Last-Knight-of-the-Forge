@@ -67,7 +67,7 @@ public class Forge
             return 0;
         }
 
-        return economy.GetUpgradePrice(upLevel, upTarget - upLevel);
+        return economy.CalcUpgradePrice(upLevel, upTarget - upLevel);
     }
 
     public bool CheckUpgradeable(WeaponData data, int upTarget)
@@ -113,6 +113,59 @@ public class Forge
         UpLevel[data] = upTarget;
 
         SetForgeState(ForgeState.Upgrade);
+
+        return true;
+    }
+
+    #endregion
+
+    #region 회복
+
+    public int GetHealPrice(int healTarget)
+    {
+        return economy.CalcHealPrice(healTarget - state.Player.HP, state.Turn);
+    }
+
+    public bool CheckHealable(int healTarget)
+    {
+        if (!CheckForgeState(ForgeState.Heal))
+        {
+            return false;
+        }
+
+        if (healTarget > Player.MaxHP)
+        {
+            return false;
+        }
+
+        if (healTarget <= state.Player.HP)
+        {
+            return false;
+        }
+
+        if (GetHealPrice(healTarget) > state.Iron)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    public bool PayToHeal(int healTarget)
+    {
+        if (!CheckHealable(healTarget))
+        {
+            return false;
+        }
+
+        if (!state.UseIron(GetHealPrice(healTarget)))
+        {
+            return false;
+        }
+
+        state.Player.Heal(healTarget - state.Player.HP);
+
+        SetForgeState(ForgeState.Heal);
 
         return true;
     }
