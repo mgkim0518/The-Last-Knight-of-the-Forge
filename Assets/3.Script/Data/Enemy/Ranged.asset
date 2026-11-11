@@ -15,7 +15,7 @@ MonoBehaviour:
   EnemyType: 1
   Name: "\uBCF4\uD589 \uB4DC\uB860"
   Sprite: {fileID: 0}
-  SpawnTurn: 20
+  SpawnTurn: 10
   Reward: 5
   SpawnWeight: 3
   Act: {fileID: 11400000, guid: d9811b0fc2ba4954ba0222122e595594, type: 2}

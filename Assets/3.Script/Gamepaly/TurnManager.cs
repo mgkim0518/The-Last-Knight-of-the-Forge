@@ -352,7 +352,7 @@ public class TurnManager : MonoBehaviour
     private void OnGUI()
     {
         if (state == null) return;
-        List<EnemyAction> nextMove_E = state.Field.PlanAction();
+        List<NextAction> nextMove_E = state.Field.PredictAct(state.Field.PlanAction());
 
         GUILayout.BeginArea(new Rect(10, 40, 500, 600));
         GUILayout.Label($"지난 판 {(turn_survived == 0 ? "기록 없음" : turn_survived + "턴")}");
@@ -402,13 +402,13 @@ public class TurnManager : MonoBehaviour
         }
 
         List<EnemyAttack> attacks = new List<EnemyAttack>();
-        foreach (EnemyAction act in nextMove_E)
+        foreach (NextAction act in nextMove_E)
         {
-            Enemy e = state.Field.Get(act.Cell);
+            Enemy e = state.Field.Get(act.Pos);
 
-            if (act.E_Action.Equals(EnemyBehav.Attack))
+            if (act.Behav.Equals(EnemyBehav.Attack))
             {
-                attacks.Add(new EnemyAttack { Cell = act.Cell, Damage = e.Data.Dmg });
+                attacks.Add(new EnemyAttack { Cell = act.Pos, Damage = act.ChangeVal });
             }
         }
 
@@ -556,7 +556,7 @@ public class TurnManager : MonoBehaviour
         else if (debug_addIron) state.AddIron(Debug_FreeIron);
     }
 
-    private string FieldToString(Field field, List<int> highlight, List<EnemyAction> next)
+    private string FieldToString(Field field, List<int> highlight, List<NextAction> next)
     {
         string[] marks = new string[Field.Size];
         for (int i = 0; i < Field.Size; i++)
@@ -564,13 +564,14 @@ public class TurnManager : MonoBehaviour
             marks[i] = string.Empty;
         }
 
-        foreach (EnemyAction act in next)
+        foreach (NextAction act in next)
         {
-            switch (act.E_Action)
+            switch (act.Behav)
             {
-                case EnemyBehav.Attack: marks[act.Cell] = "!"; break;
-                case EnemyBehav.Move: marks[act.Cell] = "←"; break;
-                case EnemyBehav.Wait: marks[act.Cell] = "…"; break;
+                case EnemyBehav.Attack: marks[act.Pos] = $"!{act.ChangeVal}"; break;
+                case EnemyBehav.Move: marks[act.Pos] = "←"; break;
+                case EnemyBehav.Heal: marks[act.Pos] = $"+{act.ChangeVal}←"; break;
+                case EnemyBehav.Wait: marks[act.Pos] = "…"; break;
             }
         }
 

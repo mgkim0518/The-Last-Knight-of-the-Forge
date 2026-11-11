@@ -27,13 +27,21 @@ public class Enemy
 
         HP -= damage;
     }
+    public int CollisionDamage(float colDmg) => Mathf.Max(1, (int)(MaxHP * colDmg));
 
-    public int CollisionDamage(float colDmg)
+    public int HealAmount(float healPercent) =>
+        Mathf.Min(Mathf.Max(1, (int) (MaxHP * healPercent)), MaxHP - HP);
+
+    public void Healed(int heal)
     {
-        int col = Mathf.Max(1, (int)(MaxHP * colDmg));
+        HP += heal;
 
-        return col;
+        if (HP > MaxHP)
+        {
+            HP = MaxHP;
+        }
     }
+
 
     public bool IsDead => HP <= 0;
 
@@ -90,21 +98,59 @@ public class Field
         foreach (EnemyAction act in planned)
         {
             Enemy e = cells[act.Cell];
+            Enemy target = cells[act.Dest];
 
-            if (act.E_Action.Equals(EnemyBehav.Attack))
+            switch (act.E_Action)
             {
-                attacks.Add(new EnemyAttack { Cell = act.Cell, Damage = e.Data.Dmg });
-                e.IsAttackedLastTurn = true;
-            }
-            else if (act.E_Action.Equals(EnemyBehav.Move))
-            {
-                cells[act.Dest] = e;
-                cells[act.Cell] = null;
-                e.IsAttackedLastTurn = false;
+                case EnemyBehav.Move:
+                    cells[act.Dest] = e;
+                    cells[act.Cell] = null;
+                    e.IsAttackedLastTurn = false;
+                    break;
+                case EnemyBehav.Attack:
+                    attacks.Add(new EnemyAttack { Cell = act.Cell, Damage = e.Data.Dmg });
+                    e.IsAttackedLastTurn = true;
+                    break;
+                case EnemyBehav.Heal:
+                    target.Healed(target.HealAmount(e.Data.HealPercent));
+                    break;
+                case EnemyBehav.Wait:
+                    break;
             }
         }
 
         return attacks;
+    }
+
+    public List<NextAction> PredictAct(List<EnemyAction> planned)
+    {
+        List<NextAction> actions = new List<NextAction>();
+
+        foreach (EnemyAction act in planned)
+        {
+            Enemy e = cells[act.Cell];
+            int value = 0;
+
+            switch (act.E_Action)
+            {
+                case EnemyBehav.Attack:
+                    value = e.Data.Dmg;
+                    break;
+                case EnemyBehav.Heal:
+                    value = cells[act.Dest].HealAmount(e.Data.HealPercent);
+                    break;
+            }
+
+            actions.Add(new NextAction
+            {
+                Pos = act.Cell,
+                Behav = act.E_Action,
+                Dest = act.Dest,
+                ChangeVal = value
+            });
+        }
+
+        return actions;
     }
 
     public List<Enemy> CheckDead()

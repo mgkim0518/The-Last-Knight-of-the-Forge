@@ -19,3 +19,11 @@ public struct HitResult //실제 플레이어에게 적용 여부
     public int Damage;
     public bool Blocked;
 }
+
+public struct NextAction
+{
+    public int Pos;
+    public EnemyBehav Behav;
+    public int Dest;
+    public int ChangeVal;
+}

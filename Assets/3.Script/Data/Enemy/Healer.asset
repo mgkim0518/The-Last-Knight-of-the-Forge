@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e9c75c8224a31847909e762f3353a1c, type: 3}
   m_Name: Healer
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
-  EnemyType: 0
+  EnemyType: 2
   Name: "\uB5A0\uB3CC\uC774 \uB55C\uC7A5\uC774"
   Sprite: {fileID: 0}
-  SpawnTurn: 40
+  SpawnTurn: 15
   Reward: 5
   SpawnWeight: 1
-  Act: {fileID: 11400000, guid: c3663c5a794d08b4689f6ed9f79cfe91, type: 2}
+  Act: {fileID: 11400000, guid: 19e4ddf9b8b4cea42945d39467c4ba2b, type: 2}
   BaseHealth: 6
   Dmg: 0
   Range: 3
   MoveSpeed: 1
-  HealPercent: 0
+  HealPercent: 0.2
