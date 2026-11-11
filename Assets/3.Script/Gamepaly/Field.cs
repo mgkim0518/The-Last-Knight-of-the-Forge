@@ -13,6 +13,7 @@ public class Enemy
     public bool IsFirstAppearance = false;
     public bool IsHavingFirstShield = false;
     public bool IsGonnaRun = false;
+    public bool IsLoaded = false;
     public int FleeCounter { get; private set; } = 0;
     public Enemy(EnemyData data, int hp, int reward)
     {
@@ -155,6 +156,9 @@ public class Field
                 case EnemyBehav.Flee:
                     cells[act.Cell] = null;
                     break;
+                case EnemyBehav.Charging:
+                    e.IsLoaded = true;
+                    break;
             }
         }
 
@@ -180,6 +184,9 @@ public class Field
                     break;
                 case EnemyBehav.DecidedFleeing:
                     value = e.IsGonnaRun ? e.FleeCounter - 1 : e.Data.FleeCounter;
+                    break;
+                case EnemyBehav.Charging:
+                    value = e.Data.Dmg;
                     break;
             }
 

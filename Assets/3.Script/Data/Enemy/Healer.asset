@@ -17,11 +17,12 @@ MonoBehaviour:
   Sprite: {fileID: 0}
   SpawnTurn: 15
   Reward: 5
-  SpawnWeight: 1
+  SpawnWeight: 2
   Act: {fileID: 11400000, guid: 19e4ddf9b8b4cea42945d39467c4ba2b, type: 2}
+  isShieldAllowed: 1
   BaseHealth: 6
   Dmg: 0
-  Range: 3
+  Range: 1
   MoveSpeed: 1
   FleeCounter: 3
   HealPercent: 0.2

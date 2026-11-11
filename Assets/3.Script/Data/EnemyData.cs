@@ -4,7 +4,8 @@ public enum EnemyType
 {
     Normal = 0,
     Ranged = 1,
-    Heal = 2
+    Heal = 2,
+    Charge = 3
 }
 
 public enum EnemyBehav
@@ -14,7 +15,8 @@ public enum EnemyBehav
     Wait = 2, 
     Heal = 3,
     DecidedFleeing = 4,
-    Flee = 5
+    Flee = 5,
+    Charging = 6
 }
 
 [CreateAssetMenu(fileName = "EnemyData", menuName = "Scriptable Objects/EnemyData")]
@@ -30,6 +32,7 @@ public class EnemyData : ScriptableObject
     public int Reward;
     public int SpawnWeight = 10;
     public BaseEnemyAct Act;
+    public bool isShieldAllowed = true;
 
     [Header("전투")]
     public int BaseHealth;

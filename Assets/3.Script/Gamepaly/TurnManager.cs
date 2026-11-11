@@ -573,23 +573,26 @@ public class TurnManager : MonoBehaviour
         {
             switch (act.Behav)
             {
-                case EnemyBehav.Attack: 
+                case EnemyBehav.Attack:
                     marks[act.Pos] = $"!{act.ChangeVal}";
                     break;
-                case EnemyBehav.Move: 
-                    marks[act.Pos] = "←"; 
+                case EnemyBehav.Move:
+                    marks[act.Pos] = "←";
                     break;
-                case EnemyBehav.Heal: 
+                case EnemyBehav.Heal:
                     marks[act.Pos] = $"←+{act.ChangeVal}";
                     break;
-                case EnemyBehav.Wait: 
-                    marks[act.Pos] = "…"; 
+                case EnemyBehav.Wait:
+                    marks[act.Pos] = "…";
                     break;
                 case EnemyBehav.DecidedFleeing:
                     marks[act.Pos] = $"→{act.ChangeVal}";
                     break;
                 case EnemyBehav.Flee:
                     marks[act.Pos] = "→!";
+                    break;
+                case EnemyBehav.Charging:
+                    marks[act.Pos] = $"(!{act.ChangeVal})*";
                     break;
             }
         }
@@ -693,6 +696,8 @@ public class TurnManager : MonoBehaviour
 
         string shield = enemy.IsShielded ? "◆" : string.Empty;
 
-        return $"{type}{enemy.HP}{shield}";
+        string charge = enemy.IsLoaded ? "*" : string.Empty;
+
+        return $"{type}{enemy.HP}{shield}{charge}";
     }
 }

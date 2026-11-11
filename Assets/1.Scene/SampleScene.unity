@@ -419,8 +419,9 @@ MonoBehaviour:
   battleData: {fileID: 11400000, guid: aa8933ad806a1ae45a878233eb41b6de, type: 2}
   spawnData: {fileID: 11400000, guid: 9f73d2dae5ba62d48b8dc0f5bdf0ac15, type: 2}
   randomManager: {fileID: 76147263}
-  normalEnemy: {fileID: 11400000, guid: ab2e2ed68ef3e6b459721c814197776a, type: 2}
   prepTurns: 3
+  Debug_SkipTurnTo: 20
+  Debug_FreeIron: 100
 --- !u!4 &889328403
 Transform:
   m_ObjectHideFlags: 0

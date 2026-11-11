@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e9c75c8224a31847909e762f3353a1c, type: 3}
+  m_Name: Charge
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  EnemyType: 3
+  Name: 
+  Sprite: {fileID: 0}
+  SpawnTurn: 199
+  Reward: 10
+  SpawnWeight: 1
+  Act: {fileID: 11400000, guid: c3663c5a794d08b4689f6ed9f79cfe91, type: 2}
+  isShieldAllowed: 0
+  BaseHealth: 20
+  Dmg: 15
+  Range: 2
+  MoveSpeed: 1
+  FleeCounter: 0
+  HealPercent: 0
