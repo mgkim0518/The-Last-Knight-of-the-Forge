@@ -10,6 +10,7 @@ public class Enemy
     public bool IsShielded;
     public bool IsAttackedLastTurn;
     public bool IsFirstAppearance = false;
+    public bool IsHavingFirstShield = false;
     public Enemy(EnemyData data, int hp)
     {
         Data = data;

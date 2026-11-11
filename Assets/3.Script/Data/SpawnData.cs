@@ -14,4 +14,5 @@ public class SpawnData : ScriptableObject
     public EnemyData[] EnemyPool;
     public float SpawnProb = 0.8f;
     public float ShieldProb = 0.3f;
+    public int FirstShieldTurn = 50;
 }

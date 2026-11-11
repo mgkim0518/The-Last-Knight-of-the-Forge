@@ -9,6 +9,8 @@ public class EnemySpawner
     private readonly BattleData foeData;
     private readonly HashSet<EnemyData> spawned = new HashSet<EnemyData>();
 
+    private bool isShieldDeployed = false;
+
     public EnemySpawner(SpawnData spawn, BattleData data, System.Random random)
     {
         this.spawn = spawn;
@@ -32,7 +34,7 @@ public class EnemySpawner
 
         if (e_Data != null)
         {
-            incoming = SpawnFromData(e_Data);
+            incoming = SpawnFromData(e_Data, spawnTurn);
             incoming.IsFirstAppearance = true;
             spawned.Add(e_Data);
             return incoming;
@@ -42,7 +44,7 @@ public class EnemySpawner
 
         if (e_Data != null)
         {
-            incoming = SpawnFromData(e_Data);
+            incoming = SpawnFromData(e_Data, spawnTurn);
             return incoming;
         }
 
@@ -50,7 +52,7 @@ public class EnemySpawner
     }
 
     private EnemyData CheckDefinite(int spawnTurn)
-    {
+    { 
         foreach (EnemyData e in spawn.EnemyPool)
         {
             if (spawned.Contains(e))
@@ -113,9 +115,24 @@ public class EnemySpawner
         return null;
     }
 
-    private Enemy SpawnFromData(EnemyData data)
+    private Enemy SpawnFromData(EnemyData data, int spawnTurn)
     {
         Enemy e = new Enemy(data, data.BaseHealth);
+
+        if (!isShieldDeployed && spawn.FirstShieldTurn <= spawnTurn)
+        {
+            e.IsShielded = true;
+            e.IsHavingFirstShield = true;
+            isShieldDeployed = true;
+        }
+        else if (isShieldDeployed)
+        {
+            if (rng.NextDouble() < spawn.ShieldProb)
+            {
+                e.IsShielded = true;
+            }
+        }
+
         return e;
     }
 }

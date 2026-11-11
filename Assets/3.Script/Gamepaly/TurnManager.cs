@@ -374,6 +374,11 @@ public class TurnManager : MonoBehaviour
             {
                 nextEnemy += " (첫 등장!)";
             }
+
+            if (state.NextEnemy.IsHavingFirstShield)
+            {
+                nextEnemy += " (방패 등장!)";
+            }
         }
 
         if (selected != null)
