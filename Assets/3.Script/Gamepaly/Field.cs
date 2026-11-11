@@ -7,15 +7,17 @@ public class Enemy
     public EnemyData Data;
     public readonly int MaxHP;
     public int HP;
+    public int Bounty;
     public bool IsShielded;
     public bool IsAttackedLastTurn;
     public bool IsFirstAppearance = false;
     public bool IsHavingFirstShield = false;
-    public Enemy(EnemyData data, int hp)
+    public Enemy(EnemyData data, int hp, int reward)
     {
         Data = data;
         MaxHP = hp;
         HP = hp;
+        Bounty = reward;
     }
 
     public void Damaged(int damage)

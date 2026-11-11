@@ -45,7 +45,7 @@ public class GameState
         Calc = new WeaponStatCalculator(battleData, playData, Forge);
         
         PrepTurns = prepTurns;
-        Spawner = new EnemySpawner(spawn, battleData, Rng);
+        Spawner = new EnemySpawner(this);
         NextEnemy = CreateNextEnemy();
     }
 
@@ -180,7 +180,7 @@ public class GameState
 
         foreach (Enemy e in casualty)
         {
-            bounty += e.Data.Reward;
+            bounty += e.Bounty;
         }
 
         AddIron(bounty);

@@ -4,18 +4,22 @@ using UnityEngine;
 
 public class EnemySpawner
 {
+    private readonly GameState state;
     private readonly System.Random rng;
     private readonly SpawnData spawn;
     private readonly BattleData foeData;
+    private readonly EconomyData playData;
     private readonly HashSet<EnemyData> spawned = new HashSet<EnemyData>();
 
     private bool isShieldDeployed = false;
 
-    public EnemySpawner(SpawnData spawn, BattleData data, System.Random random)
+    public EnemySpawner(GameState gamestate)
     {
-        this.spawn = spawn;
-        foeData = data;
-        rng = random;
+        state = gamestate;
+        spawn = gamestate.Spawn;
+        foeData = gamestate.BattleData;
+        playData = gamestate.PlayData;        
+        rng = gamestate.Rng;
 
         foreach (EnemyData e in spawn.EnemyPool)
         {
@@ -117,7 +121,12 @@ public class EnemySpawner
 
     private Enemy SpawnFromData(EnemyData data, int spawnTurn)
     {
-        Enemy e = new Enemy(data, data.BaseHealth);
+        int startTurn = spawnTurn - state.PrepTurns - 1;
+        float healthMul = Mathf.Max(1, foeData.EnemyHealthCurve.Evaluate(startTurn));
+        float bountyMul = Mathf.Max(1, playData.EnemyBountyCurve.Evaluate(startTurn));
+
+        Enemy e = new Enemy(data, Mathf.RoundToInt(data.BaseHealth*healthMul)
+            , Mathf.RoundToInt(data.Reward * bountyMul));
 
         if (!isShieldDeployed && spawn.FirstShieldTurn <= spawnTurn)
         {

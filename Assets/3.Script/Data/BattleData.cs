@@ -17,7 +17,7 @@ public class BattleData : ScriptableObject
 
     [Header("적")]
     [Tooltip("x = 턴, y = 체력 배율")]
-    public AnimationCurve EnemyHealthCurve = AnimationCurve.Linear(0, 1, 100, 10);
+    public AnimationCurve EnemyHealthCurve = AnimationCurve.Linear(0, 1, 200, 20);
 
     public int GetCap(CapTier tier) => tier switch
     {

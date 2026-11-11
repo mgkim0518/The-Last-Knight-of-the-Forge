@@ -27,6 +27,7 @@ public class EconomyData : ScriptableObject
     public int SmeltValue_Long = 5;              
     public int WeightSkipReward = 3;
     public int StartIron = 10;
+    public AnimationCurve EnemyBountyCurve = AnimationCurve.Linear(0, 1, 200, 20);
     public int GetMeltValue(Weapon weapon)
     {
         switch (weapon.Data.CapTier)
