@@ -7,12 +7,32 @@ public class HealerEnemyAct: BaseEnemyAct
     {
         Enemy self = cells[pos];
 
+        if (self.IsGonnaRun)
+        {
+            if (self.FleeCounter <= 0)
+                return new EnemyAction
+                {
+                    Cell = pos,
+                    E_Action = EnemyBehav.Flee,
+                    Dest = pos
+                };
+            else
+            {
+                return new EnemyAction
+                {
+                    Cell = pos,
+                    E_Action = EnemyBehav.DecidedFleeing,
+                    Dest = pos
+                };
+            }
+        }
+
         if (pos.Equals(0))
         {
             return new EnemyAction
             {
                 Cell = pos,
-                E_Action = EnemyBehav.Wait,
+                E_Action = EnemyBehav.DecidedFleeing,
                 Dest = pos
             };
         }

@@ -12,6 +12,8 @@ public class Enemy
     public bool IsAttackedLastTurn;
     public bool IsFirstAppearance = false;
     public bool IsHavingFirstShield = false;
+    public bool IsGonnaRun = false;
+    public int FleeCounter { get; private set; } = 0;
     public Enemy(EnemyData data, int hp, int reward)
     {
         Data = data;
@@ -50,6 +52,29 @@ public class Enemy
 
     public bool IsInRange(int index) => index < Data.Range;
     //index 0 = 기획서 1번 칸
+    public void WillFlee()
+    {
+        if (Data.FleeCounter <= 0)
+        {
+            return;
+        }
+
+        if (IsGonnaRun)
+        {
+            return;
+        }
+
+        IsGonnaRun = true;
+        FleeCounter = Data.FleeCounter;
+    }
+
+    public void FleeAt()
+    {
+        if (IsGonnaRun && FleeCounter > 0)
+        {
+            FleeCounter--;
+        }
+    }
 }
 
 public class Field
@@ -90,6 +115,10 @@ public class Field
                 currentField[act.Dest] = currentField[act.Cell];
                 currentField[act.Cell] = null;
             }
+            else if (act.E_Action.Equals(EnemyBehav.Flee))
+            {
+                currentField[act.Cell] = null;
+            }
         }
         return nextMove;
     }
@@ -119,6 +148,13 @@ public class Field
                     break;
                 case EnemyBehav.Wait:
                     break;
+                case EnemyBehav.DecidedFleeing:
+                    e.FleeAt();
+                    e.WillFlee();
+                    break;
+                case EnemyBehav.Flee:
+                    cells[act.Cell] = null;
+                    break;
             }
         }
 
@@ -141,6 +177,9 @@ public class Field
                     break;
                 case EnemyBehav.Heal:
                     value = cells[act.Dest].HealAmount(e.Data.HealPercent);
+                    break;
+                case EnemyBehav.DecidedFleeing:
+                    value = e.IsGonnaRun ? e.FleeCounter - 1 : e.Data.FleeCounter;
                     break;
             }
 

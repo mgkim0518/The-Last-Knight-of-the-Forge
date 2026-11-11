@@ -12,7 +12,9 @@ public enum EnemyBehav
     Move = 0,
     Attack = 1,
     Wait = 2, 
-    Heal = 3
+    Heal = 3,
+    DecidedFleeing = 4,
+    Flee = 5
 }
 
 [CreateAssetMenu(fileName = "EnemyData", menuName = "Scriptable Objects/EnemyData")]
@@ -34,6 +36,7 @@ public class EnemyData : ScriptableObject
     public int Dmg;
     public int Range;
     public int MoveSpeed;
+    public int FleeCounter = 0;
 
     [Header("특수")]
     [Range(0f, 1f)] public float HealPercent;

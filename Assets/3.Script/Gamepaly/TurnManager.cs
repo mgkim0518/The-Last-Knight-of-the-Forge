@@ -573,10 +573,24 @@ public class TurnManager : MonoBehaviour
         {
             switch (act.Behav)
             {
-                case EnemyBehav.Attack: marks[act.Pos] = $"!{act.ChangeVal}"; break;
-                case EnemyBehav.Move: marks[act.Pos] = "←"; break;
-                case EnemyBehav.Heal: marks[act.Pos] = $"+{act.ChangeVal}←"; break;
-                case EnemyBehav.Wait: marks[act.Pos] = "…"; break;
+                case EnemyBehav.Attack: 
+                    marks[act.Pos] = $"!{act.ChangeVal}";
+                    break;
+                case EnemyBehav.Move: 
+                    marks[act.Pos] = "←"; 
+                    break;
+                case EnemyBehav.Heal: 
+                    marks[act.Pos] = $"←+{act.ChangeVal}";
+                    break;
+                case EnemyBehav.Wait: 
+                    marks[act.Pos] = "…"; 
+                    break;
+                case EnemyBehav.DecidedFleeing:
+                    marks[act.Pos] = $"→{act.ChangeVal}";
+                    break;
+                case EnemyBehav.Flee:
+                    marks[act.Pos] = "→!";
+                    break;
             }
         }
 

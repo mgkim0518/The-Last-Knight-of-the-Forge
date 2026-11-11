@@ -23,4 +23,5 @@ MonoBehaviour:
   Dmg: 5
   Range: 2
   MoveSpeed: 1
+  FleeCounter: 0
   HealPercent: 0
