@@ -20,12 +20,12 @@ public class GameState
     public Forge Forge { get; private set; }
 
     public Field Field { get; } = new Field();
+    public EnemySpawner Spawner { get; private set; }
     public Enemy NextEnemy { get; private set; }
     public int PrepTurns;
 
     public event Action<int> OnIronChanged;
 
-    private EnemySpawner Spawner;
 
     public GameState(int seed, EconomyData playData, SpawnData spawn, 
         int prepTurns, BattleData battleData)

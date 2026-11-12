@@ -15,10 +15,10 @@ MonoBehaviour:
   EnemyType: 3
   Name: 
   Sprite: {fileID: 0}
-  SpawnTurn: 199
+  SpawnTurn: 15
   Reward: 10
   SpawnWeight: 1
-  Act: {fileID: 11400000, guid: c3663c5a794d08b4689f6ed9f79cfe91, type: 2}
+  Act: {fileID: 11400000, guid: 648540ddb00d12949b765191c7893a0a, type: 2}
   isShieldAllowed: 0
   BaseHealth: 20
   Dmg: 15

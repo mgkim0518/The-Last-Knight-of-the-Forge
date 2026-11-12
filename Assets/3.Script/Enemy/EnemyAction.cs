@@ -9,6 +9,7 @@ public struct EnemyAction
 
 public struct EnemyAttack //적의 공격
 {
+    public Enemy Enemy;
     public int Cell;
     public int Damage;
 }

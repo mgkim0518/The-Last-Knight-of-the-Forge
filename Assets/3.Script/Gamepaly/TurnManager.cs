@@ -298,8 +298,9 @@ public class TurnManager : MonoBehaviour
             Debug.Log("슬롯이 가득 차 무기 소멸");
         }
         Debug.Log("적 행동");
-        List<HitResult> validHits = state.Player.PredictHit(state.Field.ActAll
-            (state.Field.PlanAction()));
+        List<EnemyAttack> attacks = state.Field.ActAll(state.Field.PlanAction());
+        state.Spawner.CheckBlocked(attacks);
+        List<HitResult> validHits = state.Player.PredictHit(attacks);
         state.Player.TakeHit(validHits);
         lastHitTexts = ShowHits(validHits); //GUI에 넘기기
         if (state.Player.IsDead)
@@ -691,6 +692,9 @@ public class TurnManager : MonoBehaviour
                 break;
             case EnemyType.Heal:
                 type = 'H';
+                break;
+            case EnemyType.Charge:
+                type = 'C';
                 break;
         }
 

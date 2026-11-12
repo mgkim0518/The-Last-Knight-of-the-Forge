@@ -12,6 +12,7 @@ public class EnemySpawner
     private readonly HashSet<EnemyData> spawned = new HashSet<EnemyData>();
 
     private bool isShieldDeployed = false;
+    private int blockedCounter = 0;
 
     public EnemySpawner(GameState gamestate)
     {
@@ -128,7 +129,7 @@ public class EnemySpawner
         Enemy e = new Enemy(data, Mathf.RoundToInt(data.BaseHealth*healthMul)
             , Mathf.RoundToInt(data.Reward * bountyMul));
 
-        if (!isShieldDeployed && spawn.FirstShieldTurn <= spawnTurn)
+        if (!isShieldDeployed && !e.Data.isShieldAllowed && spawn.FirstShieldTurn <= spawnTurn)
         {
             e.IsShielded = true;
             e.IsHavingFirstShield = true;
@@ -143,5 +144,45 @@ public class EnemySpawner
         }
 
         return e;
+    }
+
+    public void CheckBlocked(List<EnemyAttack> attacks)
+    {
+        bool isRangedAttacked = false;
+
+        for (int i = 0; i < Field.Size; i++)
+        {
+            if (state.Field.Get(i) == null)
+            {
+                continue;
+            }
+            else if (state.Field.Get(i).Data.EnemyType.Equals(EnemyType.Charge))
+            {
+                blockedCounter = 0;
+                return;
+            }
+        }
+
+        foreach (EnemyAttack a in attacks)
+        {
+            if (!a.Enemy.Data.EnemyType.Equals(EnemyType.Ranged))
+            {
+                blockedCounter = 0;
+                return;
+            }
+            else
+            {
+                isRangedAttacked = true;
+            }
+        }
+
+        if (isRangedAttacked)
+        {
+            blockedCounter++;
+        }
+        else
+        {
+            blockedCounter = 0;
+        }
     }
 }

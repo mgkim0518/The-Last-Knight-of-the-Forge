@@ -113,8 +113,9 @@ public class Field
             nextMove.Add(act);
             if (act.E_Action.Equals(EnemyBehav.Move))
             {
+                Enemy change = currentField[act.Dest];
                 currentField[act.Dest] = currentField[act.Cell];
-                currentField[act.Cell] = null;
+                currentField[act.Cell] = change;
             }
             else if (act.E_Action.Equals(EnemyBehav.Flee))
             {
@@ -137,12 +138,13 @@ public class Field
             {
                 case EnemyBehav.Move:
                     cells[act.Dest] = e;
-                    cells[act.Cell] = null;
+                    cells[act.Cell] = target;
                     e.IsAttackedLastTurn = false;
                     break;
                 case EnemyBehav.Attack:
-                    attacks.Add(new EnemyAttack { Cell = act.Cell, Damage = e.Data.Dmg });
+                    attacks.Add(new EnemyAttack { Enemy = e, Cell = act.Cell, Damage = e.Data.Dmg });
                     e.IsAttackedLastTurn = true;
+                    e.IsLoaded = false;
                     break;
                 case EnemyBehav.Heal:
                     target.Healed(target.HealAmount(e.Data.HealPercent));
@@ -157,6 +159,7 @@ public class Field
                     cells[act.Cell] = null;
                     break;
                 case EnemyBehav.Charging:
+                    e.IsAttackedLastTurn = false;
                     e.IsLoaded = true;
                     break;
             }
