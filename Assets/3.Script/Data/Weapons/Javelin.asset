@@ -15,6 +15,7 @@ MonoBehaviour:
   WeaponName: "\uD22C\uCC3D"
   Icon: {fileID: 0}
   Target: 1
+  Reloc: 0
   BasePower: 3
   BaseAmount: 1
   ChargeType: 0

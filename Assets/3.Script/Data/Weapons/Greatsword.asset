@@ -15,10 +15,11 @@ MonoBehaviour:
   WeaponName: "\uB300\uAC80"
   Icon: {fileID: 0}
   Target: 0
+  Reloc: 0
   BasePower: 2
-  BaseAmount: 1
+  BaseAmount: 2
   ChargeType: 0
-  CapTier: 2
+  CapTier: 1
   ValueTier: 1
   UpgradeType: 1
   SpawnWeight: 2

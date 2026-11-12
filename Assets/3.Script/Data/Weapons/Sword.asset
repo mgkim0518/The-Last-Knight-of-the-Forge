@@ -15,6 +15,7 @@ MonoBehaviour:
   WeaponName: "\uAE30\uBCF8 \uAC80"
   Icon: {fileID: 0}
   Target: 0
+  Reloc: 0
   BasePower: 3
   BaseAmount: 1
   ChargeType: 0

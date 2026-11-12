@@ -26,6 +26,7 @@ public class GameState
 
     public event Action<int> OnIronChanged;
 
+    private Dictionary<WeaponData, int> weaponGenWeights = new Dictionary<WeaponData, int>();
 
     public GameState(int seed, EconomyData playData, SpawnData spawn, 
         int prepTurns, BattleData battleData)
@@ -37,6 +38,10 @@ public class GameState
         Turn = 1;
         Spawn = spawn;
         
+        foreach (WeaponData w in Spawn.WeaponPool)
+        {
+            weaponGenWeights[w] = w.SpawnWeight;
+        }
         Inventory = new Weapon[playData.StartSlots];
         NextWeapon = CreateRandomWeapon();
         MeltLeft = playData.FurnaceCap;
@@ -77,7 +82,34 @@ public class GameState
 
     public Weapon CreateRandomWeapon()
     {
-        WeaponData data = Spawn.WeaponPool[Rng.Next(Spawn.WeaponPool.Length)];
+        int weightSum = 0;
+        WeaponData data = null;
+
+        foreach (WeaponData w in Spawn.WeaponPool)
+        {
+            weightSum += weaponGenWeights[w];
+        }
+
+        if (weightSum <= 0)
+        {
+            Debug.LogWarning("만들 무기가 없습니다.");
+            return null;
+        }
+
+        int weaponIndex = Rng.Next(weightSum);
+
+        int cumulative = 0;
+
+        foreach (WeaponData w in Spawn.WeaponPool)
+        {
+            cumulative += weaponGenWeights[w];
+            if (weaponIndex < cumulative)
+            {
+                data = w;
+                break;
+            }
+        }
+
         return new Weapon(data);
     }
 

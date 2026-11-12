@@ -15,6 +15,7 @@ MonoBehaviour:
   WeaponName: "\uC11D\uAD81"
   Icon: {fileID: 0}
   Target: 2
+  Reloc: 0
   BasePower: 1
   BaseAmount: 1
   ChargeType: 0
