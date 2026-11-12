@@ -265,4 +265,12 @@ public class Field
 
         cells[0] = e_pulled;
     }
+
+    public Enemy BreakThrough(Enemy enemy)
+    {
+        Enemy pushedOut = cells[Size - 1];
+        cells[Size - 1] = enemy;
+
+        return pushedOut;
+    }
 }

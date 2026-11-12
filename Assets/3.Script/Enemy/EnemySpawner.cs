@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class EnemySpawner
 {
+    public int blockedCounter { get; private set; } = 0;
+
     private readonly GameState state;
     private readonly System.Random rng;
     private readonly SpawnData spawn;
@@ -12,7 +14,7 @@ public class EnemySpawner
     private readonly HashSet<EnemyData> spawned = new HashSet<EnemyData>();
 
     private bool isShieldDeployed = false;
-    private int blockedCounter = 0;
+    private EnemyData chargerData;
 
     public EnemySpawner(GameState gamestate)
     {
@@ -24,16 +26,31 @@ public class EnemySpawner
 
         foreach (EnemyData e in spawn.EnemyPool)
         {
+            if (e.EnemyType == EnemyType.Charge)
+            {
+                chargerData = e;
+            }
+
             if (e.SpawnTurn <= 0)
             {
                 spawned.Add(e);
             }
         }
+
+        if (chargerData == null)
+        {
+            Debug.LogWarning("기 모으는 적이 적 목록에 없습니다.");
+        }
     }
 
     public Enemy CreateEnemy(int spawnTurn)
     {
-        Enemy incoming = null;
+        Enemy incoming = BlockBuster(spawnTurn);
+
+        if (incoming != null)
+        {
+            return incoming;
+        }
 
         EnemyData e_Data = CheckDefinite(spawnTurn);
 
@@ -81,11 +98,18 @@ public class EnemySpawner
             return null;
         }
 
-        int weightSum = 0;
+        bool isChargerExisting = ChargeE_onField();
+
+        int weightSum = 0;       
 
         foreach (EnemyData e in spawn.EnemyPool)
         {
             if (!spawned.Contains(e))
+            {
+                continue;
+            }
+
+            if (e.EnemyType.Equals(EnemyType.Charge) && isChargerExisting)
             {
                 continue;
             }
@@ -105,6 +129,11 @@ public class EnemySpawner
         foreach (EnemyData e in spawn.EnemyPool)
         {
             if (!spawned.Contains(e))
+            {
+                continue;
+            }
+
+            if (e.EnemyType.Equals(EnemyType.Charge) && isChargerExisting)
             {
                 continue;
             }
@@ -129,13 +158,13 @@ public class EnemySpawner
         Enemy e = new Enemy(data, Mathf.RoundToInt(data.BaseHealth*healthMul)
             , Mathf.RoundToInt(data.Reward * bountyMul));
 
-        if (!isShieldDeployed && !e.Data.isShieldAllowed && spawn.FirstShieldTurn <= spawnTurn)
+        if (!isShieldDeployed && e.Data.IsShieldAllowed && spawn.FirstShieldTurn <= spawnTurn)
         {
             e.IsShielded = true;
             e.IsHavingFirstShield = true;
             isShieldDeployed = true;
         }
-        else if (isShieldDeployed)
+        else if (isShieldDeployed && e.Data.IsShieldAllowed)
         {
             if (rng.NextDouble() < spawn.ShieldProb)
             {
@@ -150,17 +179,10 @@ public class EnemySpawner
     {
         bool isRangedAttacked = false;
 
-        for (int i = 0; i < Field.Size; i++)
+        if (ChargeE_onField())
         {
-            if (state.Field.Get(i) == null)
-            {
-                continue;
-            }
-            else if (state.Field.Get(i).Data.EnemyType.Equals(EnemyType.Charge))
-            {
-                blockedCounter = 0;
-                return;
-            }
+            blockedCounter = 0;
+            return;
         }
 
         foreach (EnemyAttack a in attacks)
@@ -184,5 +206,48 @@ public class EnemySpawner
         {
             blockedCounter = 0;
         }
+
+        Debug.Log($"막힘 카운터: {blockedCounter}");
+    }
+
+    public bool ChargeE_onField()
+    {
+        for (int i = 0; i < Field.Size; i++)
+        {
+            if (state.Field.Get(i) == null)
+            {
+                continue;
+            }
+            else if (state.Field.Get(i).Data.EnemyType.Equals(EnemyType.Charge))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public Enemy BlockBuster(int spawnTurn)
+    {
+        if (chargerData == null)
+        {
+            Debug.LogWarning("기 모으는 적이 적 목록에 없습니다.");
+            return null;
+        }
+
+        if (blockedCounter >= spawn.BlockBusterDeploy && !ChargeE_onField())
+        {
+            Enemy chargeE = SpawnFromData(chargerData, spawnTurn);
+
+            if (!spawned.Contains(chargerData))
+            {
+                chargeE.IsFirstAppearance = true;
+                spawned.Add(chargerData);
+            }
+
+            return chargeE;
+        }
+
+        return null;
     }
 }

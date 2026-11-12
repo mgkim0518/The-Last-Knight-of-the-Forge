@@ -15,11 +15,11 @@ MonoBehaviour:
   EnemyType: 1
   Name: "\uBCF4\uD589 \uB4DC\uB860"
   Sprite: {fileID: 0}
-  SpawnTurn: 10
+  SpawnTurn: 15
   Reward: 5
   SpawnWeight: 8
   Act: {fileID: 11400000, guid: d9811b0fc2ba4954ba0222122e595594, type: 2}
-  isShieldAllowed: 1
+  IsShieldAllowed: 1
   BaseHealth: 8
   Dmg: 3
   Range: 4

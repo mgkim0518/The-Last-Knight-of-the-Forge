@@ -162,8 +162,25 @@ public class GameState
     }
 
     public void TrySpawnEnemy()
-    { 
-        if (!Field.IsEntranceFree) return;
+    {
+        if (!Field.IsEntranceFree)
+        {
+            if (NextEnemy != null && NextEnemy.Data.EnemyType.Equals(EnemyType.Charge))
+            {
+                NextEnemy = Field.BreakThrough(NextEnemy);
+            }
+            else
+            {
+                Enemy chargeE = Spawner.BlockBuster(Turn + 1);
+
+                if (chargeE != null)
+                {
+                    NextEnemy = chargeE;
+                }
+            }
+            
+            return;
+        }
 
         if (NextEnemy != null)
         {

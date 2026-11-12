@@ -15,4 +15,5 @@ public class SpawnData : ScriptableObject
     public float SpawnProb = 0.8f;
     public float ShieldProb = 0.3f;
     public int FirstShieldTurn = 50;
+    public int BlockBusterDeploy = 5;
 }

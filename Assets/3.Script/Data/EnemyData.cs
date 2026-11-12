@@ -32,7 +32,7 @@ public class EnemyData : ScriptableObject
     public int Reward;
     public int SpawnWeight = 10;
     public BaseEnemyAct Act;
-    public bool isShieldAllowed = true;
+    public bool IsShieldAllowed = true;
 
     [Header("전투")]
     public int BaseHealth;
