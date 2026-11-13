@@ -18,7 +18,6 @@ public class GameState
     public int MeltLeft;
     public int Iron { get; private set; }
     public Forge Forge { get; private set; }
-    public List<WeaponData> WeaponSelections { get; private set; } = new List<WeaponData>();
 
     public Field Field { get; } = new Field();
     public EnemySpawner Spawner { get; private set; }
@@ -27,7 +26,10 @@ public class GameState
 
     public event Action<int> OnIronChanged;
 
+    private readonly List<WeaponData> weaponSelections = new List<WeaponData>();
     private Dictionary<WeaponData, int> weaponGenWeights = new Dictionary<WeaponData, int>();
+
+    public IReadOnlyList<WeaponData> WeaponSelections => weaponSelections;
 
     public GameState(int seed, EconomyData playData, SpawnData spawn,
         int prepTurns, BattleData battleData)
@@ -49,7 +51,6 @@ public class GameState
         Iron = playData.StartIron;
         Forge = new Forge(this);
         Calc = new WeaponStatCalculator(battleData, playData, Forge);
-        WeaponSelections.Clear();
 
         PrepTurns = prepTurns;
         Spawner = new EnemySpawner(this);
@@ -188,6 +189,7 @@ public class GameState
 
     public void CreateWeaponChoice()
     {
+        weaponSelections.Clear();
         List<WeaponData> weaponList = new List<WeaponData>();
 
         foreach (WeaponData w in Spawn.WeaponPool)
@@ -198,17 +200,14 @@ public class GameState
             }
         }
 
-        List<WeaponData> weaponSelec = new List<WeaponData>();
         int count = Mathf.Min(Spawn.ChoiceCount, weaponList.Count);
 
         for (int i = 0; i < count; i++)
         {
             int selecIndex = Rng.Next(weaponList.Count);
-            weaponSelec.Add(weaponList[selecIndex]);
+            weaponSelections.Add(weaponList[selecIndex]);
             weaponList.RemoveAt(selecIndex);
         }
-
-        WeaponSelections = weaponSelec;
     }
 
     public bool ChooseWeightUp(int index)
@@ -225,7 +224,7 @@ public class GameState
         {
             weaponGenWeights[w] = Spawn.MaxSpawnWeight;
         }
-        WeaponSelections.Clear();
+        weaponSelections.Clear();
         return true;
     }
 
@@ -239,6 +238,18 @@ public class GameState
         }
 
         return weights;
+    }
+
+    public bool SkipWeightChoice()
+    {
+        if (weaponSelections.Count.Equals(0))
+        {
+            return false;
+        }
+
+        AddIron(PlayData.WeightSkipReward);
+        weaponSelections.Clear();
+        return true;
     }
 
     public Enemy CreateNextEnemy()

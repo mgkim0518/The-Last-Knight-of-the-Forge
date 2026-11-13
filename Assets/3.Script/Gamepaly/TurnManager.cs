@@ -364,6 +364,17 @@ public class TurnManager : MonoBehaviour
         return false;
     }
 
+    public bool SkipWeightInc()
+    {
+        if (state.SkipWeightChoice())
+        {
+            OnWeightChoiceClose?.Invoke();
+            return true;
+        }
+
+        return false;
+    }
+
     private void EndTurn()
     {
         if (!state.ReceiveNextWeapon())
@@ -617,11 +628,13 @@ public class TurnManager : MonoBehaviour
         GUILayout.Label($"용광로 {state.MeltLeft} / {state.PlayData.FurnaceCap}");
 
         bool rest = GUILayout.Button("쉬기");
+
+        GUI.enabled = selected == null;
         bool debug_skipturn = GUILayout.Button($"{Debug_SkipTurnTo}턴으로 이동");
         bool debug_addIron = GUILayout.Button($"철괴 {Debug_FreeIron}개");
         GUI.enabled = true;
         GUILayout.EndArea();
-        int w_choice = ChoiceButton();
+        int w_choice = ChoiceButton(out bool isSkipped);
 
         if (clickedCell != -1) SelectTarget(clickedCell);
         else if (isCancelled) CancelTargetSelect();
@@ -637,6 +650,7 @@ public class TurnManager : MonoBehaviour
         else if (forExpand) TryExpand();
         else if (debug_addIron) state.AddIron(Debug_FreeIron);
         else if (w_choice != -1) ChooseWeightInc(w_choice);
+        else if (isSkipped) SkipWeightInc();
     }
 
     private string FieldToString(Field field, List<int> highlight, List<NextAction> next)
@@ -782,8 +796,10 @@ public class TurnManager : MonoBehaviour
         return $"{type}{enemy.HP}{shield}{charge}";
     }
 
-    private int ChoiceButton()
+    private int ChoiceButton(out bool isSkipped)
     {
+        isSkipped = false;
+
         if (!IsInputBlocked)
         {
             return -1;
@@ -808,6 +824,11 @@ public class TurnManager : MonoBehaviour
             {
                 clickedIndex = i;
             }
+        }
+
+        if (GUILayout.Button($"건너뛰기 (철괴 +{economyData.WeightSkipReward})"))
+        {
+            isSkipped = true;
         }
 
         GUILayout.EndArea();
