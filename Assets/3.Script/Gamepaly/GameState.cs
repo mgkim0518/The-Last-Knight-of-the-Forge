@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameState 
+public class GameState
 {
     public readonly System.Random Rng;
     public EconomyData PlayData { get; private set; }
@@ -18,6 +18,7 @@ public class GameState
     public int MeltLeft;
     public int Iron { get; private set; }
     public Forge Forge { get; private set; }
+    public List<WeaponData> WeaponSelections { get; private set; } = new List<WeaponData>();
 
     public Field Field { get; } = new Field();
     public EnemySpawner Spawner { get; private set; }
@@ -28,7 +29,7 @@ public class GameState
 
     private Dictionary<WeaponData, int> weaponGenWeights = new Dictionary<WeaponData, int>();
 
-    public GameState(int seed, EconomyData playData, SpawnData spawn, 
+    public GameState(int seed, EconomyData playData, SpawnData spawn,
         int prepTurns, BattleData battleData)
     {
         Rng = new System.Random(seed);
@@ -37,7 +38,7 @@ public class GameState
         BattleData = battleData;
         Turn = 1;
         Spawn = spawn;
-        
+
         foreach (WeaponData w in Spawn.WeaponPool)
         {
             weaponGenWeights[w] = w.SpawnWeight;
@@ -48,7 +49,8 @@ public class GameState
         Iron = playData.StartIron;
         Forge = new Forge(this);
         Calc = new WeaponStatCalculator(battleData, playData, Forge);
-        
+        WeaponSelections.Clear();
+
         PrepTurns = prepTurns;
         Spawner = new EnemySpawner(this);
         NextEnemy = CreateNextEnemy();
@@ -117,7 +119,7 @@ public class GameState
     {
         bool added = true;
 
-        if (NextWeapon != null) 
+        if (NextWeapon != null)
         {
             added = AddWeapon(NextWeapon);
         }
@@ -182,6 +184,61 @@ public class GameState
         Iron -= useVal;
         OnIronChanged?.Invoke(Iron);
         return true;
+    }
+
+    public void CreateWeaponChoice()
+    {
+        List<WeaponData> weaponList = new List<WeaponData>();
+
+        foreach (WeaponData w in Spawn.WeaponPool)
+        {
+            if (weaponGenWeights[w] < Spawn.MaxSpawnWeight)
+            {
+                weaponList.Add(w);
+            }
+        }
+
+        List<WeaponData> weaponSelec = new List<WeaponData>();
+        int count = Mathf.Min(Spawn.ChoiceCount, weaponList.Count);
+
+        for (int i = 0; i < count; i++)
+        {
+            int selecIndex = Rng.Next(weaponList.Count);
+            weaponSelec.Add(weaponList[selecIndex]);
+            weaponList.RemoveAt(selecIndex);
+        }
+
+        WeaponSelections = weaponSelec;
+    }
+
+    public bool ChooseWeightUp(int index)
+    {
+        if (index < 0 || index >= WeaponSelections.Count)
+        {
+            return false;
+        }
+
+        WeaponData w = WeaponSelections[index];
+
+        weaponGenWeights[w] += Spawn.WeightIncrease;
+        if (weaponGenWeights[w] >= Spawn.MaxSpawnWeight)
+        {
+            weaponGenWeights[w] = Spawn.MaxSpawnWeight;
+        }
+        WeaponSelections.Clear();
+        return true;
+    }
+
+    public List<int> GetChoiceWeights()
+    {
+        List<int> weights = new List<int>();
+
+        foreach (WeaponData w in WeaponSelections)
+        {
+            weights.Add(weaponGenWeights[w]);
+        }
+
+        return weights;
     }
 
     public Enemy CreateNextEnemy()

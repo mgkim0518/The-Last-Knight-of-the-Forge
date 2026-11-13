@@ -17,6 +17,10 @@ public class TurnManager : MonoBehaviour
     public event Action OnChoiceFinished;
     public event Action<Weapon> OnMelting;
     public event Action<int> OnCurrencyChange;
+    public event Action<IReadOnlyList<WeaponData>> OnWeightChoiceOpen;
+    public event Action OnWeightChoiceClose;
+
+    public bool IsInputBlocked => state != null && state.WeaponSelections.Count > 0;
 
     private GameState state;
     private int turn_survived = 0;
@@ -53,6 +57,11 @@ public class TurnManager : MonoBehaviour
 
     public void SelectWeapon(Weapon weapon)
     {
+        if (IsInputBlocked)
+        {
+            return;
+        }
+
         if (weapon == null)
         {
             return;
@@ -91,6 +100,11 @@ public class TurnManager : MonoBehaviour
 
     public bool UseWeapon(Weapon weapon, int enemyCell = -1)
     {
+        if (IsInputBlocked)
+        {
+            return false ;
+        }
+
         if (weapon == null)
         {
             Debug.LogWarning("빈 무기가 들어왔습니다");
@@ -231,6 +245,11 @@ public class TurnManager : MonoBehaviour
 
     public void Rest()
     {
+        if (IsInputBlocked)
+        {
+            return;
+        }
+
         foreach (Weapon w in state.Inventory)
         {
             if (w == null) continue;
@@ -245,6 +264,11 @@ public class TurnManager : MonoBehaviour
 
     public bool TryMelt(Weapon weapon)
     {
+        if (IsInputBlocked)
+        {
+            return false;
+        }
+
         if (selected != null)
         {
             return false;
@@ -262,6 +286,11 @@ public class TurnManager : MonoBehaviour
 
     public bool TryUpgrade(WeaponData data)
     {
+        if (IsInputBlocked)
+        {
+            return false;
+        }
+
         if (selected != null)
         {
             return false;
@@ -273,6 +302,11 @@ public class TurnManager : MonoBehaviour
 
     public bool TryHeal(int healTarget)
     {
+        if (IsInputBlocked)
+        {
+            return false;
+        }
+
         if (selected != null)
         {
             return false;
@@ -283,12 +317,51 @@ public class TurnManager : MonoBehaviour
 
     public bool TryExpand()
     {
+        if (IsInputBlocked)
+        {
+            return false;
+        }
+
         if (selected != null)
         {
             return false;
         }
 
         return state.Forge.PayToExpand();
+    }
+
+    private bool TryOpenChoice()
+    {
+        if (spawnData.UpWeightTurn <= 0)
+        {
+            return false;
+        }
+
+        if (state.Turn % spawnData.UpWeightTurn != 0)
+        {
+            return false;
+        }
+
+        state.CreateWeaponChoice();
+
+        if (state.WeaponSelections.Count.Equals(0))
+        {
+            return false;
+        }
+
+        OnWeightChoiceOpen?.Invoke(state.WeaponSelections);
+        return true;
+    }
+
+    public bool ChooseWeightInc(int index)
+    {
+        if (state.ChooseWeightUp(index))
+        {
+            OnWeightChoiceClose?.Invoke();
+            return true;
+        }
+
+        return false;
     }
 
     private void EndTurn()
@@ -312,6 +385,7 @@ public class TurnManager : MonoBehaviour
         Debug.Log("다음 턴 준비");
         state.NextTurn();
         state.TrySpawnEnemy();
+        TryOpenChoice();
     }
 
     private void ChangeIronValUI(int iron)
@@ -366,6 +440,7 @@ public class TurnManager : MonoBehaviour
         int clickedCell = -1;
         bool isCancelled = false;
         string nextEnemy = "없음";
+        bool canAct = selected == null && !IsInputBlocked;
 
         if (state.NextEnemy != null)
         {
@@ -445,7 +520,7 @@ public class TurnManager : MonoBehaviour
             GUI_LastHP = state.Player.HP;
         }
 
-        GUI.enabled = selected == null;
+        GUI.enabled = canAct;
         GUI_HealTo = Mathf.RoundToInt(GUILayout.HorizontalSlider
             (GUI_HealTo, 0, Player.MaxHP, GUILayout.Width(200)));
         GUI_HealTo = Mathf.Clamp(GUI_HealTo, state.Player.HP, Player.MaxHP);
@@ -460,14 +535,14 @@ public class TurnManager : MonoBehaviour
             $" · {healPrice} 철괴");
         GUI.contentColor = prevColor;
 
-        GUI.enabled = selected == null && state.Forge.CheckHealable(GUI_HealTo);
+        GUI.enabled = canAct && state.Forge.CheckHealable(GUI_HealTo);
 
         if (GUILayout.Button("회복", GUILayout.Width(80)))
         {
             forHeal = true;
         }
 
-        GUI.enabled = selected == null;
+        GUI.enabled = canAct;
 
         GUILayout.EndHorizontal();
 
@@ -475,7 +550,7 @@ public class TurnManager : MonoBehaviour
         foreach (string t in lastHitTexts)
             GUILayout.Label("  " + t);
 
-        GUI.enabled = selected == null;
+        GUI.enabled = canAct;
         Weapon clicked = null;
         Weapon forMelt = null;
         WeaponData forUpgrade = null;
@@ -503,23 +578,23 @@ public class TurnManager : MonoBehaviour
             if (isRepaint && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
                 hovered = w;
 
-            GUI.enabled = selected == null && state.MeltLeft > 0;
+            GUI.enabled = canAct && state.MeltLeft > 0;
             if (GUILayout.Button($"녹이기 +{economyData.GetMeltValue(w)}",
                 GUILayout.Width(80), GUILayout.Height(40)))
                 forMelt = w;
 
             int nextLevel = state.Forge.GetUpgradeLevel(w.Data) + 1;
-            GUI.enabled = selected == null && state.Forge.CheckUpgradeable(w.Data, nextLevel);
+            GUI.enabled = canAct && state.Forge.CheckUpgradeable(w.Data, nextLevel);
             if (GUILayout.Button($"강화 {state.Forge.GetUpgradePrice(w.Data, nextLevel)}",
                 GUILayout.Width(80), GUILayout.Height(40)))
                 forUpgrade = w.Data;
 
-            GUI.enabled = selected == null;
+            GUI.enabled = canAct;
 
             GUILayout.EndHorizontal();
         }
 
-        GUI.enabled = selected == null && state.Forge.CheckExpandable();
+        GUI.enabled = canAct && state.Forge.CheckExpandable();
         if (GUILayout.Button($"슬롯 확장 {state.Forge.GetSlotPrice()}"))
         {
             forExpand = true;
@@ -530,12 +605,12 @@ public class TurnManager : MonoBehaviour
         string nextWeapon = state.NextWeapon != null ? state.NextWeapon.Data.WeaponName : "없음";
         GUILayout.Label($"다음: {nextWeapon}");
 
-        GUI.enabled = selected == null && state.MeltLeft > 0 && state.NextWeapon != null;
+        GUI.enabled = canAct && state.MeltLeft > 0 && state.NextWeapon != null;
         string meltVal = state.NextWeapon != null ? $" +{economyData.GetMeltValue(state.NextWeapon)}"
             : "";
         if (GUILayout.Button($"녹이기{meltVal}", GUILayout.Width(80)))
             forMelt = state.NextWeapon;
-        GUI.enabled = selected == null;
+        GUI.enabled = canAct;
 
         GUILayout.EndHorizontal();
 
@@ -546,6 +621,7 @@ public class TurnManager : MonoBehaviour
         bool debug_addIron = GUILayout.Button($"철괴 {Debug_FreeIron}개");
         GUI.enabled = true;
         GUILayout.EndArea();
+        int w_choice = ChoiceButton();
 
         if (clickedCell != -1) SelectTarget(clickedCell);
         else if (isCancelled) CancelTargetSelect();
@@ -560,6 +636,7 @@ public class TurnManager : MonoBehaviour
         else if (forHeal) TryHeal(GUI_HealTo);
         else if (forExpand) TryExpand();
         else if (debug_addIron) state.AddIron(Debug_FreeIron);
+        else if (w_choice != -1) ChooseWeightInc(w_choice);
     }
 
     private string FieldToString(Field field, List<int> highlight, List<NextAction> next)
@@ -703,5 +780,38 @@ public class TurnManager : MonoBehaviour
         string charge = enemy.IsLoaded ? "*" : string.Empty;
 
         return $"{type}{enemy.HP}{shield}{charge}";
+    }
+
+    private int ChoiceButton()
+    {
+        if (!IsInputBlocked)
+        {
+            return -1;
+        }
+
+        int clickedIndex = -1;
+        float width = 300f;
+        float height = 200f;
+        Rect area = new Rect((Screen.width - width) / 2f, (Screen.height - height) / 2f, width, height);
+
+        GUILayout.BeginArea(area, GUI.skin.box);
+        GUILayout.Label("등장 확률을 올릴 무기를 고르세요");
+
+        IReadOnlyList<WeaponData> choices = state.WeaponSelections;
+        List<int> weights = state.GetChoiceWeights();
+
+        for (int i = 0; i < choices.Count; i++)
+        {
+            int nextWeight = Mathf.Min(weights[i] + spawnData.WeightIncrease, spawnData.MaxSpawnWeight);
+
+            if (GUILayout.Button($"{choices[i].WeaponName} (가중치 {weights[i]} → {nextWeight})"))
+            {
+                clickedIndex = i;
+            }
+        }
+
+        GUILayout.EndArea();
+        return clickedIndex;
+
     }
 }

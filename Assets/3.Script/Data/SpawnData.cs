@@ -7,6 +7,7 @@ public class SpawnData : ScriptableObject
     [Header("무기")]
     public WeaponData[] WeaponPool;
     public int UpWeightTurn = 10;
+    public int ChoiceCount = 3;
     public int WeightIncrease = 1;
     public int MaxSpawnWeight = 20;
 
