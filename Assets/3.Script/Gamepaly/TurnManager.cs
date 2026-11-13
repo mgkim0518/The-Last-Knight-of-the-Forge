@@ -13,6 +13,7 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private int Debug_SkipTurnTo = 15;
     [SerializeField] private int Debug_FreeIron = 100;
 
+    public event Action OnStateChanged;
     public event Action<Weapon> OnTargetSelect;
     public event Action OnChoiceFinished;
     public event Action<Weapon> OnMelting;
@@ -26,19 +27,12 @@ public class TurnManager : MonoBehaviour
     private int turn_survived = 0;
     private Weapon selected;
     private Weapon hovered;   // 마우스를 올린 무기 (OnGUI 임시)
-    private int GUI_Iron;
     private int GUI_HealTo;
     private int GUI_LastHP;
 
     private void Start()
     {
-        OnCurrencyChange += iron => GUI_Iron = iron;
         StartNewGame();
-    }
-
-    private void OnDestroy()
-    {
-        state.OnIronChanged -= ChangeIronValUI;
     }
 
     private void StartNewGame()
@@ -53,6 +47,7 @@ public class TurnManager : MonoBehaviour
         state.OnIronChanged += ChangeIronValUI;
         OnCurrencyChange?.Invoke(state.Iron);
         lastHitTexts.Clear(); //GUI용 임시 코드
+        OnStateChanged?.Invoke();
     }
 
     public void SelectWeapon(Weapon weapon)
@@ -72,6 +67,7 @@ public class TurnManager : MonoBehaviour
         {
             selected = weapon;
             OnTargetSelect?.Invoke(weapon);
+            OnStateChanged?.Invoke();
         }
         else
         {
@@ -95,6 +91,7 @@ public class TurnManager : MonoBehaviour
     public void CancelTargetSelect()
     {
         selected = null;
+        OnStateChanged?.Invoke();
         OnChoiceFinished?.Invoke();
     }
 
@@ -244,6 +241,33 @@ public class TurnManager : MonoBehaviour
 
     }
 
+    public int ExpectedDamage()
+    {
+        List<NextAction> nextMove_E = state.Field.PredictAct(state.Field.PlanAction());
+
+        List<EnemyAttack> attacks = new List<EnemyAttack>();
+        foreach (NextAction act in nextMove_E)
+        {
+            if (act.Behav.Equals(EnemyBehav.Attack))
+            {
+                attacks.Add(new EnemyAttack { Cell = act.Pos, Damage = act.ChangeVal });
+            }
+        }
+
+        List<HitResult> validHits = state.Player.PredictHit(attacks);
+
+        int damage = 0;
+        foreach (HitResult r in validHits)
+        {
+            if (!r.Blocked)
+            {
+                damage += r.Damage;
+            }
+        }
+
+        return damage;
+    }
+
     public void Rest()
     {
         if (IsInputBlocked)
@@ -262,6 +286,8 @@ public class TurnManager : MonoBehaviour
         }
         EndTurn();
     }
+
+    #region TurnManager에서 다른 메소드 받는 영역
 
     public bool TryMelt(Weapon weapon)
     {
@@ -282,6 +308,7 @@ public class TurnManager : MonoBehaviour
 
         OnMelting?.Invoke(weapon);
         Debug.Log(weapon.Data.WeaponName + "을 녹였습니다.");
+        OnStateChanged?.Invoke();
         return true;
     }
 
@@ -298,7 +325,12 @@ public class TurnManager : MonoBehaviour
         }
 
         int nextLevel = state.Forge.GetUpgradeLevel(data) + 1;
-        return state.Forge.PaytoUpgrade(data, nextLevel);
+        bool isUpgraged = state.Forge.PaytoUpgrade(data, nextLevel);
+        if (isUpgraged)
+        {
+            OnStateChanged?.Invoke();
+        }
+        return isUpgraged;
     }
 
     public bool TryHeal(int healTarget)
@@ -313,7 +345,12 @@ public class TurnManager : MonoBehaviour
             return false;
         }
 
-        return state.Forge.PayToHeal(healTarget);
+        bool isHealed = state.Forge.PayToHeal(healTarget);
+        if (isHealed)
+        {
+            OnStateChanged?.Invoke();
+        }
+        return isHealed;
     }
 
     public bool TryExpand()
@@ -328,7 +365,12 @@ public class TurnManager : MonoBehaviour
             return false;
         }
 
-        return state.Forge.PayToExpand();
+        bool isExpanded = state.Forge.PayToExpand();
+        if (isExpanded)
+        {
+            OnStateChanged?.Invoke();
+        }
+        return isExpanded;
     }
 
     private bool TryOpenChoice()
@@ -359,6 +401,7 @@ public class TurnManager : MonoBehaviour
         if (state.ChooseWeightUp(index))
         {
             OnWeightChoiceClose?.Invoke();
+            OnStateChanged?.Invoke();
             return true;
         }
 
@@ -370,11 +413,24 @@ public class TurnManager : MonoBehaviour
         if (state.SkipWeightChoice())
         {
             OnWeightChoiceClose?.Invoke();
+            OnStateChanged?.Invoke();
             return true;
         }
 
         return false;
     }
+
+    #endregion
+
+    #region UI용 Getter
+
+    public int TurnNow => state.Turn; 
+    public int IronNow => state.Iron; 
+    public int HealthNow => state.Player.HP; 
+    public int MaxHPNow => Player.MaxHP; 
+    public int ShieldNow => state.Player.Shield;  
+
+    #endregion
 
     private void EndTurn()
     {
@@ -398,6 +454,7 @@ public class TurnManager : MonoBehaviour
         state.NextTurn();
         state.TrySpawnEnemy();
         TryOpenChoice();
+        OnStateChanged?.Invoke();
     }
 
     private void ChangeIronValUI(int iron)
@@ -444,11 +501,6 @@ public class TurnManager : MonoBehaviour
         GUILayout.BeginArea(new Rect(10, 40, 500, 600));
         GUILayout.Label($"지난 판 {(turn_survived == 0 ? "기록 없음" : turn_survived + "턴")}");
 
-        GUILayout.BeginHorizontal();
-        GUILayout.Label($"턴: {state.Turn}");
-        GUILayout.Label($"철괴: {GUI_Iron}");
-        GUILayout.EndHorizontal();
-
         int clickedCell = -1;
         bool isCancelled = false;
         string nextEnemy = "없음";
@@ -493,33 +545,6 @@ public class TurnManager : MonoBehaviour
             GUILayout.Label(FieldToString(state.Field, GetHitCells(hovered), nextMove_E) + 
                 $" | 등장: {nextEnemy}");
         }
-
-        List<EnemyAttack> attacks = new List<EnemyAttack>();
-        foreach (NextAction act in nextMove_E)
-        {
-            Enemy e = state.Field.Get(act.Pos);
-
-            if (act.Behav.Equals(EnemyBehav.Attack))
-            {
-                attacks.Add(new EnemyAttack { Cell = act.Pos, Damage = act.ChangeVal });
-            }
-        }
-
-        List<HitResult> validHits = state.Player.PredictHit(attacks);
-
-        int damage = 0;
-        foreach (HitResult r in validHits)
-        {
-            if (!r.Blocked)
-            {
-                damage += r.Damage;
-            }
-        }
-
-        string expected = damage > 0 ? $" (예상 -{damage})" : "";
-
-        GUILayout.Label($"체력: {state.Player.HP}/{Player.MaxHP}{expected} " +
-            $" 보호막: {state.Player.Shield}");
 
         GUILayout.BeginHorizontal();
 
@@ -644,12 +669,20 @@ public class TurnManager : MonoBehaviour
             SelectWeapon(clicked);
         }
         else if (rest) Rest();
-        else if (debug_skipturn) state.Debug_SkipTurn(Debug_SkipTurnTo);
+        else if (debug_skipturn)
+        {
+            state.Debug_SkipTurn(Debug_SkipTurnTo);
+            OnStateChanged?.Invoke();
+        }
         else if (forMelt != null) TryMelt(forMelt);
         else if (forUpgrade != null) TryUpgrade(forUpgrade);
         else if (forHeal) TryHeal(GUI_HealTo);
         else if (forExpand) TryExpand();
-        else if (debug_addIron) state.AddIron(Debug_FreeIron);
+        else if (debug_addIron)
+        {
+            state.AddIron(Debug_FreeIron);
+            OnStateChanged?.Invoke();
+        }
         else if (w_choice != -1) ChooseWeightInc(w_choice);
         else if (isSkipped) SkipWeightInc();
     }
