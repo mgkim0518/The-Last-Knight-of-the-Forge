@@ -51,6 +51,7 @@ MonoBehaviour:
   SmeltValue_Long: 5
   WeightSkipReward: 3
   StartIron: 10
+  ShieldOffDrop: 1
   EnemyBountyCurve:
     serializedVersion: 2
     m_Curve:

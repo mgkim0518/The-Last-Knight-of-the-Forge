@@ -161,6 +161,7 @@ public class EnemySpawner
         if (!isShieldDeployed && e.Data.IsShieldAllowed && spawn.FirstShieldTurn <= spawnTurn)
         {
             e.IsShielded = true;
+            e.UnShieldVal = Mathf.RoundToInt(playData.ShieldOffDrop * bountyMul);
             e.IsHavingFirstShield = true;
             isShieldDeployed = true;
         }
@@ -169,6 +170,7 @@ public class EnemySpawner
             if (rng.NextDouble() < spawn.ShieldProb)
             {
                 e.IsShielded = true;
+                e.UnShieldVal = Mathf.RoundToInt(playData.ShieldOffDrop * bountyMul);
             }
         }
 

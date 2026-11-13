@@ -8,6 +8,8 @@ public class Enemy
     public readonly int MaxHP;
     public int HP;
     public int Bounty;
+    public int UnShieldVal = 0;
+    public int PendingReward = 0;
     public bool IsShielded;
     public bool IsAttackedLastTurn;
     public bool IsFirstAppearance = false;
@@ -28,6 +30,7 @@ public class Enemy
         if (IsShielded)
         {
             IsShielded = false;
+            PendingReward += UnShieldVal;
             return;
         }
 
@@ -221,6 +224,22 @@ public class Field
         }
 
         return deadList;
+    }
+
+    public List<Enemy> PendingReward()
+    {
+        List<Enemy> unshielded = new List<Enemy>();
+
+        for (int i = 0; i < cells.Length; i++)
+        {
+            Enemy e = cells[i];
+            if (e != null && e.PendingReward != 0)
+            {
+                unshielded.Add(e);
+            }
+        }
+
+        return unshielded;
     }
 
     public void Push(int target, int pushRange, float colDmg)

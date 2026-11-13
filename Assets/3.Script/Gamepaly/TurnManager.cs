@@ -154,6 +154,7 @@ public class TurnManager : MonoBehaviour
         }
 
         state.ClearDeadEnemies();
+        state.PickUpShields();
 
         Debug.Log("사용한 무기: " + weapon.Data.WeaponName);
 

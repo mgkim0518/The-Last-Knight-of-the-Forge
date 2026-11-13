@@ -304,6 +304,21 @@ public class GameState
         return bounty;
     }
 
+    public int PickUpShields()
+    {
+        int pickUps = 0;
+        List<Enemy> unshielded = Field.PendingReward();
+
+        foreach (Enemy e in unshielded)
+        {
+            pickUps += e.PendingReward;
+            e.PendingReward = 0;
+        }
+
+        AddIron(pickUps);
+        return pickUps;
+    }
+
     public bool AddSlot()
     {
         Weapon[] slots = Inventory;
