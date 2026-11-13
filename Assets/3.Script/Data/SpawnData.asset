@@ -26,7 +26,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0f7e6091463ccb24e9c00009c3bccd73, type: 2}
   - {fileID: 11400000, guid: 3127e7ee24187ff49a9e3e770dd82c94, type: 2}
   - {fileID: 11400000, guid: b57ba72201d34364ea06062714be7b6f, type: 2}
-  UpWeightTurn: 2
+  UpWeightTurn: 10
   ChoiceCount: 3
   WeightIncrease: 1
   MaxSpawnWeight: 20
