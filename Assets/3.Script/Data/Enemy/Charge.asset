@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   EnemyType: 3
   Name: 
-  NormalSprite: {fileID: -2025276275076413731, guid: f27fd9b4a8fefd5479d544d32fd8dc55, type: 3}
-  ChargingSprite: {fileID: 9088589736757474740, guid: 6d1fbe56a5282644a9dcb2461d4c0fab, type: 3}
+  NormalSprite: {fileID: 21300000, guid: f27fd9b4a8fefd5479d544d32fd8dc55, type: 3}
+  ChargingSprite: {fileID: 21300000, guid: 6d1fbe56a5282644a9dcb2461d4c0fab, type: 3}
   SpawnTurn: 199
   Reward: 10
   SpawnWeight: 6
