@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class WeaponSlots : MonoBehaviour
+public class WeaponSlot : MonoBehaviour
 {
     [SerializeField] private Button itemButton;
     [SerializeField] private Text itemText;
