@@ -43,6 +43,16 @@ public class EnemyViewer : MonoBehaviour, IPointerClickHandler
             s.a = 0.5f;
             shieldRenderer.color = s;
         }
+        else
+        {
+            Color c = bodyRenderer.color;
+            c.a = 1f;
+            bodyRenderer.color = c;
+
+            Color s = shieldRenderer.color;
+            s.a = 1f;
+            shieldRenderer.color = s;
+        }
     }
 
     public void OnPointerClick(PointerEventData eventData)
