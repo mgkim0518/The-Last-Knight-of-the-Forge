@@ -32,6 +32,17 @@ public class EnemyViewer : MonoBehaviour, IPointerClickHandler
         {
             bodyRenderer.sprite = enemy.Data.NormalSprite;
         }
+
+        if (slot.Equals(-1))
+        {
+            Color c = bodyRenderer.color;
+            c.a = 0.5f;
+            bodyRenderer.color = c;
+
+            Color s = shieldRenderer.color;
+            s.a = 0.5f;
+            shieldRenderer.color = s;
+        }
     }
 
     public void OnPointerClick(PointerEventData eventData)
