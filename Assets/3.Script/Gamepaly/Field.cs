@@ -217,7 +217,6 @@ public class Field
             Enemy e = cells[i];
             if (e != null && e.IsDead)
             {
-                Debug.Log($"{i}번 칸 적 처치");
                 deadList.Add(e);
                 cells[i] = null;
             }

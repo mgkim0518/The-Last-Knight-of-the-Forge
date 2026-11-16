@@ -27,7 +27,8 @@ public class EnemyData : ScriptableObject
     [Header("기본")]
     public EnemyType EnemyType;
     public string Name;
-    public Sprite Sprite;
+    public Sprite NormalSprite;
+    public Sprite ChargingSprite;
     public int SpawnTurn;
     public int Reward;
     public int SpawnWeight = 10;

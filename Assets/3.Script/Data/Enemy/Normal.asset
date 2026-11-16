@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   EnemyType: 0
   Name: "\uBC84\uB824\uC9C4 \uB18D\uAE30\uAD6C"
-  Sprite: {fileID: 0}
+  NormalSprite: {fileID: 21300000, guid: 938c00f87fe03a84b937253d89c3915d, type: 3}
+  ChargingSprite: {fileID: 0}
   SpawnTurn: 0
   Reward: 5
   SpawnWeight: 8

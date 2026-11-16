@@ -153,8 +153,6 @@ public class TurnManager : MonoBehaviour
         state.ClearDeadEnemies();
         state.PickUpShields();
 
-        Debug.Log("사용한 무기: " + weapon.Data.WeaponName);
-
         EndTurn();
         return true;
     }
@@ -307,7 +305,6 @@ public class TurnManager : MonoBehaviour
         }
 
         OnMelting?.Invoke(weapon);
-        Debug.Log(weapon.Data.WeaponName + "을 녹였습니다.");
         OnStateChanged?.Invoke();
         return true;
     }
@@ -428,7 +425,11 @@ public class TurnManager : MonoBehaviour
     public int IronNow => state.Iron; 
     public int HealthNow => state.Player.HP; 
     public int MaxHPNow => Player.MaxHP; 
-    public int ShieldNow => state.Player.Shield;  
+    public int ShieldNow => state.Player.Shield;
+
+    public Enemy EnemyNow(int i) => state.Field.Get(i);
+
+    public Enemy NextEnemyNow => state.NextEnemy;
 
     #endregion
 
@@ -436,9 +437,8 @@ public class TurnManager : MonoBehaviour
     {
         if (!state.ReceiveNextWeapon())
         {
-            Debug.Log("슬롯이 가득 차 무기 소멸");
+            
         }
-        Debug.Log("적 행동");
         List<EnemyAttack> attacks = state.Field.ActAll(state.Field.PlanAction());
         state.Spawner.CheckBlocked(attacks);
         List<HitResult> validHits = state.Player.PredictHit(attacks);
@@ -450,7 +450,6 @@ public class TurnManager : MonoBehaviour
             StartNewGame();
             return;
         }
-        Debug.Log("다음 턴 준비");
         state.NextTurn();
         state.TrySpawnEnemy();
         TryOpenChoice();
