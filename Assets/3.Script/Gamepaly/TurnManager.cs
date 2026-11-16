@@ -431,6 +431,8 @@ public class TurnManager : MonoBehaviour
 
     public Enemy NextEnemyNow => state.NextEnemy;
 
+    public int UpLvNow(WeaponData data) => state.Forge.GetUpgradeLevel(data);
+
     #endregion
 
     private void EndTurn()
