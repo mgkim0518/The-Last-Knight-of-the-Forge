@@ -407,6 +407,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2845944900490211626, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
+      propertyPath: m_Color.a
+      value: 0.5882353
+      objectReference: {fileID: 0}
     - target: {fileID: 2923979484210419605, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -427,6 +431,10 @@ PrefabInstance:
       propertyPath: itemButton
       value: 
       objectReference: {fileID: 47310296}
+    - target: {fileID: 2974144577160820831, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
+      propertyPath: unlockedColor.a
+      value: 0.5882353
+      objectReference: {fileID: 0}
     - target: {fileID: 3356940615326557893, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -509,7 +517,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4617409594292277183, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
       propertyPath: m_Name
-      value: Grid (11)
+      value: Grid_Next
       objectReference: {fileID: 0}
     - target: {fileID: 7290771232867179389, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
       propertyPath: m_AnchorMax.y
@@ -561,7 +569,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 3356940615326557893, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1459213381}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
 --- !u!224 &47310295 stripped
@@ -965,7 +976,9 @@ MonoBehaviour:
   - {fileID: 1773891450}
   - {fileID: 1282012095}
   - {fileID: 1419679769}
-  - {fileID: 47310297}
+  nextSlot: {fileID: 47310297}
+  nextLabel: {fileID: 1459213382}
+  WarnBackColor: {r: 0.7283019, g: 0.17451759, b: 0.19623455, a: 1}
 --- !u!1 &452886778
 GameObject:
   m_ObjectHideFlags: 0
@@ -1306,6 +1319,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2845944900490211626, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
+      propertyPath: m_Color.a
+      value: 0.5882353
+      objectReference: {fileID: 0}
     - target: {fileID: 2923979484210419605, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1326,6 +1343,10 @@ PrefabInstance:
       propertyPath: itemButton
       value: 
       objectReference: {fileID: 650817206}
+    - target: {fileID: 2974144577160820831, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
+      propertyPath: unlockedColor.a
+      value: 0.5882353
+      objectReference: {fileID: 0}
     - target: {fileID: 3356940615326557893, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1932,6 +1953,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2845944900490211626, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
+      propertyPath: m_Color.a
+      value: 0.5882353
+      objectReference: {fileID: 0}
     - target: {fileID: 2923979484210419605, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1952,6 +1977,10 @@ PrefabInstance:
       propertyPath: itemButton
       value: 
       objectReference: {fileID: 1144496742}
+    - target: {fileID: 2974144577160820831, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
+      propertyPath: unlockedColor.a
+      value: 0.5882353
+      objectReference: {fileID: 0}
     - target: {fileID: 3356940615326557893, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2156,6 +2185,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2845944900490211626, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
+      propertyPath: m_Color.a
+      value: 0.5882353
+      objectReference: {fileID: 0}
     - target: {fileID: 2923979484210419605, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -2176,6 +2209,10 @@ PrefabInstance:
       propertyPath: itemButton
       value: 
       objectReference: {fileID: 1195396431}
+    - target: {fileID: 2974144577160820831, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
+      propertyPath: unlockedColor.a
+      value: 0.5882353
+      objectReference: {fileID: 0}
     - target: {fileID: 3356940615326557893, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2411,6 +2448,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2845944900490211626, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
+      propertyPath: m_Color.a
+      value: 0.5882353
+      objectReference: {fileID: 0}
     - target: {fileID: 2923979484210419605, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -2431,6 +2472,10 @@ PrefabInstance:
       propertyPath: itemButton
       value: 
       objectReference: {fileID: 1282012094}
+    - target: {fileID: 2974144577160820831, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
+      propertyPath: unlockedColor.a
+      value: 0.5882353
+      objectReference: {fileID: 0}
     - target: {fileID: 3356940615326557893, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2662,6 +2707,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2845944900490211626, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
+      propertyPath: m_Color.a
+      value: 0.5882353
+      objectReference: {fileID: 0}
     - target: {fileID: 2923979484210419605, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -2682,6 +2731,10 @@ PrefabInstance:
       propertyPath: itemButton
       value: 
       objectReference: {fileID: 1419679768}
+    - target: {fileID: 2974144577160820831, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
+      propertyPath: unlockedColor.a
+      value: 0.5882353
+      objectReference: {fileID: 0}
     - target: {fileID: 3356940615326557893, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2925,6 +2978,85 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1459213380
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1459213381}
+  - component: {fileID: 1459213383}
+  - component: {fileID: 1459213382}
+  m_Layer: 5
+  m_Name: NextLabel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1459213381
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1459213380}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 47310295}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: -60}
+  m_SizeDelta: {x: 200, y: 50}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1459213382
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1459213380}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Text
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 30
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 3
+    m_MaxSize: 40
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: "\uB2E4  \uC74C"
+--- !u!222 &1459213383
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1459213380}
+  m_CullTransparentMesh: 1
 --- !u!1 &1526209166
 GameObject:
   m_ObjectHideFlags: 0
@@ -3027,6 +3159,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2845944900490211626, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
+      propertyPath: m_Color.a
+      value: 0.5882353
+      objectReference: {fileID: 0}
     - target: {fileID: 2923979484210419605, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -3047,6 +3183,10 @@ PrefabInstance:
       propertyPath: itemButton
       value: 
       objectReference: {fileID: 1595347890}
+    - target: {fileID: 2974144577160820831, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
+      propertyPath: unlockedColor.a
+      value: 0.5882353
+      objectReference: {fileID: 0}
     - target: {fileID: 3356940615326557893, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -3251,6 +3391,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2845944900490211626, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
+      propertyPath: m_Color.a
+      value: 0.5882353
+      objectReference: {fileID: 0}
     - target: {fileID: 2923979484210419605, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -3271,6 +3415,10 @@ PrefabInstance:
       propertyPath: itemButton
       value: 
       objectReference: {fileID: 1663411463}
+    - target: {fileID: 2974144577160820831, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
+      propertyPath: unlockedColor.a
+      value: 0.5882353
+      objectReference: {fileID: 0}
     - target: {fileID: 3356940615326557893, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -3475,6 +3623,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2845944900490211626, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
+      propertyPath: m_Color.a
+      value: 0.5882353
+      objectReference: {fileID: 0}
     - target: {fileID: 2923979484210419605, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -3495,6 +3647,10 @@ PrefabInstance:
       propertyPath: itemButton
       value: 
       objectReference: {fileID: 1690945733}
+    - target: {fileID: 2974144577160820831, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
+      propertyPath: unlockedColor.a
+      value: 0.5882353
+      objectReference: {fileID: 0}
     - target: {fileID: 3356940615326557893, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -3900,6 +4056,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2845944900490211626, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
+      propertyPath: m_Color.a
+      value: 0.5882353
+      objectReference: {fileID: 0}
     - target: {fileID: 2923979484210419605, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -3920,6 +4080,10 @@ PrefabInstance:
       propertyPath: itemButton
       value: 
       objectReference: {fileID: 1773891449}
+    - target: {fileID: 2974144577160820831, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
+      propertyPath: unlockedColor.a
+      value: 0.5882353
+      objectReference: {fileID: 0}
     - target: {fileID: 3356940615326557893, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -4234,6 +4398,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2845944900490211626, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
+      propertyPath: m_Color.a
+      value: 0.5882353
+      objectReference: {fileID: 0}
     - target: {fileID: 2923979484210419605, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -4254,6 +4422,10 @@ PrefabInstance:
       propertyPath: itemButton
       value: 
       objectReference: {fileID: 1966227975}
+    - target: {fileID: 2974144577160820831, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
+      propertyPath: unlockedColor.a
+      value: 0.5882353
+      objectReference: {fileID: 0}
     - target: {fileID: 3356940615326557893, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -4802,6 +4974,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2845944900490211626, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
+      propertyPath: m_Color.a
+      value: 0.5882353
+      objectReference: {fileID: 0}
     - target: {fileID: 2923979484210419605, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -4822,6 +4998,10 @@ PrefabInstance:
       propertyPath: itemButton
       value: 
       objectReference: {fileID: 1356672493}
+    - target: {fileID: 2974144577160820831, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
+      propertyPath: unlockedColor.a
+      value: 0.5882353
+      objectReference: {fileID: 0}
     - target: {fileID: 3356940615326557893, guid: adb38707087f13547a9a6636787ef3ba, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

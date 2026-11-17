@@ -17,7 +17,7 @@ MonoBehaviour:
   PowerPerUpgrade: 1
   ChargeValuePerUpgrade: 1
   StartSlots: 4
-  MaxSlots: 12
+  MaxSlots: 11
   SlotBasePrice: 50
   SlotGrowth: 1.5
   HealUnitPrice: 0.5

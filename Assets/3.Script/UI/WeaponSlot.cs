@@ -15,8 +15,10 @@ public class WeaponSlot : MonoBehaviour
     [Header("잠김 표시")]
     [SerializeField] private GameObject lockIcon;
     [SerializeField] private Text priceText;
+    [SerializeField] private Color lockedColor = Color.black;
+    [SerializeField] private Color unlockedColor = new Color(0f, 0f, 0f, 0.65f);
     [SerializeField] private Color priceColor = Color.white;
-    [SerializeField] private Color priceLackColor = Color.red;
+    [SerializeField] private Color warnColor = Color.red;
 
     [Header("충전 리벳 (왼쪽부터)")]
     [SerializeField] private Image[] rivets;
@@ -29,6 +31,7 @@ public class WeaponSlot : MonoBehaviour
     [SerializeField] private Sprite[] chargeSprites;
     [SerializeField] private Color[] chargeColors;
 
+    private Image background;
     private int slotNum;
     private TurnManager manager;
     private Weapon weapon;
@@ -36,6 +39,7 @@ public class WeaponSlot : MonoBehaviour
 
     public void SetUpSlot(int num, TurnManager manager)
     {
+        background = GetComponent<Image>();
         this.manager = manager;
         slotNum = num;
     }
@@ -45,16 +49,18 @@ public class WeaponSlot : MonoBehaviour
         this.state = state;
         this.weapon = weapon;
 
-        itemButton.interactable = state != SlotState.Locked;
+        itemButton.interactable = state.Equals(SlotState.Unlocked) || state.Equals(SlotState.NextLock);
 
-        if (state == SlotState.Unlocked)
+        if (state == SlotState.Unlocked || state == SlotState.Preview )
         {
+            background.color = unlockedColor;
             lockIcon.SetActive(false);
             priceText.gameObject.SetActive(false);
             UpdateWeapon(weapon);
         }
         else
         {
+            background.color = lockedColor;
             itemText.text = string.Empty;
             UpdateCharge(null);
             UpdateLock(state, price);
@@ -69,8 +75,8 @@ public class WeaponSlot : MonoBehaviour
         priceText.gameObject.SetActive(isNext);
         if (isNext)
         {
-            priceText.text = $"{price}";
-            priceText.color = manager.IronNow >= price ? priceColor : priceLackColor;
+            priceText.text = $"철괴 {price}개";
+            priceText.color = manager.IronNow >= price ? priceColor : warnColor;
         }
     }
 
@@ -91,9 +97,9 @@ public class WeaponSlot : MonoBehaviour
     {
         if (weapon == null)
         {
-            foreach (Image r in rivets)
+            foreach (Image i in plate)
             {
-                r.gameObject.SetActive(false);
+                i.gameObject.SetActive(false);
             }
             chargeIcon.enabled = false;
             return;
@@ -141,10 +147,10 @@ public class WeaponSlot : MonoBehaviour
 
         chargeIcon.enabled = true;
         chargeIcon.sprite = chargeSprites[type];
-
         foreach (Image i in plate)
         {
             i.color = chargeColors[type];
+            i.gameObject.SetActive(true);
         }
     }
 
