@@ -426,6 +426,10 @@ public class TurnManager : MonoBehaviour
     public int HealthNow => state.Player.HP; 
     public int MaxHPNow => Player.MaxHP; 
     public int ShieldNow => state.Player.Shield;
+    public Weapon[] InventoryNow => state.Inventory;
+    public int MaxSlotsNow => state.PlayData.MaxSlots;
+    public int SlotPriceNow => state.Forge.GetSlotPrice();
+    public int CapNow(WeaponData data) => state.BattleData.GetCap(data.CapTier);
 
     public Enemy EnemyNow(int i) => state.Field.Get(i);
 

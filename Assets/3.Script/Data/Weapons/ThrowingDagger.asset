@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c2208e0d5ea1ca459f8d902f19cfcdf, type: 3}
   m_Name: ThrowingDagger
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
-  WeaponName: "\uD22C\uCC99\uC6A9 \uB2E8\uAC80"
+  WeaponName: "\uD22C\uCC99 \uB2E8\uAC80"
   Icon: {fileID: 0}
   Target: 1
   Reloc: 0
