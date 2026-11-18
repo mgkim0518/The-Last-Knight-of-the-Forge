@@ -11,6 +11,7 @@ public class WeaponSlot : MonoBehaviour
     [SerializeField] private Image weaponImage;
     [SerializeField] private Image[] plate;
     [SerializeField] private Text unlockText;
+    [SerializeField] private GameObject highlight;
 
     [Header("잠김 표시")]
     [SerializeField] private GameObject lockIcon;
@@ -64,6 +65,15 @@ public class WeaponSlot : MonoBehaviour
             itemText.text = string.Empty;
             UpdateCharge(null);
             UpdateLock(state, price);
+        }
+
+        if (state == SlotState.Unlocked && weapon != null && weapon == manager.SelectedNow )
+        {
+            highlight.SetActive(true);
+        }
+        else
+        {
+            highlight.SetActive(false);
         }
     }
 

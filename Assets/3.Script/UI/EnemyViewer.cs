@@ -56,8 +56,8 @@ public class EnemyViewer : MonoBehaviour, IPointerClickHandler
         shieldIcon.gameObject.SetActive(enemy.IsShielded);
         shieldIcon.color = Color.white;
         shieldIcon.transform.localScale = Vector3.one;
-        //typeIcon.color = Color.white;
-        //typeIcon.transform.localScale = Vector3.one;
+        typeIcon.color = Color.white;
+        typeIcon.transform.localScale = Vector3.one;
         hpLabel.text = $"{enemy.HP} / {enemy.MaxHP}";
 
         if (enemy.IsLoaded)
@@ -83,8 +83,8 @@ public class EnemyViewer : MonoBehaviour, IPointerClickHandler
 
             if (enemy.IsFirstAppearance)
             {
-                //typeIcon.color = highlightColor;
-                //typeIcon.transform.localScale = Vector3.one * 1.3f;
+                typeIcon.color = highlightColor;
+                typeIcon.transform.localScale = Vector3.one * 1.3f;
             }
 
             if (enemy.IsHavingFirstShield)

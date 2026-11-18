@@ -65,6 +65,12 @@ public class TurnManager : MonoBehaviour
             return;
         }
 
+        if (weapon.Equals(selected))
+        {
+            CancelTargetSelect();
+            return;
+        }
+
         if (weapon.Data.Target == TargetType.Choose ||
         weapon.Data.Target == TargetType.WithinReach)
         {
@@ -293,6 +299,7 @@ public class TurnManager : MonoBehaviour
 
     public void Restart()
     {
+        selected = null;
         isGameOver = false;
         StartNewGame();
     }
@@ -447,6 +454,8 @@ public class TurnManager : MonoBehaviour
     public Enemy NextEnemyNow => state.NextEnemy;
     public List<NextAction> E_ActsNow => state.Field.PredictAct(state.Field.PlanAction());
     public int UpLvNow(WeaponData data) => state.Forge.GetUpgradeLevel(data);
+
+    public Weapon SelectedNow => selected;
 
     #endregion
 
