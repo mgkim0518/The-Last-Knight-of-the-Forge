@@ -45,7 +45,7 @@ public class EnemyViewManager : MonoBehaviour
         Enemy next = manager.NextEnemyNow;
         if (next != null)
         {
-            ShowEnemy(next, slots.NextEnemyPos(), -1, null); //다음 적은 행동 없음
+            ShowEnemy(next, slots.NextEnemyPos(), -1, null);
         }
 
         toRemove.Clear();

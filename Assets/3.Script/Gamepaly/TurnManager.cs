@@ -20,12 +20,15 @@ public class TurnManager : MonoBehaviour
     public event Action<int> OnCurrencyChange;
     public event Action<IReadOnlyList<WeaponData>> OnWeightChoiceOpen;
     public event Action OnWeightChoiceClose;
+    public event Action<int> OnGameOver;
 
-    public bool IsInputBlocked => state != null && state.WeaponSelections.Count > 0;
+    public bool IsInputBlocked => state != null && 
+        (state.WeaponSelections.Count > 0 || isGameOver);
 
     private GameState state;
     private int turn_survived = 0;
     private Weapon selected;
+    private bool isGameOver = false;
     private Weapon hovered;   // 마우스를 올린 무기 (OnGUI 임시)
     private int GUI_HealTo;
     private int GUI_LastHP;
@@ -288,6 +291,12 @@ public class TurnManager : MonoBehaviour
         EndTurn();
     }
 
+    public void Restart()
+    {
+        isGameOver = false;
+        StartNewGame();
+    }
+
     #region TurnManager에서 다른 메소드 받는 영역
 
     public bool TryMelt(Weapon weapon)
@@ -455,7 +464,9 @@ public class TurnManager : MonoBehaviour
         if (state.Player.IsDead)
         {
             turn_survived = state.Turn;
-            StartNewGame();
+            OnStateChanged?.Invoke();
+            isGameOver = true;
+            OnGameOver?.Invoke(turn_survived); 
             return;
         }
         state.NextTurn();
@@ -505,7 +516,6 @@ public class TurnManager : MonoBehaviour
         if (state == null) return;
 
         GUILayout.BeginArea(new Rect(10, 40, 500, 600));
-        GUILayout.Label($"지난 판 {(turn_survived == 0 ? "기록 없음" : turn_survived + "턴")}");
 
         int clickedCell = -1;
         bool isCancelled = false;

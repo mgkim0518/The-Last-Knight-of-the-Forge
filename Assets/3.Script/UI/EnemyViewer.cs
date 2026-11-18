@@ -27,6 +27,9 @@ public class EnemyViewer : MonoBehaviour, IPointerClickHandler
     [SerializeField] private Color highlightColor;
     [SerializeField] private Color healColor;
 
+    [Header("임시")]
+    [SerializeField] private Text hpLabel;
+
     private Enemy enemy;
     private TurnManager manager;
     private int slotIndex;
@@ -55,7 +58,8 @@ public class EnemyViewer : MonoBehaviour, IPointerClickHandler
         shieldIcon.transform.localScale = Vector3.one;
         //typeIcon.color = Color.white;
         //typeIcon.transform.localScale = Vector3.one;
-        
+        hpLabel.text = $"{enemy.HP} / {enemy.MaxHP}";
+
         if (enemy.IsLoaded)
         {
             bodyRenderer.sprite = enemy.Data.ChargingSprite;
