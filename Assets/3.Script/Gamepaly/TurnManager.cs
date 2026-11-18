@@ -241,10 +241,8 @@ public class TurnManager : MonoBehaviour
 
     public int ExpectedDamage()
     {
-        List<NextAction> nextMove_E = state.Field.PredictAct(state.Field.PlanAction());
-
         List<EnemyAttack> attacks = new List<EnemyAttack>();
-        foreach (NextAction act in nextMove_E)
+        foreach (NextAction act in E_ActsNow)
         {
             if (act.Behav.Equals(EnemyBehav.Attack))
             {
@@ -431,11 +429,9 @@ public class TurnManager : MonoBehaviour
     public int SlotPriceNow => state.Forge.GetSlotPrice();
     public Weapon NextWeaponNow => state.NextWeapon;
     public int CapNow(WeaponData data) => state.BattleData.GetCap(data.CapTier);
-
     public Enemy EnemyNow(int i) => state.Field.Get(i);
-
     public Enemy NextEnemyNow => state.NextEnemy;
-
+    public List<NextAction> E_ActsNow => state.Field.PredictAct(state.Field.PlanAction());
     public int UpLvNow(WeaponData data) => state.Forge.GetUpgradeLevel(data);
 
     #endregion
@@ -502,7 +498,6 @@ public class TurnManager : MonoBehaviour
     private void OnGUI()
     {
         if (state == null) return;
-        List<NextAction> nextMove_E = state.Field.PredictAct(state.Field.PlanAction());
 
         GUILayout.BeginArea(new Rect(10, 40, 500, 600));
         GUILayout.Label($"지난 판 {(turn_survived == 0 ? "기록 없음" : turn_survived + "턴")}");
@@ -548,7 +543,7 @@ public class TurnManager : MonoBehaviour
         }
         else
         {
-            GUILayout.Label(FieldToString(state.Field, GetHitCells(hovered), nextMove_E) + 
+            GUILayout.Label(FieldToString(state.Field, GetHitCells(hovered), E_ActsNow) + 
                 $" | 등장: {nextEnemy}");
         }
 
