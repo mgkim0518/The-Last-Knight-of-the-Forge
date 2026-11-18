@@ -659,8 +659,6 @@ public class TurnManager : MonoBehaviour
 
         GUILayout.Label($"용광로 {state.MeltLeft} / {state.PlayData.FurnaceCap}");
 
-        bool rest = GUILayout.Button("쉬기");
-
         GUI.enabled = selected == null;
         bool debug_skipturn = GUILayout.Button($"{Debug_SkipTurnTo}턴으로 이동");
         bool debug_addIron = GUILayout.Button($"철괴 {Debug_FreeIron}개");
@@ -674,7 +672,6 @@ public class TurnManager : MonoBehaviour
         {
             SelectWeapon(clicked);
         }
-        else if (rest) Rest();
         else if (debug_skipturn)
         {
             state.Debug_SkipTurn(Debug_SkipTurnTo);
