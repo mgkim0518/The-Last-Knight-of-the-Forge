@@ -271,6 +271,11 @@ public class TurnManager : MonoBehaviour
             return;
         }
 
+        if (selected != null)
+        {
+            return;
+        }
+
         foreach (Weapon w in state.Inventory)
         {
             if (w == null) continue;

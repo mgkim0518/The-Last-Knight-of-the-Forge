@@ -37,7 +37,7 @@ public class EnemyViewer : MonoBehaviour, IPointerClickHandler
         this.manager = manager;
         int enemyNum = (int)enemy.Data.EnemyType;
         hpBar.maxValue = enemy.MaxHP;
-        //if (enemyNum > typeGlyphs.Length)
+        //if (enemyNum >= typeGlyphs.Length)
         //{
         //    Debug.LogWarning($"({enemy.Data.Name})에 대한 아이콘이 추가되지 않았습니다.");
         //}
@@ -50,7 +50,7 @@ public class EnemyViewer : MonoBehaviour, IPointerClickHandler
         slotIndex = slot;
         hpBar.value = enemy.HP;
         shieldRenderer.enabled = enemy.IsShielded;
-        shieldIcon.enabled = enemy.IsShielded;
+        shieldIcon.gameObject.SetActive(enemy.IsShielded);
         shieldIcon.color = Color.white;
         shieldIcon.transform.localScale = Vector3.one;
         //typeIcon.color = Color.white;
@@ -108,14 +108,14 @@ public class EnemyViewer : MonoBehaviour, IPointerClickHandler
     {
         if (action == null)
         {
-            actionIcon.enabled = false;
-            valText.enabled = false;
+            actionIcon.gameObject.SetActive(false);
+            valText.gameObject.SetActive(false);
             return;
         }
 
         EnemyBehav behav = action.Value.Behav;
 
-        actionIcon.enabled = true;
+        actionIcon.gameObject.SetActive(true);
 
         actionIcon.sprite = actIcons[(int)behav];
         actionIcon.color = actColors[(int)behav];
@@ -125,14 +125,14 @@ public class EnemyViewer : MonoBehaviour, IPointerClickHandler
             case EnemyBehav.Move:
             case EnemyBehav.Wait:
             case EnemyBehav.Flee:
-                valText.enabled = false;
+                valText.gameObject.SetActive(false);
                 break;
 
             case EnemyBehav.Attack:
             case EnemyBehav.DecidedFleeing:
             case EnemyBehav.Heal:
             case EnemyBehav.Charging:
-                valText.enabled = true;
+                valText.gameObject.SetActive(true);
                 valText.text = action.Value.ChangeVal.ToString();
                 valText.color = behav switch
                 {
@@ -143,7 +143,7 @@ public class EnemyViewer : MonoBehaviour, IPointerClickHandler
                 break;
 
             default:
-                valText.enabled = false;
+                valText.gameObject.SetActive(false);
                 break;
         }
     }
