@@ -25,6 +25,7 @@ public class TurnManager : MonoBehaviour
     public bool IsInputBlocked => state != null && 
         (state.WeaponSelections.Count > 0 || isGameOver);
     public bool IsMeltAvailable => !IsInputBlocked && state.MeltLeft > 0;
+    public bool IsCancelledThisFrame => lastCancelFrame == Time.frameCount;
 
     private GameState state;
     private int turn_survived = 0;
@@ -33,6 +34,7 @@ public class TurnManager : MonoBehaviour
     private Weapon hovered;   // 마우스를 올린 무기 (OnGUI 임시)
     private int GUI_HealTo;
     private int GUI_LastHP;
+    private int lastCancelFrame = -1;
 
     private void Start()
     {
@@ -101,6 +103,7 @@ public class TurnManager : MonoBehaviour
     public void CancelTargetSelect()
     {
         selected = null;
+        lastCancelFrame = Time.frameCount;
         OnStateChanged?.Invoke();
         OnChoiceFinished?.Invoke();
     }

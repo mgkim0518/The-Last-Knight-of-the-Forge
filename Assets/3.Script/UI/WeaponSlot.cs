@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class WeaponSlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+public class WeaponSlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler,
+    IPointerClickHandler, IPointerDownHandler
 {
     [Header("칸 내의 구성요소")]
     [SerializeField] private CanvasGroup self;
@@ -44,6 +45,7 @@ public class WeaponSlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
     private int slotNum;
     private TurnManager manager;
     private SlotState state;
+    private bool isSelectedOnPress;
 
     public void SetUpSlot(int num, TurnManager manager, DragView drag)
     {
@@ -211,5 +213,30 @@ public class WeaponSlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
     {
         dragView.Hide();
         self.alpha = 1f;
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (eventData.button != PointerEventData.InputButton.Right)
+        {
+            return;
+        }
+
+        if (isSelectedOnPress || Weapon == null)
+        {
+            return;
+        }
+
+        manager.TryMelt(Weapon);
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        if (eventData.button != PointerEventData.InputButton.Right)
+        {
+            return;
+        }
+
+        isSelectedOnPress = manager.SelectedNow != null || manager.IsCancelledThisFrame;
     }
 }

@@ -18,6 +18,7 @@ public class IronGainView : MonoBehaviour
     private void Awake()
     {
         basePos = text.rectTransform.anchoredPosition;
+        text.enabled = false;
     }
 
     public void ShowPreview(int val)
