@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class WeaponSlot : MonoBehaviour
+public class WeaponSlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     [Header("칸 내의 구성요소")]
+    [SerializeField] private CanvasGroup self;
     [SerializeField] private Button itemButton;
     [SerializeField] private Text itemText;
     [SerializeField] private Image weaponImage;
@@ -32,23 +34,29 @@ public class WeaponSlot : MonoBehaviour
     [SerializeField] private Sprite[] chargeSprites;
     [SerializeField] private Color[] chargeColors;
 
+    [Header("기타 설정값")]
+    [SerializeField] private float draggingAlpha = 0.4f;
+
+    public Weapon Weapon { get; private set; }
+
     private Image background;
+    private DragView dragView;
     private int slotNum;
     private TurnManager manager;
-    private Weapon weapon;
     private SlotState state;
 
-    public void SetUpSlot(int num, TurnManager manager)
+    public void SetUpSlot(int num, TurnManager manager, DragView drag)
     {
         background = GetComponent<Image>();
         this.manager = manager;
+        dragView = drag;
         slotNum = num;
     }
 
     public void UpdateSlot(SlotState state, Weapon weapon, int price)
     {
         this.state = state;
-        this.weapon = weapon;
+        this.Weapon = weapon;
 
         itemButton.interactable = state.Equals(SlotState.Unlocked) || state.Equals(SlotState.NextLock);
 
@@ -169,11 +177,39 @@ public class WeaponSlot : MonoBehaviour
         switch (state)
         {
             case SlotState.Unlocked:
-                manager.SelectWeapon(weapon);
+                manager.SelectWeapon(Weapon);
                 break;
             case SlotState.NextLock:
                 manager.TryExpand();
                 break;
         }
+    }
+
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        if (Weapon == null || !manager.IsMeltAvailable)
+        {
+            eventData.pointerDrag = null;
+            return;
+        }
+
+        if (manager.SelectedNow != null)
+        {
+            manager.CancelTargetSelect();
+        }
+
+        self.alpha = draggingAlpha;
+        dragView.Show(Weapon.Data.Icon, itemText.text, eventData.position);
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        dragView.Move(eventData.position);
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        dragView.Hide();
+        self.alpha = 1f;
     }
 }

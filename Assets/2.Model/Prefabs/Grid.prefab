@@ -730,6 +730,7 @@ GameObject:
   - component: {fileID: 2845944900490211626}
   - component: {fileID: 1266509342769087711}
   - component: {fileID: 2974144577160820831}
+  - component: {fileID: 6190344387089568484}
   m_Layer: 5
   m_Name: Grid
   m_TagString: Untagged
@@ -784,7 +785,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.64705884}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.5882353}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -869,6 +870,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1396ea01eb0455d4ca706926dfed7c06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponSlot
+  self: {fileID: 6190344387089568484}
   itemButton: {fileID: 1266509342769087711}
   itemText: {fileID: 3275969402748105673}
   weaponImage: {fileID: 9032548140441655431}
@@ -880,7 +882,7 @@ MonoBehaviour:
   lockIcon: {fileID: 5321134581236651271}
   priceText: {fileID: 6850648759327185828}
   lockedColor: {r: 0, g: 0, b: 0, a: 1}
-  unlockedColor: {r: 0, g: 0, b: 0, a: 1}
+  unlockedColor: {r: 0, g: 0, b: 0, a: 0.5882353}
   priceColor: {r: 1, g: 1, b: 1, a: 1}
   warnColor: {r: 1, g: 0, b: 0, a: 1}
   rivets:
@@ -904,6 +906,19 @@ MonoBehaviour:
   - {r: 0.1882353, g: 0.30588236, b: 0.627451, a: 1}
   - {r: 0.5568628, g: 0.30980393, b: 0.61960787, a: 1}
   - {r: 0.8509804, g: 0.7137255, b: 0.3529412, a: 1}
+  draggingAlpha: 0.4
+--- !u!225 &6190344387089568484
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4617409594292277183}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &5321134581236651271
 GameObject:
   m_ObjectHideFlags: 0

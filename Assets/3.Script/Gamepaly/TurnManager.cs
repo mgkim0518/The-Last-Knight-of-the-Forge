@@ -24,6 +24,7 @@ public class TurnManager : MonoBehaviour
 
     public bool IsInputBlocked => state != null && 
         (state.WeaponSelections.Count > 0 || isGameOver);
+    public bool IsMeltAvailable => !IsInputBlocked && state.MeltLeft > 0;
 
     private GameState state;
     private int turn_survived = 0;
@@ -449,13 +450,16 @@ public class TurnManager : MonoBehaviour
     public int MaxSlotsNow => state.PlayData.MaxSlots;
     public int SlotPriceNow => state.Forge.GetSlotPrice();
     public Weapon NextWeaponNow => state.NextWeapon;
+    public Weapon SelectedNow => selected;
     public int CapNow(WeaponData data) => state.BattleData.GetCap(data.CapTier);
     public Enemy EnemyNow(int i) => state.Field.Get(i);
     public Enemy NextEnemyNow => state.NextEnemy;
     public List<NextAction> E_ActsNow => state.Field.PredictAct(state.Field.PlanAction());
     public int UpLvNow(WeaponData data) => state.Forge.GetUpgradeLevel(data);
+    public int MeltLeftNow => state.MeltLeft;
+    public int FurnaceCapNow => state.PlayData.FurnaceCap;
+    public int MeltValNow(Weapon weapon) => state.PlayData.GetMeltValue(weapon);
 
-    public Weapon SelectedNow => selected;
 
     #endregion
 

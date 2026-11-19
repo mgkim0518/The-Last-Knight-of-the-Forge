@@ -14,6 +14,7 @@ public enum SlotState
 public class WeaponSlotManager : MonoBehaviour
 {
     [SerializeField] private TurnManager manager;
+    [SerializeField] private DragView dragView;
     [Tooltip("왼쪽 위부터 가로 순서대로 오른쪽 아래까지")] 
     [SerializeField] private WeaponSlot[] slots;
     [SerializeField] private WeaponSlot nextSlot;
@@ -32,10 +33,10 @@ public class WeaponSlotManager : MonoBehaviour
 
         for (int i = 0; i < slots.Length; i++)
         {
-            slots[i].SetUpSlot(i, manager);
+            slots[i].SetUpSlot(i, manager, dragView);
         }
 
-        nextSlot.SetUpSlot(-1, manager); //칸 번호 없음
+        nextSlot.SetUpSlot(-1, manager, dragView); //칸 번호 없음
         nextBackground = nextSlot.GetComponent<Image>();
 
         manager.OnStateChanged += ChangeSlots;
