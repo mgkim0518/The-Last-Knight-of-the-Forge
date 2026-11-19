@@ -31,7 +31,6 @@ public class TurnManager : MonoBehaviour
     private int turn_survived = 0;
     private Weapon selected;
     private bool isGameOver = false;
-    private Weapon hovered;   // 마우스를 올린 무기 (OnGUI 임시)
     private int GUI_HealTo;
     private int GUI_LastHP;
     private int lastCancelFrame = -1;
@@ -52,7 +51,6 @@ public class TurnManager : MonoBehaviour
         state.AddWeapon(state.CreateRandomWeapon());
         state.OnIronChanged += ChangeIronValUI;
         OnCurrencyChange?.Invoke(state.Iron);
-        lastHitTexts.Clear(); //GUI용 임시 코드
         OnStateChanged?.Invoke();
     }
 
@@ -476,7 +474,6 @@ public class TurnManager : MonoBehaviour
         state.Spawner.CheckBlocked(attacks);
         List<HitResult> validHits = state.Player.PredictHit(attacks);
         state.Player.TakeHit(validHits);
-        lastHitTexts = ShowHits(validHits); //GUI에 넘기기
         if (state.Player.IsDead)
         {
             turn_survived = state.Turn;
@@ -525,58 +522,14 @@ public class TurnManager : MonoBehaviour
         return atkRange;
     }
 
-    private List<string> lastHitTexts = new List<string>();
-
     private void OnGUI()
     {
         if (state == null) return;
 
         GUILayout.BeginArea(new Rect(10, 40, 500, 600));
 
-        int clickedCell = -1;
-        bool isCancelled = false;
-        string nextEnemy = "없음";
         bool canAct = selected == null && !IsInputBlocked;
 
-        if (state.NextEnemy != null)
-        {
-            nextEnemy = EnemyToString(state.NextEnemy);
-
-            if (state.NextEnemy.IsFirstAppearance)
-            {
-                nextEnemy += " (첫 등장!)";
-            }
-
-            if (state.NextEnemy.IsHavingFirstShield)
-            {
-                nextEnemy += " (방패 등장!)";
-            }
-        }
-
-        if (selected != null)
-        {
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("[P]");
-            for (int i = 0; i < Field.Size; i++)
-            {
-                var e = state.Field.Get(i);
-                GUI.enabled = GetTargets(state.Field, selected, i).Count > 0;
-                if (GUILayout.Button(e == null ? "_" : $"{EnemyToString(e)}"))
-                    clickedCell = i;
-            }
-            GUI.enabled = true;
-
-            GUILayout.Label($" | 등장: {nextEnemy}");
-
-            GUILayout.EndHorizontal();
-
-            isCancelled = GUILayout.Button("취소");
-        }
-        else
-        {
-            GUILayout.Label(FieldToString(state.Field, GetHitCells(hovered), E_ActsNow) + 
-                $" | 등장: {nextEnemy}");
-        }
 
         GUILayout.BeginHorizontal();
 
@@ -615,18 +568,8 @@ public class TurnManager : MonoBehaviour
 
         GUILayout.EndHorizontal();
 
-        GUILayout.Label("지난 적 행동");
-        foreach (string t in lastHitTexts)
-            GUILayout.Label("  " + t);
-
         GUI.enabled = canAct;
-        Weapon clicked = null;
-        Weapon forMelt = null;
         WeaponData forUpgrade = null;
-        bool forExpand = false;
-
-        bool isRepaint = Event.current.type == EventType.Repaint;
-        if (isRepaint) hovered = null;
 
         for (int i = 0; i < state.Inventory.Length; i++)
         {
@@ -639,23 +582,11 @@ public class TurnManager : MonoBehaviour
 
             GUILayout.BeginHorizontal();
 
-            if (GUILayout.Button($"[{i}] {w.Data.WeaponName} Lv {state.Forge.GetUpgradeLevel(w.Data)}" +
-                $" (+{w.CurStack}) {ShowEffect(w)}" +
-                $"\n{ChargeGauge(w)}"))
-                clicked = w;
-
-            if (isRepaint && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
-                hovered = w;
-
-            GUI.enabled = canAct && state.MeltLeft > 0;
-            if (GUILayout.Button($"녹이기 +{economyData.GetMeltValue(w)}",
-                GUILayout.Width(80), GUILayout.Height(40)))
-                forMelt = w;
-
             int nextLevel = state.Forge.GetUpgradeLevel(w.Data) + 1;
             GUI.enabled = canAct && state.Forge.CheckUpgradeable(w.Data, nextLevel);
-            if (GUILayout.Button($"강화 {state.Forge.GetUpgradePrice(w.Data, nextLevel)}",
-                GUILayout.Width(80), GUILayout.Height(40)))
+            if (GUILayout.Button($" {w.Data.WeaponName} 강화 " +
+                $"{state.Forge.GetUpgradePrice(w.Data, nextLevel)}",
+                GUILayout.Width(100), GUILayout.Height(40)))
                 forUpgrade = w.Data;
 
             GUI.enabled = canAct;
@@ -663,23 +594,7 @@ public class TurnManager : MonoBehaviour
             GUILayout.EndHorizontal();
         }
 
-        GUI.enabled = canAct && state.Forge.CheckExpandable();
-        if (GUILayout.Button($"슬롯 확장 {state.Forge.GetSlotPrice()}"))
-        {
-            forExpand = true;
-        }
-
         GUILayout.BeginHorizontal();
-
-        string nextWeapon = state.NextWeapon != null ? state.NextWeapon.Data.WeaponName : "없음";
-        GUILayout.Label($"다음: {nextWeapon}");
-
-        GUI.enabled = canAct && state.MeltLeft > 0 && state.NextWeapon != null;
-        string meltVal = state.NextWeapon != null ? $" +{economyData.GetMeltValue(state.NextWeapon)}"
-            : "";
-        if (GUILayout.Button($"녹이기{meltVal}", GUILayout.Width(80)))
-            forMelt = state.NextWeapon;
-        GUI.enabled = canAct;
 
         GUILayout.EndHorizontal();
 
@@ -692,21 +607,13 @@ public class TurnManager : MonoBehaviour
         GUILayout.EndArea();
         int w_choice = ChoiceButton(out bool isSkipped);
 
-        if (clickedCell != -1) SelectTarget(clickedCell);
-        else if (isCancelled) CancelTargetSelect();
-        else if (clicked != null)
-        {
-            SelectWeapon(clicked);
-        }
-        else if (debug_skipturn)
+        if (debug_skipturn)
         {
             state.Debug_SkipTurn(Debug_SkipTurnTo);
             OnStateChanged?.Invoke();
         }
-        else if (forMelt != null) TryMelt(forMelt);
         else if (forUpgrade != null) TryUpgrade(forUpgrade);
         else if (forHeal) TryHeal(GUI_HealTo);
-        else if (forExpand) TryExpand();
         else if (debug_addIron)
         {
             state.AddIron(Debug_FreeIron);
@@ -714,149 +621,6 @@ public class TurnManager : MonoBehaviour
         }
         else if (w_choice != -1) ChooseWeightInc(w_choice);
         else if (isSkipped) SkipWeightInc();
-    }
-
-    private string FieldToString(Field field, List<int> highlight, List<NextAction> next)
-    {
-        string[] marks = new string[Field.Size];
-        for (int i = 0; i < Field.Size; i++)
-        {
-            marks[i] = string.Empty;
-        }
-
-        foreach (NextAction act in next)
-        {
-            switch (act.Behav)
-            {
-                case EnemyBehav.Attack:
-                    marks[act.Pos] = $"!{act.ChangeVal}";
-                    break;
-                case EnemyBehav.Move:
-                    marks[act.Pos] = "←";
-                    break;
-                case EnemyBehav.Heal:
-                    marks[act.Pos] = $"←+{act.ChangeVal}";
-                    break;
-                case EnemyBehav.Wait:
-                    marks[act.Pos] = "…";
-                    break;
-                case EnemyBehav.DecidedFleeing:
-                    marks[act.Pos] = $"→{act.ChangeVal}";
-                    break;
-                case EnemyBehav.Flee:
-                    marks[act.Pos] = "→!";
-                    break;
-                case EnemyBehav.Charging:
-                    marks[act.Pos] = $"(!{act.ChangeVal})*";
-                    break;
-            }
-        }
-
-        var sb = new System.Text.StringBuilder("[P]");
-        for (int i = 0; i < Field.Size; i++)
-        {
-            var e = field.Get(i);
-            string cell = e == null ? "_" : $"{EnemyToString(e)}{marks[i]}";
-            sb.Append(highlight.Contains(i) ? $" [{cell}]" : $" {cell}");
-        }
-        return sb.ToString();
-    }
-
-    private List<string> ShowHits(List<HitResult> validHits)
-    {
-        List<string> DmgResult = new List<string>();
-
-        foreach (HitResult r in validHits)
-        {
-            if (r.Blocked)
-            {
-                DmgResult.Add($"{r.Cell + 1}번 적 공격 막힘");
-            }
-            else
-            {
-                DmgResult.Add($"{r.Cell + 1}번 적이 입힌 데미지: {r.Damage}");
-            }
-        }
-
-        if (DmgResult.Count.Equals(0))
-        {
-            DmgResult.Add("공격하는 적 없음");
-            return DmgResult;
-        }
-
-        return DmgResult;
-    }
-
-    private string ShowEffect(Weapon weapon)
-    {
-        string effectLabel = string.Empty;
-
-        switch (weapon.Data.ChargeType)
-        {
-            case ChargeType.Power:
-                effectLabel = $"위력 {state.Calc.CalcChargeValue(weapon)}";
-                break;
-            case ChargeType.Area:
-                effectLabel = $"위력 {state.Calc.CalcDamage(weapon)}, " +
-                    $"{state.Calc.CalcChargeValue(weapon)}칸";
-                break;
-            case ChargeType.Distance:
-                if (weapon.Data.Reloc.Equals(Relocation.Push))
-                {
-                    effectLabel = $"위력 {state.Calc.CalcDamage(weapon)}, " +
-                        $"{state.Calc.CalcChargeValue(weapon)}칸 밀기";
-                }
-                else
-                {
-                    effectLabel = $"위력 {state.Calc.CalcDamage(weapon)}, " +
-                        $"{state.Calc.CalcChargeValue(weapon)}칸 내 대상 끌기";
-                }
-                break;
-            case ChargeType.Defense:
-                effectLabel = $"보호막 {state.Calc.CalcChargeValue(weapon)}회";
-                break;
-        }
-
-        return effectLabel;
-    }
-
-    private string ChargeGauge(Weapon weapon)
-    {
-        int cap = state.BattleData.GetCap(weapon.Data.CapTier);
-        var sb = new System.Text.StringBuilder();
-
-        for (int i = 0; i < cap; i++)
-        {
-            sb.Append(i < weapon.CurStack ? "■" : "□");
-        }
-
-        return sb.ToString();
-    }
-
-    private string EnemyToString(Enemy enemy)
-    {
-        char type = 'e';
-        switch (enemy.Data.EnemyType)
-        {
-            case EnemyType.Normal:
-                type = 'N';
-                break;
-            case EnemyType.Ranged:
-                type = 'R';
-                break;
-            case EnemyType.Heal:
-                type = 'H';
-                break;
-            case EnemyType.Charge:
-                type = 'C';
-                break;
-        }
-
-        string shield = enemy.IsShielded ? "◆" : string.Empty;
-
-        string charge = enemy.IsLoaded ? "*" : string.Empty;
-
-        return $"{type}{enemy.HP}{shield}{charge}";
     }
 
     private int ChoiceButton(out bool isSkipped)
