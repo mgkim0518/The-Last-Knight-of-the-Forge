@@ -33,8 +33,6 @@ public class TurnManager : MonoBehaviour
     private int turn_survived = 0;
     private Weapon selected;
     private bool isGameOver = false;
-    private int GUI_HealTo;
-    private int GUI_LastHP;
     private int lastCancelFrame = -1;
     private ForgeState openForge = ForgeState.None;
 
@@ -518,6 +516,9 @@ public class TurnManager : MonoBehaviour
     public ForgeState ForgeStateNow => state.Forge.CurState;
     public bool IsHealableNow(int healTarget) => state.Forge.CheckHealable(healTarget);
     public int HealPriceNow(int healTarget) => state.Forge.GetHealPrice(healTarget);
+    public int ChoiceWeightNow(int index) => state.GetChoiceWeights()[index];
+    public int ChoiceNextWeightNow(int index) =>
+        Mathf.Min(ChoiceWeightNow(index) + spawnData.WeightIncrease, spawnData.MaxSpawnWeight);
 
 
     #endregion
@@ -588,44 +589,6 @@ public class TurnManager : MonoBehaviour
 
         bool canAct = selected == null && !IsActionBlocked;
 
-
-        GUILayout.BeginHorizontal();
-
-        bool forHeal = false;
-        Color prevColor = GUI.contentColor;
-
-        if (state.Player.HP != GUI_LastHP)
-        {
-            GUI_HealTo = state.Player.HP;
-            GUI_LastHP = state.Player.HP;
-        }
-
-        GUI.enabled = canAct;
-        GUI_HealTo = Mathf.RoundToInt(GUILayout.HorizontalSlider
-            (GUI_HealTo, 0, Player.MaxHP, GUILayout.Width(200)));
-        GUI_HealTo = Mathf.Clamp(GUI_HealTo, state.Player.HP, Player.MaxHP);
-
-        int healPrice = state.Forge.GetHealPrice(GUI_HealTo);
-
-        if (healPrice > state.Iron)
-        {
-            GUI.contentColor = Color.red;
-        }
-        GUILayout.Label($"{state.Player.HP} → {GUI_HealTo} (+{GUI_HealTo - state.Player.HP})" +
-            $" · {healPrice} 철괴");
-        GUI.contentColor = prevColor;
-
-        GUI.enabled = canAct && state.Forge.CheckHealable(GUI_HealTo);
-
-        if (GUILayout.Button("회복", GUILayout.Width(80)))
-        {
-            forHeal = true;
-        }
-
-        GUI.enabled = canAct;
-
-        GUILayout.EndHorizontal();
-
         GUI.enabled = canAct;
         WeaponData forUpgrade = null;
 
@@ -652,18 +615,11 @@ public class TurnManager : MonoBehaviour
             GUILayout.EndHorizontal();
         }
 
-        GUILayout.BeginHorizontal();
-
-        GUILayout.EndHorizontal();
-
-        GUILayout.Label($"용광로 {state.MeltLeft} / {state.PlayData.FurnaceCap}");
-
         GUI.enabled = selected == null;
         bool debug_skipturn = GUILayout.Button($"{Debug_SkipTurnTo}턴으로 이동");
         bool debug_addIron = GUILayout.Button($"철괴 {Debug_FreeIron}개");
         GUI.enabled = true;
         GUILayout.EndArea();
-        int w_choice = ChoiceButton(out bool isSkipped);
 
         if (debug_skipturn)
         {
@@ -671,53 +627,13 @@ public class TurnManager : MonoBehaviour
             OnStateChanged?.Invoke();
         }
         else if (forUpgrade != null) TryUpgrade(forUpgrade);
-        else if (forHeal) TryHeal(GUI_HealTo);
         else if (debug_addIron)
         {
             state.AddIron(Debug_FreeIron);
             OnStateChanged?.Invoke();
         }
-        else if (w_choice != -1) ChooseWeightInc(w_choice);
-        else if (isSkipped) SkipWeightInc();
     }
 
-    private int ChoiceButton(out bool isSkipped)
-    {
-        isSkipped = false;
-
-        if (!IsActionBlocked)
-        {
-            return -1;
-        }
-
-        int clickedIndex = -1;
-        float width = 300f;
-        float height = 200f;
-        Rect area = new Rect((Screen.width - width) / 2f, (Screen.height - height) / 2f, width, height);
-
-        GUILayout.BeginArea(area, GUI.skin.box);
-        GUILayout.Label("등장 확률을 올릴 무기를 고르세요");
-
-        IReadOnlyList<WeaponData> choices = state.WeaponSelections;
-        List<int> weights = state.GetChoiceWeights();
-
-        for (int i = 0; i < choices.Count; i++)
-        {
-            int nextWeight = Mathf.Min(weights[i] + spawnData.WeightIncrease, spawnData.MaxSpawnWeight);
-
-            if (GUILayout.Button($"{choices[i].WeaponName} (가중치 {weights[i]} → {nextWeight})"))
-            {
-                clickedIndex = i;
-            }
-        }
-
-        if (GUILayout.Button($"건너뛰기 (철괴 +{economyData.WeightSkipReward})"))
-        {
-            isSkipped = true;
-        }
-
-        GUILayout.EndArea();
-        return clickedIndex;
-
-    }
+    
+    
 }
