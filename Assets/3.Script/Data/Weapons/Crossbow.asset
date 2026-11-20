@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Crossbow
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
   WeaponName: "\uC11D\uAD81"
-  Icon: {fileID: 0}
+  Icon: {fileID: 21300000, guid: e66e0756c5cf5044ca900291f2677a2d, type: 3}
   Target: 2
   Reloc: 0
   BasePower: 1

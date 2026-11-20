@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Dagger
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
   WeaponName: "\uB2E8\uAC80"
-  Icon: {fileID: 0}
+  Icon: {fileID: 21300000, guid: 9f8169bf7e355ed4095a222bd15b647a, type: 3}
   Target: 0
   Reloc: 0
   BasePower: 5

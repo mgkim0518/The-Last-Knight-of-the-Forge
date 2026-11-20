@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Hook
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
   WeaponName: "\uAC08\uACE0\uB9AC"
-  Icon: {fileID: 0}
+  Icon: {fileID: 21300000, guid: 379afb8098f5f5f4d84f057e74e12813, type: 3}
   Target: 4
   Reloc: 2
   BasePower: 1

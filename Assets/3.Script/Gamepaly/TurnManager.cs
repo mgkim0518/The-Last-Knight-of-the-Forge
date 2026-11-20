@@ -85,6 +85,53 @@ public class TurnManager : MonoBehaviour
         }
     }
 
+    public string EffectText(Weapon weapon)
+    {
+        string effectLabel = string.Empty;
+
+        switch (weapon.Data.ChargeType)
+        {
+            case ChargeType.Power:
+            case ChargeType.Area:
+                effectLabel = $"-{state.Calc.CalcDamage(weapon)}, {TargetText(weapon)}";
+                break;
+            case ChargeType.Distance:
+                if (weapon.Data.Reloc.Equals(Relocation.Push))
+                {
+                    effectLabel = $"-{state.Calc.CalcDamage(weapon)}, " +
+                        $"{state.Calc.CalcChargeValue(weapon)}칸 밀기";
+                }
+                else
+                {
+                    effectLabel = $"-{state.Calc.CalcDamage(weapon)}, " +
+                        $"사거리 {state.Calc.CalcChargeValue(weapon)} 끌기";
+                }
+                break;
+            case ChargeType.Defense:
+                effectLabel = $"보호막 {state.Calc.CalcChargeValue(weapon)}회";
+                break;
+        }
+
+        return effectLabel;
+    }
+
+    private string TargetText(Weapon weapon)
+    {
+        int hit = state.Calc.CalcHitRange(weapon);
+
+        switch (weapon.Data.Target)
+        {
+            case TargetType.Front:
+                return hit > 1 ? $"앞 {hit}칸" : "맨 앞";
+            case TargetType.Back:
+                return hit > 1 ? $"뒤 {hit}칸" : "맨 뒤";
+            case TargetType.Choose:
+                return "지정";
+            default:
+                return string.Empty;
+        }
+    }
+
     public void SelectTarget(int enemyCell)
     {
         if (selected == null)

@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: Halberd
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
   WeaponName: "\uBBF8\uB298\uCC3D"
-  Icon: {fileID: 0}
+  Icon: {fileID: 21300000, guid: 8d3c18ef921d3874897420f2c08123a7, type: 3}
   Target: 0
+  Reloc: 0
   BasePower: 2
   BaseAmount: 3
   ChargeType: 0

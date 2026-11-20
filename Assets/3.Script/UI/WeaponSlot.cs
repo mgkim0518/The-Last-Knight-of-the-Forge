@@ -14,6 +14,7 @@ public class WeaponSlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
     [SerializeField] private Image weaponImage;
     [SerializeField] private Image[] plate;
     [SerializeField] private Text unlockText;
+    [SerializeField] private Text effectText;
     [SerializeField] private GameObject highlight;
 
     [Header("잠김 표시")]
@@ -58,7 +59,7 @@ public class WeaponSlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
     public void UpdateSlot(SlotState state, Weapon weapon, int price)
     {
         this.state = state;
-        this.Weapon = weapon;
+        Weapon = weapon;
 
         itemButton.interactable = state.Equals(SlotState.Unlocked) || state.Equals(SlotState.NextLock);
 
@@ -73,6 +74,7 @@ public class WeaponSlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
         {
             background.color = lockedColor;
             itemText.text = string.Empty;
+            weaponImage.gameObject.SetActive(false);
             UpdateCharge(null);
             UpdateLock(state, price);
         }
@@ -104,11 +106,17 @@ public class WeaponSlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
     {
         if (weapon == null)
         {
+            weaponImage.gameObject.SetActive(false);
+            effectText.gameObject.SetActive(false);
             itemText.text = string.Empty;
             UpdateCharge(null);
             return;
         }
 
+        weaponImage.sprite = Weapon.Data.Icon;
+        effectText.text = manager.EffectText(Weapon);
+        weaponImage.gameObject.SetActive(weaponImage.sprite != null);
+        effectText.gameObject.SetActive(true);
         itemText.text = $"{weapon.Data.WeaponName} Lv{manager.UpLvNow(weapon.Data)}";
         UpdateCharge(weapon);
     }
