@@ -2301,6 +2301,7 @@ MonoBehaviour:
   - {fileID: 1554995427}
   - {fileID: 812803366}
   skipButton: {fileID: 1986027755}
+  skipText: {fileID: 2085268813}
 --- !u!1001 &650817204
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4163,7 +4164,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1234011785
 RectTransform:
   m_ObjectHideFlags: 0

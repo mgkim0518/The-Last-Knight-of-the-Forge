@@ -13,6 +13,7 @@ public class WeightUpPanel : MonoBehaviour
     [SerializeField] Image[] weaponIcons;
     [SerializeField] Text[] weaponTexts;
     [SerializeField] Button skipButton;
+    [SerializeField] Text skipText;
 
     private void Awake()
     {
@@ -25,6 +26,7 @@ public class WeightUpPanel : MonoBehaviour
             selections[i].onClick.AddListener(() => manager.ChooseWeightInc(index));
         }
         skipButton.onClick.AddListener(Skip);
+        skipText.text = $"건너뛰기 (+{manager.SkipRewardNow} 철괴)";
 
         panel.SetActive(false);
     }

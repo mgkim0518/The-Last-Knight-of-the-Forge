@@ -62,7 +62,7 @@ public class TurnManager : MonoBehaviour
 
     public void SelectWeapon(Weapon weapon)
     {
-        if (IsActionBlocked)
+        if (IsInputBlocked)
         {
             return;
         }
@@ -161,7 +161,7 @@ public class TurnManager : MonoBehaviour
 
     public bool UseWeapon(Weapon weapon, int enemyCell = -1)
     {
-        if (IsActionBlocked)
+        if (IsInputBlocked)
         {
             return false ;
         }
@@ -330,7 +330,7 @@ public class TurnManager : MonoBehaviour
 
     public void Rest()
     {
-        if (IsActionBlocked)
+        if (IsInputBlocked)
         {
             return;
         }
@@ -363,7 +363,7 @@ public class TurnManager : MonoBehaviour
 
     public bool TryMelt(Weapon weapon)
     {
-        if (IsActionBlocked)
+        if (IsInputBlocked)
         {
             return false;
         }
@@ -426,7 +426,7 @@ public class TurnManager : MonoBehaviour
 
     public bool TryExpand()
     {
-        if (IsActionBlocked)
+        if (IsInputBlocked)
         {
             return false;
         }
@@ -519,7 +519,7 @@ public class TurnManager : MonoBehaviour
     public int ChoiceWeightNow(int index) => state.GetChoiceWeights()[index];
     public int ChoiceNextWeightNow(int index) =>
         Mathf.Min(ChoiceWeightNow(index) + spawnData.WeightIncrease, spawnData.MaxSpawnWeight);
-
+    public int SkipRewardNow => state.PlayData.WeightSkipReward;
 
     #endregion
 
