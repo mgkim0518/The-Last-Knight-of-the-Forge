@@ -22,10 +22,12 @@ public class TurnManager : MonoBehaviour
     public event Action OnWeightChoiceClose;
     public event Action<int> OnGameOver;
 
-    public bool IsInputBlocked => state != null && 
+    public bool IsActionBlocked => state != null && 
         (state.WeaponSelections.Count > 0 || isGameOver);
+    public bool IsInputBlocked => IsActionBlocked || openForge != ForgeState.None;
     public bool IsMeltAvailable => !IsInputBlocked && state.MeltLeft > 0;
     public bool IsCancelledThisFrame => lastCancelFrame == Time.frameCount;
+    public bool IsForgeOpenable => !IsInputBlocked && selected == null;
 
     private GameState state;
     private int turn_survived = 0;
@@ -34,6 +36,12 @@ public class TurnManager : MonoBehaviour
     private int GUI_HealTo;
     private int GUI_LastHP;
     private int lastCancelFrame = -1;
+    private ForgeState openForge = ForgeState.None;
+
+    private bool IsBlockedFor(ForgeState type)
+        => IsActionBlocked || (openForge != ForgeState.None && openForge != type);
+    public void OpenForge(ForgeState type) => openForge = type;
+    public void CloseForge() => openForge = ForgeState.None;
 
     private void Start()
     {
@@ -56,7 +64,7 @@ public class TurnManager : MonoBehaviour
 
     public void SelectWeapon(Weapon weapon)
     {
-        if (IsInputBlocked)
+        if (IsActionBlocked)
         {
             return;
         }
@@ -155,7 +163,7 @@ public class TurnManager : MonoBehaviour
 
     public bool UseWeapon(Weapon weapon, int enemyCell = -1)
     {
-        if (IsInputBlocked)
+        if (IsActionBlocked)
         {
             return false ;
         }
@@ -324,7 +332,7 @@ public class TurnManager : MonoBehaviour
 
     public void Rest()
     {
-        if (IsInputBlocked)
+        if (IsActionBlocked)
         {
             return;
         }
@@ -357,7 +365,7 @@ public class TurnManager : MonoBehaviour
 
     public bool TryMelt(Weapon weapon)
     {
-        if (IsInputBlocked)
+        if (IsActionBlocked)
         {
             return false;
         }
@@ -379,7 +387,7 @@ public class TurnManager : MonoBehaviour
 
     public bool TryUpgrade(WeaponData data)
     {
-        if (IsInputBlocked)
+        if (IsBlockedFor(ForgeState.Upgrade))
         {
             return false;
         }
@@ -400,7 +408,7 @@ public class TurnManager : MonoBehaviour
 
     public bool TryHeal(int healTarget)
     {
-        if (IsInputBlocked)
+        if (IsBlockedFor(ForgeState.Heal))
         {
             return false;
         }
@@ -420,7 +428,7 @@ public class TurnManager : MonoBehaviour
 
     public bool TryExpand()
     {
-        if (IsInputBlocked)
+        if (IsActionBlocked)
         {
             return false;
         }
@@ -507,6 +515,9 @@ public class TurnManager : MonoBehaviour
     public int MeltLeftNow => state.MeltLeft;
     public int FurnaceCapNow => state.PlayData.FurnaceCap;
     public int MeltValNow(Weapon weapon) => state.PlayData.GetMeltValue(weapon);
+    public ForgeState ForgeStateNow => state.Forge.CurState;
+    public bool IsHealableNow(int healTarget) => state.Forge.CheckHealable(healTarget);
+    public int HealPriceNow(int healTarget) => state.Forge.GetHealPrice(healTarget);
 
 
     #endregion
@@ -575,7 +586,7 @@ public class TurnManager : MonoBehaviour
 
         GUILayout.BeginArea(new Rect(10, 40, 500, 600));
 
-        bool canAct = selected == null && !IsInputBlocked;
+        bool canAct = selected == null && !IsActionBlocked;
 
 
         GUILayout.BeginHorizontal();
@@ -674,7 +685,7 @@ public class TurnManager : MonoBehaviour
     {
         isSkipped = false;
 
-        if (!IsInputBlocked)
+        if (!IsActionBlocked)
         {
             return -1;
         }
