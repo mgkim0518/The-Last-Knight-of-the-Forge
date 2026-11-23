@@ -26,7 +26,6 @@ public class WeightUpPanel : MonoBehaviour
             selections[i].onClick.AddListener(() => manager.ChooseWeightInc(index));
         }
         skipButton.onClick.AddListener(Skip);
-        skipText.text = $"건너뛰기 (+{manager.SkipRewardNow} 철괴)";
 
         panel.SetActive(false);
     }
@@ -45,6 +44,8 @@ public class WeightUpPanel : MonoBehaviour
 
     private void ShowButtons(IReadOnlyList<WeaponData> choices)
     {
+        skipText.text = $"건너뛰기 (+{manager.SkipRewardNow} 철괴)";
+
         for (int i = 0; i < selections.Length; i++)
         {
             if (i < choices.Count)

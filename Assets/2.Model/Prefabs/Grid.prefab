@@ -881,14 +881,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.5882353}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: -855625889375226725, guid: 291df26dda21c694fbe8870171b00ae7, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -978,8 +978,8 @@ MonoBehaviour:
   highlight: {fileID: 3371980253528155916}
   lockIcon: {fileID: 5321134581236651271}
   priceText: {fileID: 6850648759327185828}
-  lockedColor: {r: 0, g: 0, b: 0, a: 1}
-  unlockedColor: {r: 0, g: 0, b: 0, a: 0.5882353}
+  lockedColor: {r: 0.4509804, g: 0.4509804, b: 0.4509804, a: 1}
+  unlockedColor: {r: 1, g: 1, b: 1, a: 1}
   priceColor: {r: 1, g: 1, b: 1, a: 1}
   warnColor: {r: 1, g: 0, b: 0, a: 1}
   rivets:

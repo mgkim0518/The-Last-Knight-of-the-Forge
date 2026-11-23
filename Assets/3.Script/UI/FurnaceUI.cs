@@ -10,8 +10,8 @@ public class FurnaceUI : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoi
     [Header("용광로 투입구 (왼쪽부터 오른쪽으로)")]
     [SerializeField] private Image[] doors;
     [SerializeField] private IronGainView upIronNotice;
-    [SerializeField] private Color openColor;
-    [SerializeField] private Color closedColor;
+    [SerializeField] private Sprite openSprite;
+    [SerializeField] private Sprite closedSprite;
 
     private void Awake()
     {
@@ -68,7 +68,7 @@ public class FurnaceUI : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoi
                 continue;
             }
 
-            doors[i].color = i >= cap - left ? openColor : closedColor;
+            doors[i].sprite = i >= cap - left ? openSprite : closedSprite;
         }
     }
 }

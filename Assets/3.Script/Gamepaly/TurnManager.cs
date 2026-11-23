@@ -383,7 +383,7 @@ public class TurnManager : MonoBehaviour
         return true;
     }
 
-    public bool TryUpgrade(WeaponData data)
+    public bool TryUpgrade(WeaponData data, int upTarget)
     {
         if (IsBlockedFor(ForgeState.Upgrade))
         {
@@ -395,13 +395,12 @@ public class TurnManager : MonoBehaviour
             return false;
         }
 
-        int nextLevel = state.Forge.GetUpgradeLevel(data) + 1;
-        bool isUpgraged = state.Forge.PaytoUpgrade(data, nextLevel);
-        if (isUpgraged)
+        bool isUpgraded = state.Forge.PaytoUpgrade(data, upTarget);
+        if (isUpgraded)
         {
             OnStateChanged?.Invoke();
         }
-        return isUpgraged;
+        return isUpgraded;
     }
 
     public bool TryHeal(int healTarget)
@@ -516,6 +515,12 @@ public class TurnManager : MonoBehaviour
     public ForgeState ForgeStateNow => state.Forge.CurState;
     public bool IsHealableNow(int healTarget) => state.Forge.CheckHealable(healTarget);
     public int HealPriceNow(int healTarget) => state.Forge.GetHealPrice(healTarget);
+    public IReadOnlyList<WeaponData> WeaponPoolNow => spawnData.WeaponPool;
+    public int UpPriceNow(WeaponData data, int upTarget) => state.Forge.GetUpgradePrice(data, upTarget);
+    public bool IsUpgradeableNow(WeaponData data, int upTarget) => state.Forge.CheckUpgradeable(data, upTarget);
+    public int UpValueAt(WeaponData data, int level) => data.UpgradeType == UpgradeType.Charge
+        ? battleData.GetStackValue(data) + level * economyData.ChargeValuePerUpgrade
+        : data.BasePower + level * economyData.PowerPerUpgrade;
     public int ChoiceWeightNow(int index) => state.GetChoiceWeights()[index];
     public int ChoiceNextWeightNow(int index) =>
         Mathf.Min(ChoiceWeightNow(index) + spawnData.WeightIncrease, spawnData.MaxSpawnWeight);
@@ -626,7 +631,6 @@ public class TurnManager : MonoBehaviour
             state.Debug_SkipTurn(Debug_SkipTurnTo);
             OnStateChanged?.Invoke();
         }
-        else if (forUpgrade != null) TryUpgrade(forUpgrade);
         else if (debug_addIron)
         {
             state.AddIron(Debug_FreeIron);
