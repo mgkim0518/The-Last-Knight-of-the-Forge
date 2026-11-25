@@ -8,8 +8,10 @@ public class UpPopup : MonoBehaviour
 
     [Header("구성요소")]
     [SerializeField] private GameObject popup;
+    [SerializeField] private Image weaponIcon;
     [SerializeField] private Text nameText;
-    [SerializeField] private Text levelText;
+    [SerializeField] private Text levelOriginText;
+    [SerializeField] private Text levelAfterText;
     [SerializeField] private Text valueText;
     [SerializeField] private Text ironText;
     [SerializeField] private Button minusButton;
@@ -91,8 +93,10 @@ public class UpPopup : MonoBehaviour
         int iron = manager.IronNow;
         int left = iron - manager.UpPriceNow(target, targetLevel);
 
+        weaponIcon.sprite = target.Icon;
         nameText.text = target.WeaponName;
-        levelText.text = $"Lv {curLevel} → {targetLevel}";
+        levelOriginText.text = $"Lv {curLevel} →";
+        levelAfterText.text = targetLevel.ToString();
         valueText.text = GetValueText();
         ironText.text = $"철괴 {iron} → {left}";
         ironText.color = left < 0 ? warnColor : normalColor;
@@ -101,7 +105,6 @@ public class UpPopup : MonoBehaviour
         confirmButton.interactable = manager.IsUpgradeableNow(target, targetLevel);
     }
 
-    // 위력 강화: 기본 위력 변화 / 충전 강화(석궁): 등 하나당 위력 변화
     private string GetValueText()
     {
         int before = manager.UpValueAt(target, curLevel);
@@ -109,7 +112,7 @@ public class UpPopup : MonoBehaviour
 
         if (target.UpgradeType == UpgradeType.Charge)
         {
-            return $"등당 +{before} → +{after}";
+            return $"충전당 +{before} → +{after}";
         }
 
         return $"위력 {before} → {after}";

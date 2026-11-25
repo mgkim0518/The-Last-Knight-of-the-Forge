@@ -2,19 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-// 메인 강화 패널: 무기 칸 현황과 선택지만 보여 준다. 실제 강화는 UpPopup이 맡는다.
 public class UpgradeSelector : MonoBehaviour
 {
-    [System.Serializable]
-    private class UpgradeCell
-    {
-        public Button Button;
-        public Text NameText;
-        public Image Icon;
-        public Image ChargeIcon;
-        public GameObject OwnedBadge;
-    }
-
     [SerializeField] private TurnManager manager;
     [SerializeField] private UpPopup popup;
 
@@ -25,10 +14,6 @@ public class UpgradeSelector : MonoBehaviour
     [SerializeField] private Button closeButton;
     [SerializeField] private Button[] openButtons;
     [SerializeField] private UpgradeCell[] cells;
-
-    [Header("충전 아이콘 (WeaponSlot과 같은 값)")]
-    [SerializeField] private Sprite[] chargeSprites;
-    [SerializeField] private Color[] chargeColors;
 
     [Header("안내 문구")]
     [SerializeField] private string defaultText = "무기 강화";
@@ -44,8 +29,7 @@ public class UpgradeSelector : MonoBehaviour
     {
         for (int i = 0; i < cells.Length; i++)
         {
-            int index = i;
-            cells[i].Button.onClick.AddListener(() => SelectCell(index));
+            cells[i].OnWeaponUp += SelectWeapon;
         }
         closeButton.onClick.AddListener(PressClose);
         foreach (Button button in openButtons)
@@ -61,9 +45,9 @@ public class UpgradeSelector : MonoBehaviour
 
     private void OnDestroy()
     {
-        foreach (UpgradeCell cell in cells)
+        for (int i = 0; i < cells.Length; i++)
         {
-            cell.Button.onClick.RemoveAllListeners();
+            cells[i].OnWeaponUp -= SelectWeapon;
         }
         closeButton.onClick.RemoveListener(PressClose);
         foreach (Button button in openButtons)
@@ -97,7 +81,6 @@ public class UpgradeSelector : MonoBehaviour
         manager.CloseForge();
     }
 
-    // 팝업이 열려 있으면 팝업부터 닫는다.
     private void PressClose()
     {
         if (popup.IsOpen)
@@ -109,7 +92,6 @@ public class UpgradeSelector : MonoBehaviour
         ClosePanel();
     }
 
-    // 열 때마다 한 번만 정렬한다: 인벤토리에 있는 무기(칸 순서) → 나머지(무기 풀 순서).
     private void BuildOrder()
     {
         order.Clear();
@@ -159,32 +141,26 @@ public class UpgradeSelector : MonoBehaviour
 
         for (int i = 0; i < cells.Length; i++)
         {
-            UpgradeCell cell = cells[i];
-
             if (i >= order.Count)
             {
-                cell.Button.gameObject.SetActive(false);
+                cells[i].gameObject.SetActive(false);
                 continue;
             }
 
             WeaponData data = order[i];
-            cell.Button.gameObject.SetActive(true);
-            cell.NameText.text = $"{data.WeaponName} Lv{manager.UpLvNow(data)}";
-            cell.Icon.sprite = data.Icon;
-            cell.OwnedBadge.SetActive(owned.Contains(data));
-            SetChargeIcon(cell.ChargeIcon, data.ChargeType);
-            cell.Button.interactable = !isLocked;
+            cells[i].ShowCell(data, manager.UpLvNow(data), owned.Contains(data), isLocked);
+            cells[i].gameObject.SetActive(true);
         }
     }
 
-    private void SelectCell(int index)
+    private void SelectWeapon(WeaponData data)
     {
-        if (index >= order.Count || IsLocked())
+        if (IsLocked())
         {
             return;
         }
 
-        popup.Open(order[index]);
+        popup.Open(data);
     }
 
     private bool IsLocked()
@@ -209,19 +185,5 @@ public class UpgradeSelector : MonoBehaviour
     private void ShowIron(int iron)
     {
         ironText.text = $"철괴 {iron}";
-    }
-
-    private void SetChargeIcon(Image icon, ChargeType chargeType)
-    {
-        int type = (int)chargeType;
-        if (type >= chargeSprites.Length || type >= chargeColors.Length)
-        {
-            icon.enabled = false;
-            return;
-        }
-
-        icon.enabled = true;
-        icon.sprite = chargeSprites[type];
-        icon.color = chargeColors[type];
     }
 }

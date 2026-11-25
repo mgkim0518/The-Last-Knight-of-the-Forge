@@ -592,34 +592,6 @@ public class TurnManager : MonoBehaviour
 
         GUILayout.BeginArea(new Rect(10, 40, 500, 600));
 
-        bool canAct = selected == null && !IsActionBlocked;
-
-        GUI.enabled = canAct;
-        WeaponData forUpgrade = null;
-
-        for (int i = 0; i < state.Inventory.Length; i++)
-        {
-            var w = state.Inventory[i];
-            if (w == null)
-            {
-                GUILayout.Label($"[{i}] 빈칸");
-                continue;
-            }
-
-            GUILayout.BeginHorizontal();
-
-            int nextLevel = state.Forge.GetUpgradeLevel(w.Data) + 1;
-            GUI.enabled = canAct && state.Forge.CheckUpgradeable(w.Data, nextLevel);
-            if (GUILayout.Button($" {w.Data.WeaponName} 강화 " +
-                $"{state.Forge.GetUpgradePrice(w.Data, nextLevel)}",
-                GUILayout.Width(100), GUILayout.Height(40)))
-                forUpgrade = w.Data;
-
-            GUI.enabled = canAct;
-
-            GUILayout.EndHorizontal();
-        }
-
         GUI.enabled = selected == null;
         bool debug_skipturn = GUILayout.Button($"{Debug_SkipTurnTo}턴으로 이동");
         bool debug_addIron = GUILayout.Button($"철괴 {Debug_FreeIron}개");
