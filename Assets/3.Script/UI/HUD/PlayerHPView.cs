@@ -8,6 +8,7 @@ public class PlayerHPView : MonoBehaviour
     [SerializeField] private TurnManager manager;
     [SerializeField] private Slider hpSlider;
     [SerializeField] private Text hpText;
+    [SerializeField] private Text nextDamageText;
     [SerializeField] private Transform shieldPlace;
     [SerializeField] private Image shieldIcon;
 
@@ -24,6 +25,7 @@ public class PlayerHPView : MonoBehaviour
     {
         manager.OnStateChanged += ShowHP;
         manager.OnStateChanged += ShowShieldLeft;
+        manager.OnStateChanged += ShowExpectedDamage;
         manager.OnGameOver += ResetLastHP;
         shieldIcon.gameObject.SetActive(false);
         shieldIcons = new List<Image>();
@@ -34,6 +36,7 @@ public class PlayerHPView : MonoBehaviour
     {
         manager.OnStateChanged -= ShowHP;
         manager.OnStateChanged -= ShowShieldLeft;
+        manager.OnStateChanged -= ShowExpectedDamage;
         manager.OnGameOver -= ResetLastHP;
     }
 
@@ -45,7 +48,7 @@ public class PlayerHPView : MonoBehaviour
     private void ShowHP()
     {
         hpSlider.value = manager.HealthNow;
-        hpText.text = $"체력: {manager.HealthNow} / {manager.MaxHPNow}";
+        hpText.text = $"{manager.HealthNow} / {manager.MaxHPNow}";
 
         ShowChange(manager.HealthNow);
     }
@@ -82,5 +85,13 @@ public class PlayerHPView : MonoBehaviour
         {
             shieldIcons[i].gameObject.SetActive(i < shieldLeft);
         }
+    }
+
+    private void ShowExpectedDamage()
+    {
+        int expected = manager.ExpectedDamage();
+
+        nextDamageText.gameObject.SetActive(expected > 0);
+        nextDamageText.text = $"(-{expected})";
     }
 }

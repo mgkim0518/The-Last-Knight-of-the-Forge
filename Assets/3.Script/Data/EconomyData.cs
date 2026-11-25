@@ -29,6 +29,11 @@ public class EconomyData : ScriptableObject
     public int StartIron = 10;
     public int ShieldOffDrop = 1;
     public AnimationCurve EnemyBountyCurve = AnimationCurve.Linear(0, 1, 200, 20);
+
+    [Header("점수")]
+    public int ScorePerRound = 10;
+    public int ScorePerKill = 20;
+
     public int GetMeltValue(Weapon weapon)
     {
         switch (weapon.Data.CapTier)
