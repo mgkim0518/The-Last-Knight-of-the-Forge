@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class WeaponSlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler,
-    IPointerClickHandler, IPointerDownHandler
+    IPointerClickHandler, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("칸 내의 구성요소")]
     [SerializeField] private CanvasGroup self;
@@ -246,5 +246,20 @@ public class WeaponSlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
         }
 
         isSelectedOnPress = manager.SelectedNow != null || manager.IsCancelledThisFrame;
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (Weapon == null || state != SlotState.Unlocked)
+        {
+            return;
+        }
+
+        manager.PreviewHit(Weapon);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        manager.PreviewHit(null);
     }
 }

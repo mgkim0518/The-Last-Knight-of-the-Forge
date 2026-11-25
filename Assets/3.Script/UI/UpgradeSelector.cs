@@ -148,7 +148,8 @@ public class UpgradeSelector : MonoBehaviour
             }
 
             WeaponData data = order[i];
-            cells[i].ShowCell(data, manager.UpLvNow(data), owned.Contains(data), isLocked);
+            cells[i].ShowCell(data, manager.UpLvNow(data), owned.Contains(data), isLocked,
+                manager.SpawnRateNow(data));
             cells[i].gameObject.SetActive(true);
         }
     }

@@ -40,11 +40,6 @@ public class EnemyViewer : MonoBehaviour, IPointerClickHandler
         this.manager = manager;
         int enemyNum = (int)enemy.Data.EnemyType;
         hpBar.maxValue = enemy.MaxHP;
-        //if (enemyNum >= typeGlyphs.Length)
-        //{
-        //    Debug.LogWarning($"({enemy.Data.Name})에 대한 아이콘이 추가되지 않았습니다.");
-        //}
-        //typeIcon.sprite = typeIcons[(int)enemy.Data.EnemyType];
     }
 
     public void UpdateEnemy(Vector3 pos, int slot)

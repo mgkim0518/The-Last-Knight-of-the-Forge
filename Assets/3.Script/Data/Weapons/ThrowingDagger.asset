@@ -16,7 +16,7 @@ MonoBehaviour:
   Icon: {fileID: 21300000, guid: 550180f327355a843bdf4eb59956c421, type: 3}
   Target: 1
   Reloc: 0
-  BasePower: 3
+  BasePower: 5
   BaseAmount: 1
   ChargeType: 0
   CapTier: 0

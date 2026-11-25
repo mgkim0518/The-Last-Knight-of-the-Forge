@@ -21,7 +21,7 @@ public class TurnManager : MonoBehaviour
     public event Action<IReadOnlyList<WeaponData>> OnWeightChoiceOpen;
     public event Action OnWeightChoiceClose;
     public event Action<int> OnGameOver;
-
+    public event Action<Weapon> OnHitPreview;
     public bool IsActionBlocked => state != null && 
         (state.WeaponSelections.Count > 0 || isGameOver);
     public bool IsInputBlocked => IsActionBlocked || openForge != ForgeState.None;
@@ -40,6 +40,7 @@ public class TurnManager : MonoBehaviour
         => IsActionBlocked || (openForge != ForgeState.None && openForge != type);
     public void OpenForge(ForgeState type) => openForge = type;
     public void CloseForge() => openForge = ForgeState.None;
+    public void PreviewHit(Weapon weapon) => OnHitPreview?.Invoke(weapon);
 
     private void Start()
     {
@@ -525,6 +526,8 @@ public class TurnManager : MonoBehaviour
     public int ChoiceNextWeightNow(int index) =>
         Mathf.Min(ChoiceWeightNow(index) + spawnData.WeightIncrease, spawnData.MaxSpawnWeight);
     public int SkipRewardNow => state.PlayData.WeightSkipReward;
+
+    public float SpawnRateNow(WeaponData data) => state.CalcWeaponProb(data);
 
     #endregion
 

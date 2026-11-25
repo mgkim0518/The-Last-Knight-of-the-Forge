@@ -20,6 +20,6 @@ MonoBehaviour:
   BaseAmount: 1
   ChargeType: 0
   CapTier: 1
-  ValueTier: 1
+  ValueTier: 2
   UpgradeType: 1
   SpawnWeight: 2

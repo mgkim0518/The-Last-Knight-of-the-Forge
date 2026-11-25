@@ -252,6 +252,24 @@ public class GameState
         return true;
     }
 
+    public float CalcWeaponProb(WeaponData data)
+    {
+        int weightSum = 0;
+
+        foreach (WeaponData w in Spawn.WeaponPool)
+        {
+            weightSum += weaponGenWeights[w];
+        }
+
+        if (weightSum <= 0)
+        {
+            Debug.LogWarning("만들 무기가 없습니다.");
+            return 0f;
+        }
+
+        return (float) weaponGenWeights[data] / weightSum;
+    }
+
     public Enemy CreateNextEnemy()
     {
         if (Turn + 1 <= PrepTurns) return null;

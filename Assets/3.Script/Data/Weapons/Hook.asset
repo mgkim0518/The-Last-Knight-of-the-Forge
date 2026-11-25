@@ -17,7 +17,7 @@ MonoBehaviour:
   Target: 4
   Reloc: 2
   BasePower: 1
-  BaseAmount: 3
+  BaseAmount: 4
   ChargeType: 2
   CapTier: 1
   ValueTier: 1
