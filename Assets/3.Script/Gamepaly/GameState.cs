@@ -23,6 +23,7 @@ public class GameState
     public EnemySpawner Spawner { get; private set; }
     public Enemy NextEnemy { get; private set; }
     public int PrepTurns;
+    public int Kills { get; private set; }
 
     public event Action<int> OnIronChanged;
 
@@ -55,6 +56,7 @@ public class GameState
         PrepTurns = prepTurns;
         Spawner = new EnemySpawner(this);
         NextEnemy = CreateNextEnemy();
+        Kills = 0;
     }
 
     public bool RemoveWeapon(Weapon weapon)
@@ -316,6 +318,7 @@ public class GameState
         foreach (Enemy e in casualty)
         {
             bounty += e.Bounty;
+            Kills++;
         }
 
         AddIron(bounty);
@@ -352,6 +355,8 @@ public class GameState
 
         return true;
     }
+
+    public int CalcScore() => Kills * PlayData.ScorePerKill + (Turn-1) * PlayData.ScorePerRound;
 
     public void Debug_SkipTurn(int dest)
     {

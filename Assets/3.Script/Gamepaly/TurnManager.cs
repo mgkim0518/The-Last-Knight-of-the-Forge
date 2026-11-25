@@ -526,8 +526,9 @@ public class TurnManager : MonoBehaviour
     public int ChoiceNextWeightNow(int index) =>
         Mathf.Min(ChoiceWeightNow(index) + spawnData.WeightIncrease, spawnData.MaxSpawnWeight);
     public int SkipRewardNow => state.PlayData.WeightSkipReward;
-
     public float SpawnRateNow(WeaponData data) => state.CalcWeaponProb(data);
+
+    public int ScoreNow => state.CalcScore();
 
     #endregion
 
