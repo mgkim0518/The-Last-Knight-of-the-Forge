@@ -70,5 +70,5 @@ public class HitHighlighter : MonoBehaviour
         }
     }
 
-    private void ClearOnGameOver(int turn) => Clear();
+    private void ClearOnGameOver(int turn, int kills) => Clear();
 }

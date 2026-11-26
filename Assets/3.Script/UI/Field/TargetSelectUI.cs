@@ -48,7 +48,7 @@ public class TargetSelectUI : MonoBehaviour
         hintPanel.SetActive(false);
     }
 
-    private void HideOnGameOver(int turn)
+    private void HideOnGameOver(int turn, int kills)
     {
         HideHint();
     }

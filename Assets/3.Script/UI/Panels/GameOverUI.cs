@@ -7,22 +7,29 @@ public class GameOverUI : MonoBehaviour
 {
     [SerializeField] private TurnManager manager;
     [SerializeField] private GameObject gameOverPanel;
-    [SerializeField] private Text turnText;
+    [SerializeField] private Text calcText;
+    [SerializeField] private Text scoreText;
+    [SerializeField] private GameObject NewRecordLabel;
+    [SerializeField] private GameObject DebugUsedLabel;
 
     private void Awake()
     {
-        manager.OnGameOver += WriteSurvivalTurn;
+        manager.OnGameOver += WriteScoreboard;
     }
 
     private void OnDestroy()
     {
-        manager.OnGameOver -= WriteSurvivalTurn;
+        manager.OnGameOver -= WriteScoreboard;
     }
 
-    private void WriteSurvivalTurn(int turn)
+    private void WriteScoreboard(int turn, int kills)
     {
         gameOverPanel.SetActive(true);
-        turnText.text = $"당신은 {turn}턴까지 생존했습니다.";
+        calcText.text = $"{turn} X {manager.ScorePerTurnNow} =\n{kills} X {manager.ScorePerKillNow} =";
+        scoreText.text = $"{manager.TurnScoreNow}\n{manager.KillScoreNow}" +
+            $"\n\n{manager.ScoreNow}\n{manager.HighScoreNow}";
+        NewRecordLabel.SetActive(manager.IsNewBestNow);
+        DebugUsedLabel.SetActive(manager.IsDebugUsedNow);
     }
 
     public void RestartButton()

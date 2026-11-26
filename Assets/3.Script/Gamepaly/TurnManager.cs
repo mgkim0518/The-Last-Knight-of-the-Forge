@@ -20,7 +20,7 @@ public class TurnManager : MonoBehaviour
     public event Action<int> OnCurrencyChange;
     public event Action<IReadOnlyList<WeaponData>> OnWeightChoiceOpen;
     public event Action OnWeightChoiceClose;
-    public event Action<int> OnGameOver;
+    public event Action<int, int> OnGameOver;
     public event Action<Weapon> OnHitPreview;
     public bool IsActionBlocked => state != null && 
         (state.WeaponSelections.Count > 0 || isGameOver);
@@ -35,6 +35,7 @@ public class TurnManager : MonoBehaviour
     private bool isGameOver = false;
     private int lastCancelFrame = -1;
     private ForgeState openForge = ForgeState.None;
+    private ScoreRecord record;
 
     private bool IsBlockedFor(ForgeState type)
         => IsActionBlocked || (openForge != ForgeState.None && openForge != type);
@@ -44,6 +45,7 @@ public class TurnManager : MonoBehaviour
 
     private void Start()
     {
+        record = new ScoreRecord();
         StartNewGame();
     }
 
@@ -215,8 +217,8 @@ public class TurnManager : MonoBehaviour
             state.Field.Pull(enemyCell);
         }
 
-        state.ClearDeadEnemies();
         state.PickUpShields();
+        state.ClearDeadEnemies();
 
         EndTurn();
         return true;
@@ -527,8 +529,14 @@ public class TurnManager : MonoBehaviour
         Mathf.Min(ChoiceWeightNow(index) + spawnData.WeightIncrease, spawnData.MaxSpawnWeight);
     public int SkipRewardNow => state.PlayData.WeightSkipReward;
     public float SpawnRateNow(WeaponData data) => state.CalcWeaponProb(data);
-
+    public int ScorePerTurnNow => economyData.ScorePerRound;
+    public int ScorePerKillNow => economyData.ScorePerKill;
+    public int TurnScoreNow => state.TurnScore();
+    public int KillScoreNow => state.KillScore();
     public int ScoreNow => state.CalcScore();
+    public int HighScoreNow => record.BestScore;
+    public bool IsNewBestNow => record.IsNewBest;
+    public bool IsDebugUsedNow => state.IsDebugUsed;
 
     #endregion
 
@@ -544,10 +552,14 @@ public class TurnManager : MonoBehaviour
         state.Player.TakeHit(validHits);
         if (state.Player.IsDead)
         {
-            turn_survived = state.Turn;
+            turn_survived = state.Turn - 1;
             OnStateChanged?.Invoke();
             isGameOver = true;
-            OnGameOver?.Invoke(turn_survived); 
+            if (!state.IsDebugUsed)
+            {
+                record.TrySave(state.CalcScore(), state.Turn - 1, state.Kills);
+            }
+            OnGameOver?.Invoke(turn_survived, state.Kills); 
             return;
         }
         state.NextTurn();
@@ -599,6 +611,7 @@ public class TurnManager : MonoBehaviour
         GUI.enabled = selected == null;
         bool debug_skipturn = GUILayout.Button($"{Debug_SkipTurnTo}턴으로 이동");
         bool debug_addIron = GUILayout.Button($"철괴 {Debug_FreeIron}개");
+        bool clear_record = GUILayout.Button($"최고점수 삭제");
         GUI.enabled = true;
         GUILayout.EndArea();
 
@@ -609,7 +622,12 @@ public class TurnManager : MonoBehaviour
         }
         else if (debug_addIron)
         {
-            state.AddIron(Debug_FreeIron);
+            state.Debug_AddIron(Debug_FreeIron);
+            OnStateChanged?.Invoke();
+        }
+        else if (clear_record)
+        {
+            record.Clear();
             OnStateChanged?.Invoke();
         }
     }

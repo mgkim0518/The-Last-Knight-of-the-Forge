@@ -24,6 +24,7 @@ public class GameState
     public Enemy NextEnemy { get; private set; }
     public int PrepTurns;
     public int Kills { get; private set; }
+    public bool IsDebugUsed { get; private set; } = false;
 
     public event Action<int> OnIronChanged;
 
@@ -356,15 +357,25 @@ public class GameState
         return true;
     }
 
-    public int CalcScore() => Kills * PlayData.ScorePerKill + (Turn-1) * PlayData.ScorePerRound;
+    public int TurnScore() => (Turn - 1) * PlayData.ScorePerRound;
+    public int KillScore() => Kills * PlayData.ScorePerKill;
+    public int CalcScore() => TurnScore() + KillScore();
 
     public void Debug_SkipTurn(int dest)
     {
+        IsDebugUsed = true;
+
         if (Turn >= dest)
         {
             return;
         }
 
         Turn = dest;
+    }
+
+    public void Debug_AddIron(int amount)
+    {
+        IsDebugUsed = true;
+        AddIron(amount);
     }
 }

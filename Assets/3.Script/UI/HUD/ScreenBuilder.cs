@@ -10,6 +10,7 @@ public class ScreenBuilder : MonoBehaviour
     [SerializeField] private Text turnText;
     [SerializeField] private Text ironText;
     [SerializeField] private Text scoreText;
+    [SerializeField] private Text highscoreText;
 
     private void Awake()
     {
@@ -26,5 +27,6 @@ public class ScreenBuilder : MonoBehaviour
         turnText.text = $"턴: {manager.TurnNow}";
         ironText.text = $"철괴: {manager.IronNow}";
         scoreText.text = $"점수: {manager.ScoreNow}";
+        highscoreText.text = $"최고: {manager.HighScoreNow}";
     }
 }

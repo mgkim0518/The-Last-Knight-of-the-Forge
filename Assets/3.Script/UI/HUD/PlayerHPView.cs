@@ -40,7 +40,7 @@ public class PlayerHPView : MonoBehaviour
         manager.OnGameOver -= ResetLastHP;
     }
 
-    private void ResetLastHP(int turn)
+    private void ResetLastHP(int turn, int kills)
     {
         lastHP = -1;
     }
