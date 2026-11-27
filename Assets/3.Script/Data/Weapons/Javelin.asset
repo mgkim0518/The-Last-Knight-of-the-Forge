@@ -22,4 +22,4 @@ MonoBehaviour:
   CapTier: 1
   ValueTier: 2
   UpgradeType: 2
-  SpawnWeight: 2
+  SpawnWeight: 3

@@ -19,7 +19,7 @@ MonoBehaviour:
   BasePower: 5
   BaseAmount: 1
   ChargeType: 1
-  CapTier: 0
+  CapTier: 1
   ValueTier: 1
   UpgradeType: 1
-  SpawnWeight: 2
+  SpawnWeight: 3

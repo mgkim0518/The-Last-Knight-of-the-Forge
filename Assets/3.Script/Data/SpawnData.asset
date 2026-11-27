@@ -37,5 +37,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f3ede67b96016884d976200f11e4d765, type: 2}
   SpawnProb: 0.8
   ShieldProb: 0.3
-  FirstShieldTurn: 60
+  FirstShieldTurn: 45
   BlockBusterDeploy: 3
