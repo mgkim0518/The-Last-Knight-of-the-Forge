@@ -21,7 +21,9 @@ public class TurnManager : MonoBehaviour
     public event Action<IReadOnlyList<WeaponData>> OnWeightChoiceOpen;
     public event Action OnWeightChoiceClose;
     public event Action<int, int> OnGameOver;
+    public event Action OnGameReset;
     public event Action<Weapon> OnHitPreview;
+    public event Action OnReturnToTitle;
     public bool IsActionBlocked => state != null && 
         (state.WeaponSelections.Count > 0 || isGameOver);
     public bool IsInputBlocked => IsActionBlocked || openForge != ForgeState.None;
@@ -43,13 +45,12 @@ public class TurnManager : MonoBehaviour
     public void CloseForge() => openForge = ForgeState.None;
     public void PreviewHit(Weapon weapon) => OnHitPreview?.Invoke(weapon);
 
-    private void Start()
+    private void Awake()
     {
         record = new ScoreRecord();
-        StartNewGame();
     }
 
-    private void StartNewGame()
+    private void SetupNewGame()
     {
         if (state != null)
         {
@@ -59,6 +60,7 @@ public class TurnManager : MonoBehaviour
             prepTurns, battleData);
         state.AddWeapon(state.CreateRandomWeapon());
         state.OnIronChanged += ChangeIronValUI;
+        OnGameReset?.Invoke();
         OnCurrencyChange?.Invoke(state.Iron);
         OnStateChanged?.Invoke();
     }
@@ -355,11 +357,11 @@ public class TurnManager : MonoBehaviour
         EndTurn();
     }
 
-    public void Restart()
+    public void InitGame()
     {
         selected = null;
         isGameOver = false;
-        StartNewGame();
+        SetupNewGame();
     }
 
     #region TurnManager에서 다른 메소드 받는 영역
@@ -538,6 +540,10 @@ public class TurnManager : MonoBehaviour
     public bool IsNewBestNow => record.IsNewBest;
     public bool IsDebugUsedNow => state.IsDebugUsed;
 
+    public void GotoTitle()
+    {
+        OnReturnToTitle?.Invoke();
+    }
     #endregion
 
     private void EndTurn()
@@ -602,6 +608,7 @@ public class TurnManager : MonoBehaviour
         return atkRange;
     }
 
+#if UNITY_EDITOR
     private void OnGUI()
     {
         if (state == null) return;
@@ -631,7 +638,5 @@ public class TurnManager : MonoBehaviour
             OnStateChanged?.Invoke();
         }
     }
-
-    
-    
+#endif
 }

@@ -14,6 +14,7 @@ public class TargetSelectUI : MonoBehaviour
         manager.OnTargetSelect += ShowHint;
         manager.OnChoiceFinished += HideHint;
         manager.OnGameOver += HideOnGameOver;
+        manager.OnGameReset += HideHint;
 
         hintPanel.SetActive(false);
     }
@@ -23,6 +24,7 @@ public class TargetSelectUI : MonoBehaviour
         manager.OnTargetSelect -= ShowHint;
         manager.OnChoiceFinished -= HideHint;
         manager.OnGameOver -= HideOnGameOver;
+        manager.OnGameReset -= HideHint;
     }
 
     private void Update()

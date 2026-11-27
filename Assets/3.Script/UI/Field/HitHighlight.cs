@@ -15,6 +15,7 @@ public class HitHighlighter : MonoBehaviour
         manager.OnStateChanged += ShowSelected;
         manager.OnHitPreview += Preview;
         manager.OnGameOver += ClearOnGameOver;
+        manager.OnGameReset += Clear;
         Clear();
     }
 
@@ -25,6 +26,7 @@ public class HitHighlighter : MonoBehaviour
         manager.OnStateChanged -= ShowSelected;
         manager.OnHitPreview -= Preview;
         manager.OnGameOver -= ClearOnGameOver;
+        manager.OnGameReset -= Clear;
     }
 
     private void Preview(Weapon weapon)

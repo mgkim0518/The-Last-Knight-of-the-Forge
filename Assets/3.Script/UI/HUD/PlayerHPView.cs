@@ -27,6 +27,7 @@ public class PlayerHPView : MonoBehaviour
         manager.OnStateChanged += ShowShieldLeft;
         manager.OnStateChanged += ShowExpectedDamage;
         manager.OnGameOver += ResetLastHP;
+        manager.OnGameReset += ResetLastHP;
         shieldIcon.gameObject.SetActive(false);
         shieldIcons = new List<Image>();
         shieldIcons.Add(shieldIcon);
@@ -38,9 +39,12 @@ public class PlayerHPView : MonoBehaviour
         manager.OnStateChanged -= ShowShieldLeft;
         manager.OnStateChanged -= ShowExpectedDamage;
         manager.OnGameOver -= ResetLastHP;
+        manager.OnGameReset -= ResetLastHP;
     }
 
-    private void ResetLastHP(int turn, int kills)
+    private void ResetLastHP(int turn, int kills) => ResetLastHP();
+
+    private void ResetLastHP()
     {
         lastHP = -1;
     }

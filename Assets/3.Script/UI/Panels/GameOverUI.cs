@@ -28,13 +28,13 @@ public class GameOverUI : MonoBehaviour
         calcText.text = $"{turn} X {manager.ScorePerTurnNow} =\n{kills} X {manager.ScorePerKillNow} =";
         scoreText.text = $"{manager.TurnScoreNow}\n{manager.KillScoreNow}" +
             $"\n\n{manager.ScoreNow}\n{manager.HighScoreNow}";
-        NewRecordLabel.SetActive(manager.IsNewBestNow);
+        NewRecordLabel.SetActive(manager.IsNewBestNow && !manager.IsDebugUsedNow);
         DebugUsedLabel.SetActive(manager.IsDebugUsedNow);
     }
 
     public void RestartButton()
     {
         gameOverPanel.SetActive(false);
-        manager.Restart();
+        manager.InitGame();
     }
 }
