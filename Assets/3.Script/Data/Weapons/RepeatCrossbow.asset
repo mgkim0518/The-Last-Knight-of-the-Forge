@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c2208e0d5ea1ca459f8d902f19cfcdf, type: 3}
+  m_Name: RepeatCrossbow
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponData
+  WeaponName: "\uC5F0\uB178"
+  Icon: {fileID: 8720762711468022038, guid: dc7e09186c21dfa4db90a8fbe9ab1516, type: 3}
+  Target: 1
+  Reloc: 0
+  BasePower: 2
+  BaseAmount: 3
+  ChargeType: 0
+  CapTier: 1
+  ValueTier: 1
+  UpgradeType: 1
+  SpawnWeight: 3
